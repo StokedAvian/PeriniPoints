@@ -200,6 +200,36 @@
     line-height: 1;
   }
 
+  /* Top-right icon buttons (Share Score Photo / Start Over) that replace
+     the old full-width buttons at the bottom of each mode's page. Kept as
+     a small absolutely-positioned group so they sit to the right of the
+     centered "Perini Points" title, matching the back button on the left. */
+  .header-icons {
+    position: absolute;
+    top: 6px;
+    right: 0;
+    display: -webkit-box;
+    display: -webkit-flex;
+    display: flex;
+    -webkit-box-align: center;
+    -webkit-align-items: center;
+    align-items: center;
+  }
+  .header-btn.icon-btn-header {
+    position: static;
+    font-size: 17px;
+    line-height: 1;
+    padding: 6px 10px;
+    margin-left: 6px;
+  }
+  .header-btn.icon-btn-header:first-child { margin-left: 0; }
+
+  /* Hidden (rather than the whole header) when viewing a read-only saved-day
+     snapshot from History, so the Share Score Photo icon can stay usable
+     even though the title/back-button/Start-over are redundant or unsafe
+     to show there -- see updateViewOnlyBanner(). */
+  .header-hideable.hidden { display: none; }
+
   .card {
     background: var(--bg-card);
     color: var(--text);
@@ -220,7 +250,7 @@
   }
 
   .field-row {
-    margin-bottom: 10px;
+    margin-bottom: 7px;
   }
   .field-row label {
     display: block;
@@ -306,20 +336,35 @@
     -webkit-box-flex: 1;
     -webkit-flex: 1;
     flex: 1;
-    padding: 12px 10px;
-    font-size: 25px;
+    padding: 8px 24px 8px 8px;
+    font-size: 22px;
     font-family: Tahoma, Geneva, Verdana, sans-serif;
     border: 1px solid var(--border-strong);
     border-radius: 3px;
-    background: var(--bg-input);
+    background-color: #0e1012;
+    background-color: var(--bg-input);
+    color: #e9edee;
     color: var(--text);
+    /* Older iOS Safari (e.g. iPad 2 / iOS 9.3.5) renders <select> with the
+       native control chrome and ignores background-color unless the
+       native appearance is turned off -- without this the box stays
+       system light-grey even though our (correct) text color is applied
+       on top of it, which is what made dark mode unreadable there. */
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3E%3Cpath fill='%23e9edee' d='M5 7l5 6 5-6z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 8px center;
+    background-size: 16px 16px;
   }
+
   .name-manual-btn {
     -webkit-flex-shrink: 0;
     flex-shrink: 0;
-    width: 40px;
+    width: 34px;
     margin-left: 6px;
-    font-size: 18px;
+    font-size: 16px;
     border: 1px solid var(--border-strong);
     border-radius: 3px;
     background: var(--bg-card);
@@ -328,8 +373,8 @@
   .name-manual-btn:active { background: var(--bg-tile-active); }
   .name-manual-input {
     width: 100%;
-    padding: 12px 10px;
-    font-size: 25px;
+    padding: 8px 8px;
+    font-size: 19px;
     font-family: Tahoma, Geneva, Verdana, sans-serif;
     border: 1px solid var(--border-strong);
     border-radius: 3px;
@@ -581,11 +626,24 @@
     width: 100%;
     font-family: Tahoma, Geneva, Verdana, sans-serif;
     font-size: 16px;
+    color: #e9edee;
     color: var(--text);
-    background: var(--bg-input);
+    background-color: #0e1012;
+    background-color: var(--bg-input);
     border: 1px solid var(--border-strong);
     border-radius: 6px;
-    padding: 10px 8px;
+    padding: 10px 30px 10px 8px;
+    /* Older iOS Safari renders <select> with native control chrome and
+       ignores background-color unless native appearance is turned off --
+       without this the box stays system light-grey even though our text
+       color is applied on top of it, making dark mode unreadable. */
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3E%3Cpath fill='%23e9edee' d='M5 7l5 6 5-6z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 8px center;
+    background-size: 16px 16px;
   }
   .days-actions {
     display: -webkit-box;
@@ -619,7 +677,7 @@
     -webkit-flex: 0 0 50%;
     flex: 0 0 50%;
     width: 50%;
-    padding: 15px 8px;
+    padding: 15px 30px 15px 8px;
     font-size: 21px;
   }
   .days-row .btn {
@@ -637,17 +695,39 @@
     -webkit-box-flex: 0;
     -webkit-flex: 0 0 auto;
     flex: 0 0 auto;
-    padding: 10px 16px;
+    height: 44px;
+    padding: 0 16px;
+    box-sizing: border-box;
+    display: -webkit-box;
+    display: -webkit-flex;
+    display: flex;
+    -webkit-box-align: center;
+    -webkit-align-items: center;
+    align-items: center;
+    -webkit-box-pack: center;
+    -webkit-justify-content: center;
+    justify-content: center;
   }
   .days-row .icon-btn {
     width: 44px;
+    height: 44px;
     margin-right: 0;
-    padding: 10px 0;
+    padding: 0;
+    box-sizing: border-box;
     line-height: 1;
     font-size: 18px;
     text-align: center;
     -webkit-flex-shrink: 0;
     flex-shrink: 0;
+    display: -webkit-box;
+    display: -webkit-flex;
+    display: flex;
+    -webkit-box-align: center;
+    -webkit-align-items: center;
+    align-items: center;
+    -webkit-box-pack: center;
+    -webkit-justify-content: center;
+    justify-content: center;
   }
   .btn-danger {
     background: transparent;
@@ -1339,6 +1419,15 @@
     background: #f7f9fa;
     color: #1c2023;
   }
+  html[data-theme="light"] .name-field-row select.name-select {
+    border: 1px solid #b7c1c6;
+    background-color: #f7f9fa;
+    color: #1c2023;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3E%3Cpath fill='%231c2023' d='M5 7l5 6 5-6z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 8px center;
+    background-size: 16px 16px;
+  }
   html[data-theme="light"] .field-row input[type="text"] {
     border: 1px solid #b7c1c6;
     background: #f7f9fa;
@@ -1387,8 +1476,12 @@
   }
   html[data-theme="light"] .days-select {
     color: #1c2023;
-    background: #f7f9fa;
+    background-color: #f7f9fa;
     border: 1px solid #b7c1c6;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3E%3Cpath fill='%231c2023' d='M5 7l5 6 5-6z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 8px center;
+    background-size: 16px 16px;
   }
   html[data-theme="light"] .btn-danger {
     color: #d9483f;
@@ -1586,8 +1679,12 @@
 <div class="wrap hidden" id="appPage">
 
   <header id="appPageHeader">
-    <button class="header-btn back-btn" onclick="goToMainMenu()">&lsaquo;</button>
-    <div class="title-row">
+    <button class="header-btn back-btn header-hideable" onclick="goToMainMenu()">&lsaquo;</button>
+    <div class="header-icons hidden" id="appIcons">
+      <button class="header-btn icon-btn-header" onclick="exportSnapshotImage('', 'Classic (6 Team)')" aria-label="Share Score Photo" title="Share Score Photo&hellip;">&#128247;</button>
+      <button class="header-btn icon-btn-header header-hideable" onclick="resetAll()" aria-label="Start Over (new tournament)" title="Start Over (new tournament)">&#8630;</button>
+    </div>
+    <div class="title-row header-hideable">
       <div class="ball ball-left">&#8226; &#8226; &#8226;</div>
       <h1>Perini <span class="accent">Points</span></h1>
       <div class="ball ball-right">&#8226; &#8226; &#8226;</div>
@@ -1637,11 +1734,9 @@
   <div class="card hidden" id="standingsCard">
     <div class="card-title">Standings</div>
     <div id="standingsBox"><div class="empty-note">Enter scores above to populate</div></div>
-    <button class="btn btn-secondary" style="margin-top:10px;" onclick="exportSnapshotImage('', 'Classic (6 Team)')">Share Score Photo&hellip;</button>
   </div>
 
   <div class="card hidden" id="resetCard">
-    <button class="btn btn-secondary" onclick="resetAll()">Start Over (new tournament)</button>
   </div>
 </div>
 
@@ -1649,8 +1744,12 @@
 <div class="wrap hidden" id="p7Page">
 
   <header id="p7PageHeader">
-    <button class="header-btn back-btn" onclick="goToMainMenu()">&lsaquo;</button>
-    <div class="title-row">
+    <button class="header-btn back-btn header-hideable" onclick="goToMainMenu()">&lsaquo;</button>
+    <div class="header-icons hidden" id="p7Icons">
+      <button class="header-btn icon-btn-header" onclick="exportSnapshotImage('P7', 'Playoff (12 Team)')" aria-label="Share Score Photo" title="Share Score Photo&hellip;">&#128247;</button>
+      <button class="header-btn icon-btn-header header-hideable" onclick="resetAllP7()" aria-label="Start Over (new tournament)" title="Start Over (new tournament)">&#8630;</button>
+    </div>
+    <div class="title-row header-hideable">
       <div class="ball ball-left">&#8226; &#8226; &#8226;</div>
       <h1>Perini <span class="accent">Points</span></h1>
       <div class="ball ball-right">&#8226; &#8226; &#8226;</div>
@@ -1706,11 +1805,9 @@
   <div class="card hidden" id="standingsCardP7">
     <div class="card-title">Standings</div>
     <div id="standingsBoxP7"><div class="empty-note">Enter scores above to populate</div></div>
-    <button class="btn btn-secondary" style="margin-top:10px;" onclick="exportSnapshotImage('P7', 'Playoff (12 Team)')">Share Score Photo&hellip;</button>
   </div>
 
   <div class="card hidden" id="resetCardP7">
-    <button class="btn btn-secondary" onclick="resetAllP7()">Start Over (new tournament)</button>
   </div>
 </div>
 
@@ -1718,8 +1815,12 @@
 <div class="wrap hidden" id="prPage">
 
   <header id="prPageHeader">
-    <button class="header-btn back-btn" onclick="goToMainMenu()">&lsaquo;</button>
-    <div class="title-row">
+    <button class="header-btn back-btn header-hideable" onclick="goToMainMenu()">&lsaquo;</button>
+    <div class="header-icons hidden" id="prIcons">
+      <button class="header-btn icon-btn-header" onclick="exportSnapshotImage('8', 'Partner Round Robin')" aria-label="Share Score Photo" title="Share Score Photo&hellip;">&#128247;</button>
+      <button class="header-btn icon-btn-header header-hideable" onclick="resetAll8()" aria-label="Start Over (new tournament)" title="Start Over (new tournament)">&#8630;</button>
+    </div>
+    <div class="title-row header-hideable">
       <div class="ball ball-left">&#8226; &#8226; &#8226;</div>
       <h1>Perini <span class="accent">Points</span></h1>
       <div class="ball ball-right">&#8226; &#8226; &#8226;</div>
@@ -1753,11 +1854,9 @@
   <div class="card hidden" id="standingsCard8">
     <div class="card-title">Standings</div>
     <div id="standingsBox8"><div class="empty-note">Enter scores above to populate</div></div>
-    <button class="btn btn-secondary" style="margin-top:10px;" onclick="exportSnapshotImage('8', 'Partner Round Robin')">Share Score Photo&hellip;</button>
   </div>
 
   <div class="card hidden" id="resetCard8">
-    <button class="btn btn-secondary" onclick="resetAll8()">Start Over (new tournament)</button>
   </div>
 </div>
 
@@ -1765,8 +1864,12 @@
 <div class="wrap hidden" id="trPage">
 
   <header id="trPageHeader">
-    <button class="header-btn back-btn" onclick="goToMainMenu()">&lsaquo;</button>
-    <div class="title-row">
+    <button class="header-btn back-btn header-hideable" onclick="goToMainMenu()">&lsaquo;</button>
+    <div class="header-icons hidden" id="trIcons">
+      <button class="header-btn icon-btn-header" onclick="exportSnapshotImage('TR', 'Team Rotation')" aria-label="Share Score Photo" title="Share Score Photo&hellip;">&#128247;</button>
+      <button class="header-btn icon-btn-header header-hideable" onclick="resetAllTR()" aria-label="Start Over (new tournament)" title="Start Over (new tournament)">&#8630;</button>
+    </div>
+    <div class="title-row header-hideable">
       <div class="ball ball-left">&#8226; &#8226; &#8226;</div>
       <h1>Perini <span class="accent">Points</span></h1>
       <div class="ball ball-right">&#8226; &#8226; &#8226;</div>
@@ -1804,11 +1907,9 @@
   <div class="card hidden" id="standingsCardTR">
     <div class="card-title">Standings</div>
     <div id="standingsBoxTR"><div class="empty-note">Enter scores above to populate</div></div>
-    <button class="btn btn-secondary" style="margin-top:10px;" onclick="exportSnapshotImage('TR', 'Team Rotation')">Share Score Photo&hellip;</button>
   </div>
 
   <div class="card hidden" id="resetCardTR">
-    <button class="btn btn-secondary" onclick="resetAllTR()">Start Over (new tournament)</button>
   </div>
 </div>
 
@@ -1816,8 +1917,12 @@
 <div class="wrap hidden" id="rtPage">
 
   <header id="rtPageHeader">
-    <button class="header-btn back-btn" onclick="goToMainMenu()">&lsaquo;</button>
-    <div class="title-row">
+    <button class="header-btn back-btn header-hideable" onclick="goToMainMenu()">&lsaquo;</button>
+    <div class="header-icons hidden" id="rtIcons">
+      <button class="header-btn icon-btn-header" onclick="exportSnapshotImage('RT', 'Round Robin (Time Cap)')" aria-label="Share Score Photo" title="Share Score Photo&hellip;">&#128247;</button>
+      <button class="header-btn icon-btn-header header-hideable" onclick="resetAllRT()" aria-label="Start Over (new tournament)" title="Start Over (new tournament)">&#8630;</button>
+    </div>
+    <div class="title-row header-hideable">
       <div class="ball ball-left">&#8226; &#8226; &#8226;</div>
       <h1>Perini <span class="accent">Points</span></h1>
       <div class="ball ball-right">&#8226; &#8226; &#8226;</div>
@@ -1851,20 +1956,22 @@
   <div class="card hidden" id="standingsCardRT">
     <div class="card-title">Standings</div>
     <div id="standingsBoxRT"><div class="empty-note">Enter scores above to populate</div></div>
-    <button class="btn btn-secondary" style="margin-top:10px;" onclick="exportSnapshotImage('RT', 'Round Robin (Time Cap)')">Share Score Photo&hellip;</button>
   </div>
 
   <div class="card hidden" id="resetCardRT">
-    <button class="btn btn-secondary" onclick="resetAllRT()">Start Over (new tournament)</button>
   </div>
 </div>
 
-<!-- ============ CLASSIC SCORING PAGE (8 players, groups of 4) ============ -->
+<!-- ============ SCRAMBLE SCORING PAGE (8 players, groups of 4) ============ -->
 <div class="wrap hidden" id="clPage">
 
   <header id="clPageHeader">
-    <button class="header-btn back-btn" onclick="goToMainMenu()">&lsaquo;</button>
-    <div class="title-row">
+    <button class="header-btn back-btn header-hideable" onclick="goToMainMenu()">&lsaquo;</button>
+    <div class="header-icons hidden" id="clIcons">
+      <button class="header-btn icon-btn-header" onclick="exportSnapshotImage('Cl', 'Scramble')" aria-label="Share Score Photo" title="Share Score Photo&hellip;">&#128247;</button>
+      <button class="header-btn icon-btn-header header-hideable" onclick="resetAllCl()" aria-label="Start Over (new tournament)" title="Start Over (new tournament)">&#8630;</button>
+    </div>
+    <div class="title-row header-hideable">
       <div class="ball ball-left">&#8226; &#8226; &#8226;</div>
       <h1>Perini <span class="accent">Points</span></h1>
       <div class="ball ball-right">&#8226; &#8226; &#8226;</div>
@@ -1898,11 +2005,9 @@
   <div class="card hidden" id="standingsCardCl">
     <div class="card-title">Standings</div>
     <div id="standingsBoxCl"><div class="empty-note">Enter scores above to populate</div></div>
-    <button class="btn btn-secondary" style="margin-top:10px;" onclick="exportSnapshotImage('Cl', 'Classic Scoring')">Share Score Photo&hellip;</button>
   </div>
 
   <div class="card hidden" id="resetCardCl">
-    <button class="btn btn-secondary" onclick="resetAllCl()">Start Over (new tournament)</button>
   </div>
 </div>
 
@@ -1910,8 +2015,12 @@
 <div class="wrap hidden" id="fuPage">
 
   <header id="fuPageHeader">
-    <button class="header-btn back-btn" onclick="goToMainMenu()">&lsaquo;</button>
-    <div class="title-row">
+    <button class="header-btn back-btn header-hideable" onclick="goToMainMenu()">&lsaquo;</button>
+    <div class="header-icons hidden" id="fuIcons">
+      <button class="header-btn icon-btn-header" onclick="exportSnapshotImage('Fu', 'Fusion')" aria-label="Share Score Photo" title="Share Score Photo&hellip;">&#128247;</button>
+      <button class="header-btn icon-btn-header header-hideable" onclick="resetAllFu()" aria-label="Start Over (new tournament)" title="Start Over (new tournament)">&#8630;</button>
+    </div>
+    <div class="title-row header-hideable">
       <div class="ball ball-left">&#8226; &#8226; &#8226;</div>
       <h1>Perini <span class="accent">Points</span></h1>
       <div class="ball ball-right">&#8226; &#8226; &#8226;</div>
@@ -1945,11 +2054,9 @@
   <div class="card hidden" id="standingsCardFu">
     <div class="card-title">Standings</div>
     <div id="standingsBoxFu"><div class="empty-note">Enter scores above to populate</div></div>
-    <button class="btn btn-secondary" style="margin-top:10px;" onclick="exportSnapshotImage('Fu', 'Fusion Scoring')">Share Score Photo&hellip;</button>
   </div>
 
   <div class="card hidden" id="resetCardFu">
-    <button class="btn btn-secondary" onclick="resetAllFu()">Start Over (new tournament)</button>
   </div>
 </div>
 
@@ -2080,11 +2187,11 @@
   var gamesRT = [];       // {t1:[nameA,nameB], t2:[nameA,nameB], s1, s2, rawS1, rawS2, entered, round, court}
   var activeDateKeyRT = null;
 
-  // ---------- Classic Scoring (8 players, groups of 4, winners/losers courts) ----------
-  // Comment out the line below (leave this comment) to blank out the Classic
+  // ---------- Scramble Scoring (8 players, groups of 4, winners/losers courts) ----------
+  // Comment out the line below (leave this comment) to blank out the Scramble
   // Scoring name fields instead of auto-filling them -- handy when you want
   // people to type in their own names instead of seeing the demo roster.
-  // var DEFAULT_CLASSIC_PLAYERS = ['Keaton', 'Caroline', 'Phil', 'Corey', 'Gary', 'Jeff', 'Colby', 'Kime'];
+  var DEFAULT_SCRAMBLE_PLAYERS_PLAYERS = ['Keaton', 'Caroline', 'Phil', 'Corey', 'Gary', 'Jeff', 'Colby', 'Kime'];
   var playersCl = [];    // array of 8 player names (in current group order: [groupA x4, groupB x4])
   var groupACl = [];
   var groupBCl = [];
@@ -2282,6 +2389,7 @@
     document.getElementById('scheduleCard').className = 'card hidden';
     document.getElementById('standingsCard').className = 'card hidden';
     document.getElementById('resetCard').className = 'card hidden';
+    document.getElementById('appIcons').className = 'header-icons hidden';
     goToAppPage();
   }
 
@@ -2308,6 +2416,7 @@
     document.getElementById('scheduleCard8').className = 'card hidden';
     document.getElementById('standingsCard8').className = 'card hidden';
     document.getElementById('resetCard8').className = 'card hidden';
+    document.getElementById('prIcons').className = 'header-icons hidden';
     goToPRPage();
   }
 
@@ -2339,6 +2448,7 @@
     document.getElementById('scheduleCardTR').className = 'card hidden';
     document.getElementById('standingsCardTR').className = 'card hidden';
     document.getElementById('resetCardTR').className = 'card hidden';
+    document.getElementById('trIcons').className = 'header-icons hidden';
     goToTRPage();
   }
 
@@ -2365,6 +2475,7 @@
     document.getElementById('scheduleCardRT').className = 'card hidden';
     document.getElementById('standingsCardRT').className = 'card hidden';
     document.getElementById('resetCardRT').className = 'card hidden';
+    document.getElementById('rtIcons').className = 'header-icons hidden';
     goToRTPage();
   }
 
@@ -2395,6 +2506,7 @@
     document.getElementById('scheduleCardCl').className = 'card hidden';
     document.getElementById('standingsCardCl').className = 'card hidden';
     document.getElementById('resetCardCl').className = 'card hidden';
+    document.getElementById('clIcons').className = 'header-icons hidden';
     goToClPage();
   }
 
@@ -2425,6 +2537,7 @@
     document.getElementById('scheduleCardFu').className = 'card hidden';
     document.getElementById('standingsCardFu').className = 'card hidden';
     document.getElementById('resetCardFu').className = 'card hidden';
+    document.getElementById('fuIcons').className = 'header-icons hidden';
     goToFuPage();
   }
 
@@ -2454,6 +2567,7 @@
     document.getElementById('scheduleCardP7').className = 'card hidden';
     document.getElementById('standingsCardP7').className = 'card hidden';
     document.getElementById('resetCardP7').className = 'card hidden';
+    document.getElementById('p7Icons').className = 'header-icons hidden';
     goToP7Page();
   }
 
@@ -2521,20 +2635,43 @@
     document.getElementById('scheduleCard').className = 'card';
     document.getElementById('standingsCard').className = 'card';
     document.getElementById('resetCard').className = 'card';
+    document.getElementById('appIcons').className = 'header-icons';
     renderSchedule();
     renderStandings();
   }
 
   // ================== Game menu (card grid + player-count toggle) ==================
   var GAME_DEFS = [
-    { id: 'classic', label: 'Classic Scoring', players: '8', sub: '8 players &middot; 2 courts &middot; 7 games &middot; groups of 4, winners/losers courts', open: 'openClassic' },
-    { id: 'fusion', label: 'Fusion Scoring', players: '8', sub: '8 players &middot; 2 courts &middot; 7 games &middot; groups of 4, then fixed cross-group matchups', open: 'openFusion' },
+    { id: 'classic', label: 'Scramble', players: '8', sub: '8 players &middot; 2 courts &middot; 7 games &middot; groups of 4, winners/losers courts', open: 'openClassic' },
+    { id: 'fusion', label: 'Fusion', players: '8', sub: '8 players &middot; 2 courts &middot; 7 games &middot; groups of 4, then fixed cross-group matchups', open: 'openFusion' },
     { id: 'rrtc', label: 'Round Robin (time cap)', players: '8', sub: '8 players &middot; 2 courts &middot; 7 games &middot; partner once, oppose everyone twice &middot; no 11-point requirement', open: 'openRRTC' },
     { id: 'rr', label: 'Round Robin', players: '8', sub: '8 players &middot; 2 courts &middot; 7 games &middot; partner once, oppose everyone twice', open: 'openRR' },
     { id: 'teamrot', label: 'Team/Partner Rotation', players: '8', sub: '8 players &middot; 2 teams of 4 &middot; 2 courts &middot; 7 games &middot; game 7 is a winners/losers showdown', open: 'openTeamRotation' },
     { id: 'partnerrr', label: 'Partner Round Robin', players: '12', sub: '6 teams &middot; 3 courts &middot; 5 games', open: 'openPartnerRR' },
-    { id: 'playoff12', label: 'Playoff Scoring', players: '12', sub: '6 teams &middot; 3 courts &middot; 7 games &middot; 4-team playoff bracket', open: 'openPlayoff7' }
+    { id: 'playoff12', label: 'Playoff', players: '12', sub: '6 teams &middot; 3 courts &middot; 7 games &middot; 4-team playoff bracket', open: 'openPlayoff7' }
   ];
+
+  // Looks up a GAME_DEFS entry's home-page label by its id, so every other
+  // place that needs to display a game type's name (History dropdown, etc.)
+  // pulls from this single source of truth instead of duplicating strings.
+  function gameDefLabel(id) {
+    for (var g = 0; g < GAME_DEFS.length; g++) {
+      if (GAME_DEFS[g].id === id) return GAME_DEFS[g].label;
+    }
+    return '';
+  }
+
+  // Maps each saved day's gameType value to the GAME_DEFS id that describes
+  // it, for use by gameDefLabel() above.
+  var GAME_TYPE_TO_DEF_ID = {
+    'partner8': 'rr',
+    'teamrot8': 'teamrot',
+    'rrtc8': 'rrtc',
+    'classic8': 'classic',
+    'fusion8': 'fusion',
+    'playoff12': 'playoff12',
+    'partnerrr12': 'partnerrr'
+  };
 
   var PERINI_MENU_MODE = 'periniPoints_menuMode';
 
@@ -2728,14 +2865,13 @@
     var prevSelected = select.value;
     var html = '';
     for (var i = 0; i < keys.length; i++) {
-      var isPartner = days[keys[i]] && days[keys[i]].gameType === 'partner8';
-      var isTR = days[keys[i]] && days[keys[i]].gameType === 'teamrot8';
-      var isRT = days[keys[i]] && days[keys[i]].gameType === 'rrtc8';
-      var isClassic = days[keys[i]] && days[keys[i]].gameType === 'classic8';
-      var isFusion = days[keys[i]] && days[keys[i]].gameType === 'fusion8';
-      var isPlayoff = days[keys[i]] && days[keys[i]].gameType === 'playoff12';
-      var label = keys[i].replace('-8p', '').replace('-8t', '').replace('-cl', '').replace('-fu', '').replace('-tr', '').replace('-p7', '') +
-        (isPartner ? ' \u00b7 Partner RR' : (isTR ? ' \u00b7 Team Rotation' : (isRT ? ' \u00b7 RR (time cap)' : (isClassic ? ' \u00b7 Classic' : (isFusion ? ' \u00b7 Fusion' : (isPlayoff ? ' \u00b7 Playoff' : ''))))));
+      var dayGameType = days[keys[i]] && days[keys[i]].gameType;
+      // Days saved before gameType was recorded (the original Partner Round
+      // Robin) have no gameType field at all -- treat that as 'partnerrr12'.
+      var defId = GAME_TYPE_TO_DEF_ID[dayGameType || 'partnerrr12'];
+      var gameLabel = defId ? gameDefLabel(defId) : '';
+      var label = keys[i].replace('-8p', '').replace('-8t', '').replace('-scr', '').replace('-fu', '').replace('-tr', '').replace('-p7', '') +
+        (gameLabel ? ' \u00b7 ' + gameLabel : '');
       html += '<option value="' + escapeHtml(keys[i]) + '">' + escapeHtml(label) + '</option>';
     }
     select.innerHTML = html;
@@ -2881,24 +3017,26 @@
     var banner = document.getElementById('viewOnlyBanner');
     if (!banner) return;
     banner.className = PERINI_VIEW_ONLY ? 'view-only-banner' : 'view-only-banner hidden';
-    // "Start Over" should never be tappable while looking at a read-only
-    // snapshot from History -- hide it entirely rather than just leaving it
-    // disabled-looking, regardless of whether that tournament was finished.
-    if (PERINI_VIEW_ONLY) {
-      var resetIds = ['resetCard', 'resetCard8', 'resetCardTR', 'resetCardRT', 'resetCardCl', 'resetCardFu', 'resetCardP7'];
-      for (var i = 0; i < resetIds.length; i++) {
-        var el = document.getElementById(resetIds[i]);
-        if (el) el.className = 'card hidden';
-      }
-    }
     // While a saved day is shown as a read-only snapshot beneath the History
-    // page, that page's own "Perini Points" title header and back button are
+    // page, that page's own "Perini Points" title and back button are
     // redundant with History's own header directly above -- hide them to
-    // save space and let the Matchups card sit right under Saved Days.
+    // save space and let the Matchups card sit right under Saved Days. The
+    // "Start Over" icon is hidden too (never tappable on a read-only
+    // snapshot, regardless of whether that tournament was finished), but the
+    // "Share Score Photo" icon is deliberately left showing at top-right so
+    // you can still export a photo of a past day -- see the .header-icons
+    // markup in each page's <header>, where only the Start-over button
+    // additionally carries the "header-hideable" class.
     var headerIds = ['appPageHeader', 'prPageHeader', 'trPageHeader', 'rtPageHeader', 'clPageHeader', 'fuPageHeader', 'p7PageHeader'];
     for (var j = 0; j < headerIds.length; j++) {
       var h = document.getElementById(headerIds[j]);
-      if (h) h.className = PERINI_VIEW_ONLY ? 'hidden' : '';
+      if (!h) continue;
+      var hideables = h.getElementsByClassName('header-hideable');
+      for (var k = 0; k < hideables.length; k++) {
+        var el = hideables[k];
+        var base = el.className.replace(/\s*hidden\s*/g, ' ').replace(/\s+/g, ' ').trim();
+        el.className = PERINI_VIEW_ONLY ? (base + ' hidden') : base;
+      }
     }
   }
 
@@ -3437,6 +3575,7 @@
     document.getElementById('scheduleCard8').className = 'card';
     document.getElementById('standingsCard8').className = 'card';
     document.getElementById('resetCard8').className = 'card';
+    document.getElementById('prIcons').className = 'header-icons';
     renderSchedule8();
     renderScoreLog8();
     renderStandings8();
@@ -3817,7 +3956,7 @@
   }
 
   function resetAll8() {
-    appConfirm('Start a new partner round robin? This clears today\'s scores from the screen (the day already played stays saved under Saved Days).', function () {
+    appConfirm('Start a new Partner Round Robin tournament? This clears today\'s scores from the screen (the day already played stays saved under Saved Days).', function () {
       players8 = [];
       games8 = [];
       activeDateKey8 = null;
@@ -3827,6 +3966,7 @@
       document.getElementById('scheduleCard8').className = 'card hidden';
       document.getElementById('standingsCard8').className = 'card hidden';
       document.getElementById('resetCard8').className = 'card hidden';
+      document.getElementById('prIcons').className = 'header-icons hidden';
       clearActiveTournament();
     });
   }
@@ -3935,6 +4075,7 @@
     document.getElementById('scheduleCardTR').className = 'card';
     document.getElementById('standingsCardTR').className = 'card';
     document.getElementById('resetCardTR').className = 'card';
+    document.getElementById('trIcons').className = 'header-icons';
     renderScheduleTR();
     renderScoreLogTR();
     renderStandingsTR();
@@ -4203,6 +4344,12 @@
     }
 
     var wasAlreadyEntered = g.entered;
+    // If this is a correction to an already-entered score and Game 7 was
+    // already built from it, check whether the correction actually
+    // changes the top/bottom pairing -- if not, there's nothing to warn
+    // about or rebuild.
+    var pairingChangesTR = !wasAlreadyEntered || game7PairingWouldChangeTR(activeGameIdxTR, nTop, nSide);
+    var g7AlreadyBuiltTR = downstreamBuiltTR();
 
     var saveCommitTR = function () {
       var adj = adjustGameScore(nTop, nSide);
@@ -4217,10 +4364,13 @@
       renderScoreLogTR();
       renderStandingsTR();
       autosaveCurrentTR();
-      if (wasRoundLE5) maybeBuildGame7TR();
+      // Only rebuild Game 7 (which wipes any score already entered there)
+      // when it isn't built yet, or when this correction actually changes
+      // the pairing it was built from.
+      if (wasRoundLE5 && (!g7AlreadyBuiltTR || pairingChangesTR)) maybeBuildGame7TR();
     };
 
-    if (wasAlreadyEntered && wasRoundLE5 && downstreamBuiltTR()) {
+    if (wasAlreadyEntered && wasRoundLE5 && g7AlreadyBuiltTR && pairingChangesTR) {
       appConfirm('Are you sure you want to change this score? It will affect the Game 7 matchups already set up from it, and will erase any scores already entered there.', saveCommitTR);
       return;
     }
@@ -4273,6 +4423,56 @@
       if (g.round !== 6) continue;
       g.t1 = null; g.t2 = null; g.s1 = null; g.s2 = null; g.rawS1 = null; g.rawS2 = null; g.entered = false;
     }
+  }
+
+  // Recomputes a team's per-player pts/wins as if game `overrideIdx` had
+  // score overS1/overS2 instead of its currently saved score -- used to
+  // silently test a hypothetical correction without touching real state.
+  function computeTeamStatsSilentTR(teamArr, side, overrideIdx, overS1, overS2) {
+    var pts = {}, wins = {};
+    for (var i = 0; i < teamArr.length; i++) { pts[teamArr[i]] = 0; wins[teamArr[i]] = 0; }
+    for (var j = 0; j < gamesTR.length; j++) {
+      var g = gamesTR[j];
+      if (g.round > 5) continue;
+      var s1 = g.s1, s2 = g.s2, entered = g.entered;
+      if (j === overrideIdx) { s1 = overS1; s2 = overS2; entered = true; }
+      if (!entered) continue;
+      var arr = (side === 1) ? g.t1 : g.t2;
+      var thisWon = (side === 1) ? (s1 > s2) : (s2 > s1);
+      var score = (side === 1) ? s1 : s2;
+      for (var a = 0; a < arr.length; a++) {
+        pts[arr[a]] = (pts[arr[a]] || 0) + score;
+        if (thisWon) wins[arr[a]] = (wins[arr[a]] || 0) + 1;
+      }
+    }
+    return { pts: pts, wins: wins };
+  }
+
+  // Given pts/wins stats for a 4-player team array, returns the set (as a
+  // sorted-name string) of the top 2 players by pts/wins -- the pairing for
+  // Game 7 only depends on *which* 2 players land in the top half vs bottom
+  // half, not their exact 1st/2nd order within that half.
+  function top2SetKeyTR(teamArr, stats) {
+    var sorted = teamArr.slice().sort(function (a, b) {
+      if (stats.pts[b] !== stats.pts[a]) return stats.pts[b] - stats.pts[a];
+      if (stats.wins[b] !== stats.wins[a]) return stats.wins[b] - stats.wins[a];
+      return 0;
+    });
+    return sorted.slice(0, 2).slice().sort().join('|');
+  }
+
+  // True if correcting game `gameIdx` (on whichever side it belongs to) to
+  // raw newTop/newSide would actually change which 2 players land in the
+  // top half vs bottom half of either team -- i.e. whether the correction
+  // would actually change the Game 7 matchups already built.
+  function game7PairingWouldChangeTR(gameIdx, newTop, newSide) {
+    var adj = adjustGameScore(newTop, newSide);
+    var oldTop1 = top2SetKeyTR(team1TR, computeTeamStatsSilentTR(team1TR, 1, -1, 0, 0));
+    var newTop1 = top2SetKeyTR(team1TR, computeTeamStatsSilentTR(team1TR, 1, gameIdx, adj.s1, adj.s2));
+    if (oldTop1 !== newTop1) return true;
+    var oldTop2 = top2SetKeyTR(team2TR, computeTeamStatsSilentTR(team2TR, 2, -1, 0, 0));
+    var newTop2 = top2SetKeyTR(team2TR, computeTeamStatsSilentTR(team2TR, 2, gameIdx, adj.s1, adj.s2));
+    return oldTop2 !== newTop2;
   }
 
   // True if Game 7 has already been set up (matchups assigned or scored)
@@ -4414,7 +4614,7 @@
   }
 
   function resetAllTR() {
-    appConfirm('Start a new team/partner rotation? This clears today\'s scores from the screen (the day already played stays saved under Saved Days).', function () {
+    appConfirm('Start a new Team/Partner Rotation tournament? This clears today\'s scores from the screen (the day already played stays saved under Saved Days).', function () {
       playersTR = [];
       team1TR = [];
       team2TR = [];
@@ -4427,6 +4627,7 @@
       document.getElementById('scheduleCardTR').className = 'card hidden';
       document.getElementById('standingsCardTR').className = 'card hidden';
       document.getElementById('resetCardTR').className = 'card hidden';
+      document.getElementById('trIcons').className = 'header-icons hidden';
       clearActiveTournament();
     });
   }
@@ -4496,6 +4697,7 @@
     document.getElementById('scheduleCardRT').className = 'card';
     document.getElementById('standingsCardRT').className = 'card';
     document.getElementById('resetCardRT').className = 'card';
+    document.getElementById('rtIcons').className = 'header-icons';
     renderScheduleRT();
     renderScoreLogRT();
     renderStandingsRT();
@@ -4866,7 +5068,7 @@
   }
 
   function resetAllRT() {
-    appConfirm('Start a new round robin (time cap)? This clears today\'s scores from the screen (the day already played stays saved under Saved Days).', function () {
+    appConfirm('Start a new Round Robin (time cap) tournament? This clears today\'s scores from the screen (the day already played stays saved under Saved Days).', function () {
       playersRT = [];
       gamesRT = [];
       activeDateKeyRT = null;
@@ -4876,6 +5078,7 @@
       document.getElementById('scheduleCardRT').className = 'card hidden';
       document.getElementById('standingsCardRT').className = 'card hidden';
       document.getElementById('resetCardRT').className = 'card hidden';
+      document.getElementById('rtIcons').className = 'header-icons hidden';
       clearActiveTournament();
     });
   }
@@ -4896,7 +5099,7 @@
     serverSyncUp();
   }
 
-  // ================== Classic Scoring (8 players, groups of 4) ==================
+  // ================== Scramble Scoring (8 players, groups of 4) ==================
   // Games 1-3: 2 groups of 4 (Court 1 = Group A, Court 2 = Group B), each
   //   group plays a 3-round round robin so every player in the group
   //   partners with each of the other 3 exactly once.
@@ -4909,7 +5112,7 @@
   //   possible, no two players who shared a court in games 4-5 share a
   //   court again.
   function buildPlayerClInputs() {
-    var defaults = (typeof DEFAULT_CLASSIC_PLAYERS !== 'undefined') ? DEFAULT_CLASSIC_PLAYERS : null;
+    var defaults = (typeof DEFAULT_SCRAMBLE_PLAYERS !== 'undefined') ? DEFAULT_SCRAMBLE_PLAYERS : null;
     buildNameGrid('playerInputsCl', 'pCl_', 8, defaults, 'dupNoteCl');
   }
 
@@ -4959,7 +5162,7 @@
       gamesCl.push({ t1: null, t2: null, s1: null, s2: null, rawS1: null, rawS2: null, entered: false, round: r2, court: 1 });
     }
 
-    activeDateKeyCl = dateKeyFor() + '-cl';
+    activeDateKeyCl = dateKeyFor() + '-scr';
     showClassicUI();
     autosaveCurrentCl();
   }
@@ -4969,6 +5172,7 @@
     document.getElementById('scheduleCardCl').className = 'card';
     document.getElementById('standingsCardCl').className = 'card';
     document.getElementById('resetCardCl').className = 'card';
+    document.getElementById('clIcons').className = 'header-icons';
     renderScheduleCl();
     renderScoreLogCl();
     renderStandingsCl();
@@ -5023,7 +5227,7 @@
     autosizeSchedule('gridWrapCl');
   }
 
-  // ================== Classic Scoring score log (read-only) ==================
+  // ================== Scramble score log (read-only) ==================
   function playerScoreForRoundCl(round, playerName) {
     for (var i = 0; i < gamesCl.length; i++) {
       var g = gamesCl[i];
@@ -5218,6 +5422,12 @@
     }
 
     var wasAlreadyEntered = g.entered;
+    // If this is a correction to an already-entered score and the bracket
+    // was already built from it, check whether the correction actually
+    // changes the top-2/bottom-2 split -- if not, there's nothing to warn
+    // about or rebuild.
+    var bracketChangesCl = !wasAlreadyEntered || bracketWouldChangeCl(activeGameIdxCl, nTop, nSide);
+    var bracketAlreadyBuiltCl = downstreamBuiltCl();
 
     var saveCommitCl = function () {
       var adj = adjustGameScore(nTop, nSide);
@@ -5235,20 +5445,63 @@
       // Only check whether games 1-3 just became complete when a games 1-3
       // score was the one just saved (avoids re-checking on every game 4-7 save).
       if (wasFirstPhase) {
-        // If the bracket (games 4-7) was already built off the old totals,
-        // an edit to a games 1-3 score can change who should be in the
-        // Winners/Losers courts -- so wipe games 4-7 back to TBD and rebuild
+        // If the bracket (games 4-7) was already built off the old totals
+        // AND this correction actually changes who should be in the
+        // Winners/Losers courts, wipe games 4-7 back to TBD and rebuild
         // them fresh from the updated totals, exactly like clearing does.
-        resetBracketGamesCl();
-        maybeBuildBracketCl();
+        // Otherwise leave the existing bracket (and any scores already
+        // entered in it) untouched.
+        if (!bracketAlreadyBuiltCl || bracketChangesCl) {
+          resetBracketGamesCl();
+          maybeBuildBracketCl();
+        }
       }
     };
 
-    if (wasAlreadyEntered && wasFirstPhase && downstreamBuiltCl()) {
+    if (wasAlreadyEntered && wasFirstPhase && bracketAlreadyBuiltCl && bracketChangesCl) {
       appConfirm('Are you sure you want to change this score? It will affect the games already set up from it, and will erase any scores already entered in those games.', saveCommitCl);
       return;
     }
     saveCommitCl();
+  }
+
+  // Recomputes the ordered pts ranking (highest first) for a group as if
+  // game `overrideIdx` had score overS1/overS2 instead of its currently
+  // saved score -- used to silently test a hypothetical correction. Ties
+  // are broken by array order only (not a real manual tie-break choice) --
+  // fine here since we only compare two hypothetical orders to each other.
+  function computeGroupOrderSilentCl(names, overrideIdx, overS1, overS2) {
+    var totals = {};
+    for (var i = 0; i < names.length; i++) totals[names[i]] = 0;
+    for (var j = 0; j < gamesCl.length; j++) {
+      var g = gamesCl[j];
+      if (g.round > 2 || !g.t1) continue;
+      var s1 = g.s1, s2 = g.s2, entered = g.entered;
+      if (j === overrideIdx) { s1 = overS1; s2 = overS2; entered = true; }
+      if (!entered) continue;
+      if (names.indexOf(g.t1[0]) === -1) continue; // this game belongs to the other group
+      totals[g.t1[0]] += s1; totals[g.t1[1]] += s1;
+      totals[g.t2[0]] += s2; totals[g.t2[1]] += s2;
+    }
+    var arr = names.map(function (n) { return { name: n, pts: totals[n] || 0 }; });
+    arr.sort(function (a, b) { return b.pts - a.pts; });
+    return arr.map(function (p) { return p.name; });
+  }
+
+  // True if correcting game `gameIdx` to newTop/newSide would actually
+  // change the top-2/bottom-2 split (or their order) for whichever group
+  // that game belongs to -- i.e. whether the correction actually changes
+  // the games 4-7 matchups already built off the games 1-3 totals.
+  function bracketWouldChangeCl(gameIdx, newTop, newSide) {
+    var g = gamesCl[gameIdx];
+    var adj = adjustGameScore(newTop, newSide);
+    var names = (groupACl.indexOf(g.t1[0]) !== -1) ? groupACl : groupBCl;
+    var oldOrder = computeGroupOrderSilentCl(names, -1, 0, 0);
+    var newOrder = computeGroupOrderSilentCl(names, gameIdx, adj.s1, adj.s2);
+    for (var i = 0; i < oldOrder.length; i++) {
+      if (oldOrder[i] !== newOrder[i]) return true;
+    }
+    return false;
   }
 
   // True if games 4-7 have already been set up (matchups assigned or
@@ -5406,7 +5659,7 @@
     cb(sel);
   }
 
-  // ---------- Classic Scoring standings ----------
+  // ---------- Scramble standings ----------
   var standingsSortCl = 'points';
   var standingsDirCl = 'desc';
 
@@ -5508,7 +5761,7 @@
   }
 
   function resetAllCl() {
-    appConfirm('Start a new classic scoring tournament? This clears today\'s scores from the screen (the day already played stays saved under Saved Days).', function () {
+    appConfirm('Start a new Scramble tournament? This clears today\'s scores from the screen (the day already played stays saved under Saved Days).', function () {
       playersCl = [];
       groupACl = [];
       groupBCl = [];
@@ -5520,6 +5773,7 @@
       document.getElementById('scheduleCardCl').className = 'card hidden';
       document.getElementById('standingsCardCl').className = 'card hidden';
       document.getElementById('resetCardCl').className = 'card hidden';
+      document.getElementById('clIcons').className = 'header-icons hidden';
       clearActiveTournament();
     });
   }
@@ -5541,10 +5795,10 @@
   }
 
   // ================== Fusion Scoring (8 players, groups of 4 -> fixed cross-group games) ==================
-  // Games 1-3: identical to Classic -- 2 groups of 4 (Court 1 = Group A,
+  // Games 1-3: identical to Scramble -- 2 groups of 4 (Court 1 = Group A,
   //   Court 2 = Group B), each group plays a 3-round round robin so every
   //   player in the group partners with each of the other 3 exactly once.
-  // Games 4-7: unlike Classic, there's no winners/losers bracket -- every
+  // Games 4-7: unlike Scramble, there's no winners/losers bracket -- every
   //   Group A player is paired with every Group B player exactly once,
   //   in a fixed pattern set at schedule-generation time (so all 7 games
   //   are visible up front, and editing an earlier score never reshuffles
@@ -5635,6 +5889,7 @@
     document.getElementById('scheduleCardFu').className = 'card';
     document.getElementById('standingsCardFu').className = 'card';
     document.getElementById('resetCardFu').className = 'card';
+    document.getElementById('fuIcons').className = 'header-icons';
     renderScheduleFu();
     renderScoreLogFu();
     renderStandingsFu();
@@ -5987,7 +6242,7 @@
   }
 
   function resetAllFu() {
-    appConfirm('Start a new fusion scoring tournament? This clears today\'s scores from the screen (the day already played stays saved under Saved Days).', function () {
+    appConfirm('Start a new Fusion tournament? This clears today\'s scores from the screen (the day already played stays saved under Saved Days).', function () {
       playersFu = [];
       groupAFu = [];
       groupBFu = [];
@@ -5999,6 +6254,7 @@
       document.getElementById('scheduleCardFu').className = 'card hidden';
       document.getElementById('standingsCardFu').className = 'card hidden';
       document.getElementById('resetCardFu').className = 'card hidden';
+      document.getElementById('fuIcons').className = 'header-icons hidden';
       clearActiveTournament();
     });
   }
@@ -6413,7 +6669,7 @@
   }
 
   function resetAll() {
-    appConfirm('Start a new tournament? This clears today\'s scores from the screen (the day already played stays saved under Saved Days).', function () {
+    appConfirm('Start a new Round Robin tournament? This clears today\'s scores from the screen (the day already played stays saved under Saved Days).', function () {
       teams = [];
       games = [];
       mode = null;
@@ -6427,6 +6683,7 @@
       document.getElementById('scheduleCard').className = 'card hidden';
       document.getElementById('standingsCard').className = 'card hidden';
       document.getElementById('resetCard').className = 'card hidden';
+      document.getElementById('appIcons').className = 'header-icons hidden';
       clearActiveTournament();
     });
   }
@@ -6540,6 +6797,7 @@
     document.getElementById('scheduleCardP7').className = 'card';
     document.getElementById('standingsCardP7').className = 'card';
     document.getElementById('resetCardP7').className = 'card';
+    document.getElementById('p7Icons').className = 'header-icons';
     renderScheduleP7();
     renderStandingsP7();
   }
@@ -6824,6 +7082,34 @@
     }
   }
 
+  // True if correcting the score of a seeding-phase game (games 1-5) to
+  // newS1/newS2 would actually change the seed order that's already locked
+  // into seedOrderP7 -- i.e. whether the correction matters at all. This
+  // is async because, if the correction creates or breaks a tie at a seed
+  // boundary that the app can't resolve automatically (head-to-head),
+  // it pops the real tie-break prompt to find out who actually takes the
+  // seed -- same as when the bracket was first built -- rather than
+  // silently guessing. seedOrderP7 (the already-locked, already-resolved
+  // order) is used as the "old" order, so it doesn't need to be recomputed.
+  function seedOrderWouldChangeP7(gameIdx, newS1, newS2, callback) {
+    computeSeedOrderP7(gameIdx, newS1, newS2, function (newOrder) {
+      var changed = false;
+      for (var i = 0; i < seedOrderP7.length; i++) {
+        if (seedOrderP7[i] !== newOrder[i]) { changed = true; break; }
+      }
+      callback(changed, newOrder);
+    });
+  }
+
+  // True if correcting the score of a round-5 game (semifinal or 5th/6th
+  // game) to newS1/newS2 would flip which team wins that game -- i.e.
+  // whether the correction actually changes who advances to Game 7.
+  function round5WinnerWouldChangeP7(g, newS1, newS2) {
+    var oldWinnerIsT1 = g.s1 > g.s2;
+    var newWinnerIsT1 = newS1 > newS2;
+    return oldWinnerIsT1 !== newWinnerIsT1;
+  }
+
   // True if correcting a game at this round/court would tear down playoff
   // matchups (and possibly scores) that were already set up from it --
   // used to decide whether to warn before saving.
@@ -6916,45 +7202,78 @@
     var wasRound = g.round;
     var wasCourt = g.court;
     var wasAlreadyEntered = g.entered;
+    var gameIdx = activeGameIdxP7;
 
-    var saveCommitP7 = function () {
-      g.s1 = nTop; g.s2 = nSide; g.entered = true;
-      activeGameIdxP7 = null;
-      document.getElementById(activePanelIdP7).className = 'entry-panel hidden';
+    var finishSaveP7 = function (outcomeChangesP7) {
+      var saveCommitP7 = function () {
+        g.s1 = nTop; g.s2 = nSide; g.entered = true;
+        activeGameIdxP7 = null;
+        document.getElementById(activePanelIdP7).className = 'entry-panel hidden';
 
-      // If this corrects a score that downstream rounds already relied on,
-      // tear those down so they get rebuilt off the corrected result.
-      if (wasRound <= 4 && seedOrderP7) {
-        resetPlayoffPhaseP7();
-      } else if (wasRound === 5) {
-        if (wasCourt === 2) { invalidateGame7FunFromConsolP7(); }
-        else { invalidateGame7FromSemisP7(); }
+        // If this corrects a score that downstream rounds already relied on
+        // AND that correction actually changes the outcome, tear those down
+        // so they get rebuilt off the corrected result.
+        if (outcomeChangesP7) {
+          if (wasRound <= 4 && seedOrderP7) {
+            resetPlayoffPhaseP7();
+          } else if (wasRound === 5) {
+            if (wasCourt === 2) { invalidateGame7FunFromConsolP7(); }
+            else { invalidateGame7FromSemisP7(); }
+          }
+        }
+
+        renderScheduleP7();
+        renderStandingsP7();
+        autosaveCurrentP7();
+        maybeBuildGame6P7();
+      };
+
+      if (wasAlreadyEntered && downstreamBuiltP7(wasRound, wasCourt)) {
+        if (outcomeChangesP7) {
+          appConfirm('Are you sure you want to change this score? It will affect the playoff games already set up from it, and will erase any scores already entered in those games.', saveCommitP7);
+          return;
+        }
       }
-
-      renderScheduleP7();
-      renderStandingsP7();
-      autosaveCurrentP7();
-      maybeBuildGame6P7();
+      saveCommitP7();
     };
 
-    if (wasAlreadyEntered && downstreamBuiltP7(wasRound, wasCourt)) {
-      appConfirm('Are you sure you want to change this score? It will affect the playoff games already set up from it, and will erase any scores already entered in those games.', saveCommitP7);
-      return;
+    // If this is a correction to an already-entered score, and downstream
+    // rounds were already built from it, check whether the correction
+    // would actually change that downstream outcome -- if not, there's
+    // nothing to tear down or warn about. For seeding games (1-5) this can
+    // pop the real tie-break prompt if the correction creates/breaks a tie
+    // at a seed boundary, so it's async.
+    if (!wasAlreadyEntered) {
+      finishSaveP7(true);
+    } else if (wasRound <= 4 && seedOrderP7) {
+      seedOrderWouldChangeP7(gameIdx, nTop, nSide, function (changed) {
+        finishSaveP7(changed);
+      });
+    } else if (wasRound <= 4) {
+      finishSaveP7(true); // seed not built yet -- nothing downstream to check
+    } else {
+      finishSaveP7(round5WinnerWouldChangeP7(g, nTop, nSide));
     }
-    saveCommitP7();
   }
 
   // ---------- Seeding + bracket construction ----------
-  function computeTeamStatsSeedP7() {
+  // overrideIdx/overS1/overS2 let callers ask "what would the stats look
+  // like if game `overrideIdx` had this score instead of its saved one" --
+  // used to test a correction before it's committed. Omit them (or pass
+  // overrideIdx === -1) to just use the games as currently saved.
+  function computeTeamStatsSeedP7(overrideIdx, overS1, overS2) {
     var wins = {}, pts = {};
     for (var i = 0; i < teamsP7.length; i++) { wins[teamsP7[i]] = 0; pts[teamsP7[i]] = 0; }
     for (var j = 0; j < gamesP7.length; j++) {
       var g = gamesP7[j];
-      if (g.round > 4 || !g.entered) continue;
-      var r = computePointsP7(g.s1, g.s2);
+      if (g.round > 4) continue;
+      var s1 = g.s1, s2 = g.s2, entered = g.entered;
+      if (j === overrideIdx) { s1 = overS1; s2 = overS2; entered = true; }
+      if (!entered) continue;
+      var r = computePointsP7(s1, s2);
       pts[g.t1] = (pts[g.t1] || 0) + r.pts1;
       pts[g.t2] = (pts[g.t2] || 0) + r.pts2;
-      if (g.s1 > g.s2) wins[g.t1] = (wins[g.t1] || 0) + 1;
+      if (s1 > s2) wins[g.t1] = (wins[g.t1] || 0) + 1;
       else wins[g.t2] = (wins[g.t2] || 0) + 1;
     }
     return { wins: wins, pts: pts };
@@ -6985,17 +7304,19 @@
   // the higher spot, or null if it can't be determined automatically (not
   // every pair has played, or -- for 3 teams -- each team split 1-1
   // against the other two, a genuine three-way cycle).
-  function headToHeadWinnerP7(group) {
+  function headToHeadWinnerP7(group, overrideIdx, overS1, overS2) {
     var winsAmong = {};
     for (var gi = 0; gi < group.length; gi++) winsAmong[group[gi]] = 0;
     var totalPossiblePairs = group.length * (group.length - 1) / 2;
     var playedPairs = 0;
     for (var j = 0; j < gamesP7.length; j++) {
       var g = gamesP7[j];
-      if (g.round > 4 || !g.entered) continue;
+      var s1 = g.s1, s2 = g.s2, entered = g.entered;
+      if (j === overrideIdx) { s1 = overS1; s2 = overS2; entered = true; }
+      if (g.round > 4 || !entered) continue;
       if (group.indexOf(g.t1) !== -1 && group.indexOf(g.t2) !== -1) {
         playedPairs++;
-        var winner = g.s1 > g.s2 ? g.t1 : g.t2;
+        var winner = s1 > s2 ? g.t1 : g.t2;
         winsAmong[winner]++;
       }
     }
@@ -7048,8 +7369,14 @@
   // or 3 teams automatically via head-to-head where possible, and
   // prompting the user one tie at a time (picking who takes the higher
   // spot) whenever it can't be determined automatically.
-  function computeSeedOrderP7(callback) {
-    var stats = computeTeamStatsSeedP7();
+  // overrideIdx/overS1/overS2 (all optional -- pass callback as the first
+  // arg to omit them) let this be used both to build the real bracket and
+  // to test "what would seeding look like if this game's score were
+  // corrected", using the exact same tie-break logic (including popping
+  // the real tie-break prompt) either way.
+  function computeSeedOrderP7(overrideIdx, overS1, overS2, callback) {
+    if (typeof overrideIdx === 'function') { callback = overrideIdx; overrideIdx = -1; overS1 = 0; overS2 = 0; }
+    var stats = computeTeamStatsSeedP7(overrideIdx, overS1, overS2);
     var remaining = teamsP7.slice().sort(function (a, b) {
       if (stats.wins[b] !== stats.wins[a]) return stats.wins[b] - stats.wins[a];
       if (stats.pts[b] !== stats.pts[a]) return stats.pts[b] - stats.pts[a];
@@ -7070,7 +7397,7 @@
         return;
       }
       var placeLabel = 'seed #' + (result.length + 1);
-      var autoWinner = (group.length === 2 || group.length === 3) ? headToHeadWinnerP7(group) : null;
+      var autoWinner = (group.length === 2 || group.length === 3) ? headToHeadWinnerP7(group, overrideIdx, overS1, overS2) : null;
       if (autoWinner) {
         result.push(autoWinner);
         var autoIdx = remaining.indexOf(autoWinner);
@@ -7094,7 +7421,7 @@
     var seedGames = gamesP7.filter(function (g) { return g.round <= 4; });
     if (seedGames.length !== 15 || !seedGames.every(function (g) { return g.entered; })) return;
 
-    computeSeedOrderP7(function (order) {
+    computeSeedOrderP7(-1, 0, 0, function (order) {
       seedOrderP7 = order;
       var s1 = order[0], s2 = order[1], s3 = order[2], s4 = order[3], s5 = order[4], s6 = order[5];
       for (var i = 0; i < gamesP7.length; i++) {
@@ -7284,7 +7611,7 @@
   }
 
   function resetAllP7() {
-    appConfirm('Start a new playoff tournament? This clears today\'s scores from the screen (the day already played stays saved under Saved Days).', function () {
+    appConfirm('Start a new Playoff tournament? This clears today\'s scores from the screen (the day already played stays saved under Saved Days).', function () {
       teamsP7 = [];
       gamesP7 = [];
       seedOrderP7 = null;
@@ -7299,6 +7626,7 @@
       document.getElementById('scheduleCardP7').className = 'card hidden';
       document.getElementById('standingsCardP7').className = 'card hidden';
       document.getElementById('resetCardP7').className = 'card hidden';
+      document.getElementById('p7Icons').className = 'header-icons hidden';
       clearActiveTournament();
     });
   }
@@ -7373,7 +7701,7 @@
     if (!teams || teams.length !== 6 || !activeDateKey) return;
     try {
       var days = getDays();
-      days[activeDateKey] = { teams: teams, games: games, dateKey: activeDateKey, updatedAt: new Date().toISOString() };
+      days[activeDateKey] = { gameType: 'partnerrr12', teams: teams, games: games, dateKey: activeDateKey, updatedAt: new Date().toISOString() };
       setDays(days);
       window.localStorage.setItem(PERINI_ACTIVE, activeDateKey);
     } catch (e) { /* ignore quota / access errors */ }
@@ -7567,10 +7895,10 @@
     }
 
     var dateKey = PERINI_VIEWING_DATEKEY || activeDateKey8 || activeDateKeyTR || activeDateKeyRT || activeDateKeyCl || activeDateKeyFu || activeDateKeyP7 || activeDateKey || dateKeyFor();
-    // Saved date keys carry a mode suffix ("-tr", "-8p", "-8t", "-cl", "-fu", "-p7")
+    // Saved date keys carry a mode suffix ("-tr", "-8p", "-8t", "-scr", "-fu", "-p7")
     // to keep different game types saved on the same day distinct -- strip
     // that off for display since the mode is already shown in the title.
-    dateKey = dateKey.replace('-8p', '').replace('-8t', '').replace('-cl', '').replace('-fu', '').replace('-tr', '').replace('-p7', '');
+    dateKey = dateKey.replace('-8p', '').replace('-8t', '').replace('-scr', '').replace('-fu', '').replace('-tr', '').replace('-p7', '');
     var pad = 28;
     var scale = 2; // draw at 2x for a crisper saved photo
     var fontMain = 15;
