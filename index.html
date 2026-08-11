@@ -114,6 +114,13 @@
     user-select: text;
   }
 
+  /* The global "* { -webkit-touch-callout: none }" rule above would also
+     block iOS's long-press "Save Image" menu on the exported score photo,
+     so re-enable the system callout menu specifically for that image. */
+  #imageExportImg {
+    -webkit-touch-callout: default;
+  }
+
   html, body {
     background: var(--bg);
     font-family: Tahoma, Geneva, Verdana, sans-serif;
@@ -336,6 +343,46 @@
     border: 2px solid var(--danger) !important;
     background: rgba(255, 107, 107, 0.12);
   }
+
+  /* ---------- Read-only "viewing a saved day" banner ---------- */
+  .view-only-banner {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 150;
+    background: var(--accent);
+    color: var(--bg-input);
+    padding: 8px 10px;
+    font-size: 13px;
+    font-family: Tahoma, Geneva, Verdana, sans-serif;
+    display: -webkit-box;
+    display: -webkit-flex;
+    display: flex;
+    -webkit-box-align: center;
+    -webkit-align-items: center;
+    align-items: center;
+    -webkit-flex-wrap: wrap;
+    flex-wrap: wrap;
+  }
+  .view-only-banner.hidden { display: none; }
+  .view-only-banner .vob-label {
+    -webkit-box-flex: 1;
+    -webkit-flex: 1 1 auto;
+    flex: 1 1 auto;
+    font-weight: bold;
+    margin-right: 8px;
+    margin-bottom: 4px;
+  }
+  .view-only-banner button {
+    padding: 6px 10px;
+    font-size: 12px;
+    border: 1px solid var(--bg-input);
+    border-radius: 5px;
+    background: transparent;
+    color: var(--bg-input);
+    margin-right: 6px;
+    margin-bottom: 4px;
+  }
+  .view-only-banner button:last-child { margin-right: 0; }
   .dup-note {
     color: var(--danger);
     font-size: 13px;
@@ -567,6 +614,14 @@
     -webkit-flex: 1 1 auto;
     flex: 1 1 auto;
   }
+  .days-row .days-select.days-select-narrow {
+    -webkit-box-flex: 0;
+    -webkit-flex: 0 0 50%;
+    flex: 0 0 50%;
+    width: 50%;
+    padding: 15px 8px;
+    font-size: 21px;
+  }
   .days-row .btn {
     width: 64px;
     margin-top: 0;
@@ -576,6 +631,13 @@
     text-align: center;
     -webkit-flex-shrink: 0;
     flex-shrink: 0;
+  }
+  .days-row .days-row-btn {
+    width: auto;
+    -webkit-box-flex: 0;
+    -webkit-flex: 0 0 auto;
+    flex: 0 0 auto;
+    padding: 10px 16px;
   }
   .days-row .icon-btn {
     width: 44px;
@@ -667,7 +729,7 @@
   table.grid td.cell .cellbtn .matchline {
     display: block;
     max-width: 100%;
-    font-size: 12.5px;
+    font-size: 16px;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -679,11 +741,11 @@
      is what pushes the score log below the schedule on narrow/older
      devices that don't fully honor table-layout: fixed. */
   table.grid td.cell .cellbtn .matchline.compact {
-    font-size: 10.5px;
+    font-size: 13px;
   }
 
   table.grid td.cell .cellbtn .matchline.compact .raw-score {
-    font-size: 9px;
+    font-size: 11px;
   }
 
   table.grid td.cell .cellbtn .matchline .score {
@@ -695,7 +757,7 @@
   }
 
   table.grid td.cell .cellbtn .matchline .pts {
-    font-size: 10.5px;
+    font-size: 12px;
     font-weight: normal;
     color: var(--pts-color);
   }
@@ -704,7 +766,12 @@
     color: var(--pts-color-done);
   }
 
-  table.grid td.cell .cellbtn .matchline .raw-score,
+  table.grid td.cell .cellbtn .matchline .raw-score {
+    font-size: 12px;
+    font-weight: normal;
+    color: var(--text-dimmer);
+  }
+
   table.scorelog td.logcell .raw-score {
     font-size: 10.5px;
     font-weight: normal;
@@ -717,7 +784,7 @@
 
   table.grid td.cell .cellbtn .vs-sep {
     display: block;
-    font-size: 10.5px;
+    font-size: 12px;
     color: var(--text-dimmer);
     font-style: italic;
     margin: 1px 0;
@@ -737,6 +804,126 @@
 
   .schedule-flex {
     position: relative;
+  }
+
+  /* Playoff Scoring (12 players) schedule grid: bump the text size up from
+     the shared default since these cells have plenty of room, and give the
+     row a little extra height to match -- still sized so all 5 seeding
+     rounds fit on screen together. */
+  #gridWrapP7 table.grid td.cell {
+    height: 104px;
+  }
+  #gridWrapP7 table.grid td.cell .cellbtn .matchline {
+    font-size: 17px;
+  }
+  #gridWrapP7 table.grid td.cell .cellbtn .matchline .pts {
+    font-size: 14px;
+  }
+  #gridWrapP7 table.grid td.cell .cellbtn .vs-sep {
+    font-size: 14px;
+  }
+
+  /* ---------- Playoff bracket (Games 6-7) ---------- */
+  .bracket-wrap {
+    display: -webkit-box;
+    display: -webkit-flex;
+    display: flex;
+    -webkit-flex-wrap: wrap;
+    flex-wrap: wrap;
+    -webkit-box-align: stretch;
+    -webkit-align-items: stretch;
+    align-items: stretch;
+  }
+  .bracket-col {
+    -webkit-box-flex: 1;
+    -webkit-flex: 1 1 220px;
+    flex: 1 1 220px;
+    min-width: 220px;
+    margin-right: 14px;
+    margin-bottom: 14px;
+  }
+  .bracket-round-title {
+    font-size: 13px;
+    font-weight: bold;
+    color: var(--accent-light);
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    margin-bottom: 8px;
+  }
+  .bracket-box {
+    display: block;
+    width: 100%;
+    box-sizing: border-box;
+    text-align: left;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 8px 10px;
+    margin-bottom: 10px;
+    font-family: inherit;
+    color: var(--text-dim);
+  }
+  .bracket-box.done {
+    background: var(--bg-accent-tint);
+    border-color: var(--accent);
+    color: var(--accent);
+    font-weight: bold;
+  }
+  .bracket-box.tbd {
+    opacity: 0.55;
+  }
+  .bracket-box[disabled] {
+    opacity: 0.55;
+  }
+  .bracket-box.selected-cell {
+    box-shadow: inset 0 0 0 3px var(--accent);
+  }
+  .bracket-box-title {
+    font-size: 11px;
+    font-weight: bold;
+    color: var(--text-dimmer);
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    margin-bottom: 5px;
+  }
+  .bracket-line {
+    font-size: 17px;
+    line-height: 1.5;
+  }
+  .bracket-box.done .bracket-line .score {
+    font-weight: bold;
+    color: var(--accent);
+  }
+  .bracket-box.done .bracket-line .pts {
+    font-size: 14px;
+    font-weight: normal;
+    color: var(--pts-color-done);
+  }
+  .bracket-vs {
+    font-size: 14px;
+    color: var(--text-dimmer);
+    font-style: italic;
+    margin: 1px 0;
+  }
+  .bracket-tbd {
+    font-size: 13px;
+    font-style: italic;
+    color: var(--text-dimmer);
+  }
+  .bracket-tbd-inline {
+    font-size: 12.5px;
+    font-style: italic;
+    color: var(--text-dimmer);
+  }
+  .bracket-seed {
+    font-size: 12px;
+    font-weight: bold;
+    color: var(--accent-light);
+  }
+  .note-inline {
+    font-size: 11px;
+    font-weight: normal;
+    color: var(--text-dimmer);
   }
 
   .schedule-grids {
@@ -795,21 +982,21 @@
   #gridWrapTR table.grid td.cell .cellbtn .matchline,
   #gridWrapCl table.grid td.cell .cellbtn .matchline,
   #gridWrapFu table.grid td.cell .cellbtn .matchline {
-    font-size: 15px;
+    font-size: 17px;
   }
   #gridWrap8 table.grid td.cell .cellbtn .matchline.compact,
   #gridWrapRT table.grid td.cell .cellbtn .matchline.compact,
   #gridWrapTR table.grid td.cell .cellbtn .matchline.compact,
   #gridWrapCl table.grid td.cell .cellbtn .matchline.compact,
   #gridWrapFu table.grid td.cell .cellbtn .matchline.compact {
-    font-size: 12.5px;
+    font-size: 14px;
   }
   #gridWrap8 table.grid td.cell .cellbtn .matchline.compact .raw-score,
   #gridWrapRT table.grid td.cell .cellbtn .matchline.compact .raw-score,
   #gridWrapTR table.grid td.cell .cellbtn .matchline.compact .raw-score,
   #gridWrapCl table.grid td.cell .cellbtn .matchline.compact .raw-score,
   #gridWrapFu table.grid td.cell .cellbtn .matchline.compact .raw-score {
-    font-size: 10.5px;
+    font-size: 11.5px;
   }
   #gridWrap8 table.grid td.cell .cellbtn .enterhint,
   #gridWrapRT table.grid td.cell .cellbtn .enterhint,
@@ -939,25 +1126,22 @@
     text-align: center;
     padding: 14px 11px;
     width: 230px;
-    position: absolute;
-    top: 0;
-    right: 0;
+    position: fixed;
+    top: 50%;
+    right: 14px;
+    left: auto;
+    bottom: auto;
+    -webkit-transform: translateY(-50%);
+    transform: translateY(-50%);
+    max-height: calc(100% - 24px);
+    overflow-y: auto;
     background: var(--bg-card);
     border-radius: 6px;
     border: 2px solid var(--accent);
     box-shadow: 0 4px 20px var(--shadow-entry);
-    z-index: 10;
+    z-index: 60;
   }
   .entry-panel.hidden { display: none; }
-
-  /* On the 8-person pages, line the entry panel's left edge up with the
-     score log's left edge (it's fine for it to sit over the first couple
-     of score-log columns while open -- those cells just aren't visible
-     until you close the panel). */
-  #entryPanel8, #entryPanelRT, #entryPanelCl, #entryPanelFu, #entryPanelTR {
-    left: calc(100% + 14px);
-    right: auto;
-  }
 
   .entry-panel .score-row {
     display: -webkit-box;
@@ -1234,6 +1418,10 @@
     background: #dcf0f7;
     color: #2896b8;
   }
+  html[data-theme="light"] .bracket-box.done {
+    background: #dcf0f7;
+    color: #2896b8;
+  }
   html[data-theme="light"] table.grid td.cell.done .cellbtn .matchline .score {
     color: #2896b8;
   }
@@ -1340,6 +1528,12 @@
 </head>
 <body>
 
+<div class="view-only-banner hidden" id="viewOnlyBanner">
+  <span class="vob-label">&#128214; Read-only snapshot</span>
+  <button onclick="loadViewedDayForEditing()">Load to Edit</button>
+  <button onclick="exitViewOnly()">Close</button>
+</div>
+
 <!-- ============ MAIN MENU PAGE ============ -->
 <div class="wrap" id="mainMenuPage">
   <header>
@@ -1359,27 +1553,39 @@
     </div>
     <button class="toolbar-btn surprise-btn" onclick="surpriseMe()"><span class="emoji">&#127920;</span> Surprise Me</button>
     <button class="toolbar-btn" onclick="openManageNames()">Manage Players</button>
+    <button class="toolbar-btn" onclick="goToHistoryPage()">History</button>
   </div>
 
   <div class="game-grid" id="gameGrid"></div>
+</div>
 
+<!-- ============ HISTORY PAGE ============ -->
+<div class="wrap hidden" id="historyPage">
+  <header>
+    <button class="header-btn back-btn" onclick="goToMainMenu()">&lsaquo;</button>
+    <div class="title-row">
+      <div class="ball ball-left">&#8226; &#8226; &#8226;</div>
+      <h1>History</h1>
+      <div class="ball ball-right">&#8226; &#8226; &#8226;</div>
+    </div>
+  </header>
 
-  <!-- SAVED DAYS CARD -->
   <div class="card hidden" id="daysCard">
     <div class="card-title">Saved Days</div>
     <div class="days-row">
-      <select id="daysSelect" class="days-select"></select>
-      <button class="btn btn-primary" onclick="viewSelectedDay()">View</button>
+      <select id="daysSelect" class="days-select days-select-narrow"></select>
+      <button class="btn btn-secondary days-row-btn" onclick="viewSelectedDay()">View</button>
+      <button class="btn btn-primary days-row-btn" onclick="loadSelectedDayForEditing()">Edit</button>
       <button class="btn btn-danger icon-btn" onclick="deleteSelectedDay()" aria-label="Delete" title="Delete">&#128465;</button>
     </div>
-    <button class="btn btn-secondary" style="margin-top:12px;" onclick="openBackup()">Backup / Export Data</button>
   </div>
+  <div class="empty-note hidden" id="noDaysNote">No saved days yet.</div>
 </div>
 
 <!-- ============ TOURNAMENT / APP PAGE ============ -->
 <div class="wrap hidden" id="appPage">
 
-  <header>
+  <header id="appPageHeader">
     <button class="header-btn back-btn" onclick="goToMainMenu()">&lsaquo;</button>
     <div class="title-row">
       <div class="ball ball-left">&#8226; &#8226; &#8226;</div>
@@ -1431,6 +1637,7 @@
   <div class="card hidden" id="standingsCard">
     <div class="card-title">Standings</div>
     <div id="standingsBox"><div class="empty-note">Enter scores above to populate</div></div>
+    <button class="btn btn-secondary" style="margin-top:10px;" onclick="exportSnapshotImage('', 'Classic (6 Team)')">Share Score Photo&hellip;</button>
   </div>
 
   <div class="card hidden" id="resetCard">
@@ -1438,10 +1645,79 @@
   </div>
 </div>
 
+<!-- ============ PLAYOFF SCORING PAGE (12 players, 7 games + bracket) ============ -->
+<div class="wrap hidden" id="p7Page">
+
+  <header id="p7PageHeader">
+    <button class="header-btn back-btn" onclick="goToMainMenu()">&lsaquo;</button>
+    <div class="title-row">
+      <div class="ball ball-left">&#8226; &#8226; &#8226;</div>
+      <h1>Perini <span class="accent">Points</span></h1>
+      <div class="ball ball-right">&#8226; &#8226; &#8226;</div>
+    </div>
+  </header>
+
+  <!-- SETUP CARD -->
+  <div class="card" id="setupCardP7">
+    <div class="card-title">Set Up Teams</div>
+
+    <div class="two-col" style="margin-bottom:10px;">
+      <div><button class="btn btn-secondary" onclick="showModeP7('players')">Enter 12 Players &amp; Pair Them</button></div>
+      <div><button class="btn btn-secondary" onclick="showModeP7('teams')">Type 6 Team Names Directly</button></div>
+    </div>
+
+    <!-- PLAYER MODE -->
+    <div id="playerModeP7" class="hidden">
+      <div class="players-grid" id="playerInputsP7"></div>
+      <div class="dup-note" id="dupNoteP7">Duplicate name entered &mdash; please make each name unique (e.g. "Mike S" / "Mike G").</div>
+      <div class="btn-small" style="margin-top:8px; margin-bottom:10px;">
+        <button class="btn btn-secondary btn-small" onclick="randomPairPlayersP7()">Randomly Pair Into Teams</button>
+      </div>
+      <div id="pairPreviewP7"></div>
+    </div>
+
+    <!-- TEAM MODE -->
+    <div id="teamModeP7" class="hidden">
+      <div class="field-row" id="teamInputsP7"></div>
+    </div>
+
+    <button class="btn btn-primary" id="generateBtnP7" onclick="generateScheduleP7()">Generate Schedule</button>
+  </div>
+
+  <!-- SCHEDULE CARD -->
+  <div class="card hidden" id="scheduleCardP7">
+    <div class="card-title">Seeding Games (1-5)</div>
+
+    <div class="schedule-flex">
+      <div class="grid-scroll" id="gridWrapP7"></div>
+      <div class="entry-panel hidden" id="entryPanelP7"></div>
+    </div>
+
+    <div class="cap-note">Points = score differential (can be negative), capped at &plusmn;8 &middot; games to 11, win by 1, 15-min cap</div>
+
+    <div class="card-title" style="margin-top:18px;">Playoffs (Games 6-7)</div>
+    <div class="schedule-flex">
+      <div class="entry-panel hidden" id="entryPanelP7b"></div>
+      <div id="bracketWrapP7"></div>
+    </div>
+  </div>
+
+  <!-- STANDINGS CARD -->
+  <div class="card hidden" id="standingsCardP7">
+    <div class="card-title">Standings</div>
+    <div id="standingsBoxP7"><div class="empty-note">Enter scores above to populate</div></div>
+    <button class="btn btn-secondary" style="margin-top:10px;" onclick="exportSnapshotImage('P7', 'Playoff (12 Team)')">Share Score Photo&hellip;</button>
+  </div>
+
+  <div class="card hidden" id="resetCardP7">
+    <button class="btn btn-secondary" onclick="resetAllP7()">Start Over (new tournament)</button>
+  </div>
+</div>
+
 <!-- ============ PARTNER ROUND ROBIN PAGE (8 players) ============ -->
 <div class="wrap hidden" id="prPage">
 
-  <header>
+  <header id="prPageHeader">
     <button class="header-btn back-btn" onclick="goToMainMenu()">&lsaquo;</button>
     <div class="title-row">
       <div class="ball ball-left">&#8226; &#8226; &#8226;</div>
@@ -1477,6 +1753,7 @@
   <div class="card hidden" id="standingsCard8">
     <div class="card-title">Standings</div>
     <div id="standingsBox8"><div class="empty-note">Enter scores above to populate</div></div>
+    <button class="btn btn-secondary" style="margin-top:10px;" onclick="exportSnapshotImage('8', 'Partner Round Robin')">Share Score Photo&hellip;</button>
   </div>
 
   <div class="card hidden" id="resetCard8">
@@ -1487,7 +1764,7 @@
 <!-- ============ TEAM/PARTNER ROTATION PAGE (8 players, 2 teams of 4, 7 games, 2 courts) ============ -->
 <div class="wrap hidden" id="trPage">
 
-  <header>
+  <header id="trPageHeader">
     <button class="header-btn back-btn" onclick="goToMainMenu()">&lsaquo;</button>
     <div class="title-row">
       <div class="ball ball-left">&#8226; &#8226; &#8226;</div>
@@ -1527,6 +1804,7 @@
   <div class="card hidden" id="standingsCardTR">
     <div class="card-title">Standings</div>
     <div id="standingsBoxTR"><div class="empty-note">Enter scores above to populate</div></div>
+    <button class="btn btn-secondary" style="margin-top:10px;" onclick="exportSnapshotImage('TR', 'Team Rotation')">Share Score Photo&hellip;</button>
   </div>
 
   <div class="card hidden" id="resetCardTR">
@@ -1537,7 +1815,7 @@
 <!-- ============ ROUND ROBIN (TIME CAP) PAGE (8 players, 7 games, 2 courts) ============ -->
 <div class="wrap hidden" id="rtPage">
 
-  <header>
+  <header id="rtPageHeader">
     <button class="header-btn back-btn" onclick="goToMainMenu()">&lsaquo;</button>
     <div class="title-row">
       <div class="ball ball-left">&#8226; &#8226; &#8226;</div>
@@ -1573,6 +1851,7 @@
   <div class="card hidden" id="standingsCardRT">
     <div class="card-title">Standings</div>
     <div id="standingsBoxRT"><div class="empty-note">Enter scores above to populate</div></div>
+    <button class="btn btn-secondary" style="margin-top:10px;" onclick="exportSnapshotImage('RT', 'Round Robin (Time Cap)')">Share Score Photo&hellip;</button>
   </div>
 
   <div class="card hidden" id="resetCardRT">
@@ -1583,7 +1862,7 @@
 <!-- ============ CLASSIC SCORING PAGE (8 players, groups of 4) ============ -->
 <div class="wrap hidden" id="clPage">
 
-  <header>
+  <header id="clPageHeader">
     <button class="header-btn back-btn" onclick="goToMainMenu()">&lsaquo;</button>
     <div class="title-row">
       <div class="ball ball-left">&#8226; &#8226; &#8226;</div>
@@ -1619,6 +1898,7 @@
   <div class="card hidden" id="standingsCardCl">
     <div class="card-title">Standings</div>
     <div id="standingsBoxCl"><div class="empty-note">Enter scores above to populate</div></div>
+    <button class="btn btn-secondary" style="margin-top:10px;" onclick="exportSnapshotImage('Cl', 'Classic Scoring')">Share Score Photo&hellip;</button>
   </div>
 
   <div class="card hidden" id="resetCardCl">
@@ -1629,7 +1909,7 @@
 <!-- ============ FUSION SCORING PAGE (8 players, groups of 4 -> fixed cross-group games) ============ -->
 <div class="wrap hidden" id="fuPage">
 
-  <header>
+  <header id="fuPageHeader">
     <button class="header-btn back-btn" onclick="goToMainMenu()">&lsaquo;</button>
     <div class="title-row">
       <div class="ball ball-left">&#8226; &#8226; &#8226;</div>
@@ -1665,6 +1945,7 @@
   <div class="card hidden" id="standingsCardFu">
     <div class="card-title">Standings</div>
     <div id="standingsBoxFu"><div class="empty-note">Enter scores above to populate</div></div>
+    <button class="btn btn-secondary" style="margin-top:10px;" onclick="exportSnapshotImage('Fu', 'Fusion Scoring')">Share Score Photo&hellip;</button>
   </div>
 
   <div class="card hidden" id="resetCardFu">
@@ -1710,15 +1991,29 @@
 
 <!-- ============ MANAGE NAMES MODAL ============ -->
 <div class="modal-overlay hidden" id="manageNamesOverlay">
-  <div class="modal-box" style="max-width:420px;">
+  <div class="modal-box" style="max-width:315px;">
     <div class="modal-title">Manage Players</div>
     <div class="days-row" style="margin-bottom:12px;">
       <input type="text" class="modal-input selectable" id="manageNamesInput" placeholder="Add a name" style="margin-bottom:0;margin-right:8px;">
       <button class="btn btn-primary btn-small" onclick="addNameToList()">Add</button>
     </div>
-    <div style="max-height:45vh;overflow-y:auto;-webkit-overflow-scrolling:touch;" id="manageNamesList"></div>
+    <div style="max-height:45vh;overflow-y:auto;-webkit-overflow-scrolling:touch;padding-right:12px;" id="manageNamesList"></div>
     <div class="modal-btns" style="margin-top:12px;">
       <button class="btn btn-primary" onclick="closeManageNames()">Done</button>
+    </div>
+  </div>
+</div>
+
+<!-- ============ IMAGE EXPORT MODAL (save-to-Photos snapshot) ============ -->
+<div class="modal-overlay hidden" id="imageExportOverlay">
+  <div class="modal-box" style="max-width:94vw;">
+    <div class="modal-title">Save to Photos</div>
+    <div class="modal-msg" style="margin-bottom:8px;">Press and hold the image below, then tap <b>Save Image</b>. (This app must be opened through Safari, not the Home Screen icon, for Save Image to work.)</div>
+    <div style="max-height:50vh;overflow:auto;-webkit-overflow-scrolling:touch;text-align:center;background:#fff;border-radius:4px;">
+      <img id="imageExportImg" style="max-width:100%;height:auto;display:block;margin:0 auto;">
+    </div>
+    <div class="modal-btns" style="margin-top:12px;">
+      <button class="btn btn-secondary" onclick="closeImageExport()">Close</button>
     </div>
   </div>
 </div>
@@ -1789,7 +2084,7 @@
   // Comment out the line below (leave this comment) to blank out the Classic
   // Scoring name fields instead of auto-filling them -- handy when you want
   // people to type in their own names instead of seeing the demo roster.
-  var DEFAULT_CLASSIC_PLAYERS = ['Keaton', 'Caroline', 'Phil', 'Corey', 'Gary', 'Jeff', 'Colby', 'Kime'];
+  // var DEFAULT_CLASSIC_PLAYERS = ['Keaton', 'Caroline', 'Phil', 'Corey', 'Gary', 'Jeff', 'Colby', 'Kime'];
   var playersCl = [];    // array of 8 player names (in current group order: [groupA x4, groupB x4])
   var groupACl = [];
   var groupBCl = [];
@@ -1798,6 +2093,24 @@
   var activeDateKeyCl = null;
   var activeGameIdxCl = null;
   var activeFieldCl = 'top';
+
+  // ---------- Playoff Scoring (12 players, 6 teams, 3 courts, 7 games) ----------
+  // Games 1-5 are the same 6-team / 3-court round robin as the original
+  // Partner Round Robin mode (built with the same buildRoundRobinCourts()),
+  // but scored with a differential/2 formula instead of 10 +/- diff.
+  // Once all 15 seeding games are entered, teams are seeded 1-6 by wins
+  // then point differential (ties broken with a prompt). Game 6 is then
+  // built as a 4-team bracket for the top 4 seeds (#1 v #4 and #2 v #3)
+  // plus the bottom 2 seeds playing each other for 5th/6th. Game 7 is the
+  // championship + 3rd place game for the top 4, plus a shuffled "fun
+  // match" for the bottom 2 teams' players (new partners, doesn't affect
+  // placement).
+  var teamsP7 = [];
+  var gamesP7 = [];      // {t1, t2, s1, s2, entered, round, court, label}
+                          // round 0-4 = games 1-5 (seeding), round 5 = game 6, round 6 = game 7
+  var seedOrderP7 = null; // array of 6 team-name strings, seed 1 first, once seeding is resolved
+  var modeP7 = null;
+  var activeDateKeyP7 = null;
 
   // ---------- iOS double-tap fix ----------
   document.addEventListener('touchstart', function () {}, false);
@@ -1876,19 +2189,31 @@
   // ================== Main menu / navigation ==================
   function hideAllPages() {
     document.getElementById('mainMenuPage').className = 'wrap hidden';
+    document.getElementById('historyPage').className = 'wrap hidden';
     document.getElementById('appPage').className = 'wrap hidden';
     document.getElementById('prPage').className = 'wrap hidden';
     document.getElementById('trPage').className = 'wrap hidden';
     document.getElementById('rtPage').className = 'wrap hidden';
     document.getElementById('clPage').className = 'wrap hidden';
     document.getElementById('fuPage').className = 'wrap hidden';
+    document.getElementById('p7Page').className = 'wrap hidden';
   }
 
   function goToMainMenu() {
+    PERINI_VIEW_ONLY = false;
+    PERINI_VIEWING_DATEKEY = null;
+    updateViewOnlyBanner();
     hideAllPages();
     document.getElementById('mainMenuPage').className = 'wrap';
     renderMainMenu();
     saveLastPage('mainMenuPage');
+  }
+
+  function goToHistoryPage() {
+    hideAllPages();
+    document.getElementById('historyPage').className = 'wrap';
+    renderHistoryPage();
+    saveLastPage('historyPage');
   }
 
   function goToAppPage() {
@@ -1927,6 +2252,12 @@
     saveLastPage('fuPage');
   }
 
+  function goToP7Page() {
+    hideAllPages();
+    document.getElementById('p7Page').className = 'wrap';
+    saveLastPage('p7Page');
+  }
+
   function openPartnerRR() {
     // If a tournament is already in progress, jump straight back into it.
     if (activeDateKey) {
@@ -1934,7 +2265,7 @@
       return;
     }
     var current = getActiveTournament();
-    if (current && current.gameType !== 'partner8' && current.gameType !== 'rrtc8' && current.gameType !== 'classic8' && current.gameType !== 'fusion8' && current.gameType !== 'teamrot8') {
+    if (current && current.gameType !== 'partner8' && current.gameType !== 'rrtc8' && current.gameType !== 'classic8' && current.gameType !== 'fusion8' && current.gameType !== 'teamrot8' && current.gameType !== 'playoff12') {
       activeDateKey = current.dateKey;
       teams = current.teams;
       games = current.games;
@@ -2097,6 +2428,35 @@
     goToFuPage();
   }
 
+  function openPlayoff7() {
+    // If a playoff-scoring tournament is already in progress, jump straight back into it.
+    if (activeDateKeyP7) {
+      goToP7Page();
+      return;
+    }
+    var current = getActiveTournament();
+    if (current && current.gameType === 'playoff12') {
+      activeDateKeyP7 = current.dateKey;
+      teamsP7 = current.teams;
+      gamesP7 = current.games;
+      seedOrderP7 = current.seedOrder || null;
+      modeP7 = null;
+      showPlayoffP7UI();
+      goToP7Page();
+      return;
+    }
+    // Nothing in progress -- fresh setup screen.
+    teamsP7 = [];
+    gamesP7 = [];
+    seedOrderP7 = null;
+    modeP7 = null;
+    document.getElementById('setupCardP7').className = 'card';
+    document.getElementById('scheduleCardP7').className = 'card hidden';
+    document.getElementById('standingsCardP7').className = 'card hidden';
+    document.getElementById('resetCardP7').className = 'card hidden';
+    goToP7Page();
+  }
+
   function resumeActiveTournament() {
     var current = getActiveTournament();
     if (current) {
@@ -2136,6 +2496,14 @@
         gamesFu = current.games;
         showFusionUI();
         goToFuPage();
+      } else if (current.gameType === 'playoff12') {
+        activeDateKeyP7 = current.dateKey;
+        teamsP7 = current.teams;
+        gamesP7 = current.games;
+        seedOrderP7 = current.seedOrder || null;
+        modeP7 = null;
+        showPlayoffP7UI();
+        goToP7Page();
       } else {
         activeDateKey = current.dateKey;
         teams = current.teams;
@@ -2164,7 +2532,8 @@
     { id: 'rrtc', label: 'Round Robin (time cap)', players: '8', sub: '8 players &middot; 2 courts &middot; 7 games &middot; partner once, oppose everyone twice &middot; no 11-point requirement', open: 'openRRTC' },
     { id: 'rr', label: 'Round Robin', players: '8', sub: '8 players &middot; 2 courts &middot; 7 games &middot; partner once, oppose everyone twice', open: 'openRR' },
     { id: 'teamrot', label: 'Team/Partner Rotation', players: '8', sub: '8 players &middot; 2 teams of 4 &middot; 2 courts &middot; 7 games &middot; game 7 is a winners/losers showdown', open: 'openTeamRotation' },
-    { id: 'partnerrr', label: 'Partner Round Robin', players: '12', sub: '6 teams &middot; 3 courts &middot; 5 games', open: 'openPartnerRR' }
+    { id: 'partnerrr', label: 'Partner Round Robin', players: '12', sub: '6 teams &middot; 3 courts &middot; 5 games', open: 'openPartnerRR' },
+    { id: 'playoff12', label: 'Playoff Scoring', players: '12', sub: '6 teams &middot; 3 courts &middot; 7 games &middot; 4-team playoff bracket', open: 'openPlayoff7' }
   ];
 
   var PERINI_MENU_MODE = 'periniPoints_menuMode';
@@ -2286,6 +2655,29 @@
     var input = document.getElementById('manageNamesInput');
     var val = input.value.trim();
     if (!val) return;
+    // Same history duplicate-name check as the in-schedule manual-entry
+    // fields, run fresh every time a name is added here too -- so a name
+    // that collides with someone's saved-game history gets caught however
+    // it's typed in, not just from the schedule screens.
+    var existing = findHistoryNameMatch(val);
+    if (existing) {
+      modalShow('A player named "' + existing + '" already has games saved in your history. Is this the same ' + existing + ', or a different person?', {
+        showCancel: true,
+        okLabel: 'Same Person',
+        cancelLabel: 'Different Person',
+        onOk: function () {
+          addToRoster(existing);
+          input.value = '';
+          renderManageNames();
+        },
+        onCancel: function () {
+          input.value = '';
+          input.placeholder = 'Enter a unique name, e.g. "' + existing + ' S"';
+          setTimeout(function () { input.focus(); }, 50);
+        }
+      });
+      return;
+    }
     addToRoster(val);
     input.value = '';
     renderManageNames();
@@ -2297,7 +2689,8 @@
   function refreshAllNameGridsOnScreen() {
     var grids = [
       ['p', 12, 'dupNote'], ['p8_', 8, 'dupNote8'], ['pTR_', 8, 'dupNoteTR'],
-      ['pRT_', 8, 'dupNoteRT'], ['pCl_', 8, 'dupNoteCl'], ['pFu_', 8, 'dupNoteFu']
+      ['pRT_', 8, 'dupNoteRT'], ['pCl_', 8, 'dupNoteCl'], ['pFu_', 8, 'dupNoteFu'],
+      ['p7_', 12, 'dupNoteP7']
     ];
     for (var i = 0; i < grids.length; i++) {
       if (document.getElementById(grids[i][0] + '1')) {
@@ -2311,17 +2704,22 @@
     var current = getActiveTournament();
     var resumeBtn = document.getElementById('resumeBtn');
     resumeBtn.className = current ? 'header-btn resume-btn' : 'header-btn resume-btn hidden';
+  }
 
+  function renderHistoryPage() {
     var days = getDays();
     var keys = Object.keys(days);
     var card = document.getElementById('daysCard');
+    var note = document.getElementById('noDaysNote');
     var select = document.getElementById('daysSelect');
 
     if (keys.length === 0) {
       card.className = 'card hidden';
+      note.className = 'empty-note';
       return;
     }
     card.className = 'card';
+    note.className = 'empty-note hidden';
     keys.sort(function (a, b) {
       var ta = days[a].updatedAt || '';
       var tb = days[b].updatedAt || '';
@@ -2335,8 +2733,9 @@
       var isRT = days[keys[i]] && days[keys[i]].gameType === 'rrtc8';
       var isClassic = days[keys[i]] && days[keys[i]].gameType === 'classic8';
       var isFusion = days[keys[i]] && days[keys[i]].gameType === 'fusion8';
-      var label = keys[i].replace('-8p', '').replace('-8t', '').replace('-cl', '').replace('-fu', '').replace('-tr', '') +
-        (isPartner ? ' \u00b7 Partner RR' : (isTR ? ' \u00b7 Team Rotation' : (isRT ? ' \u00b7 RR (time cap)' : (isClassic ? ' \u00b7 Classic' : (isFusion ? ' \u00b7 Fusion' : '')))));
+      var isPlayoff = days[keys[i]] && days[keys[i]].gameType === 'playoff12';
+      var label = keys[i].replace('-8p', '').replace('-8t', '').replace('-cl', '').replace('-fu', '').replace('-tr', '').replace('-p7', '') +
+        (isPartner ? ' \u00b7 Partner RR' : (isTR ? ' \u00b7 Team Rotation' : (isRT ? ' \u00b7 RR (time cap)' : (isClassic ? ' \u00b7 Classic' : (isFusion ? ' \u00b7 Fusion' : (isPlayoff ? ' \u00b7 Playoff' : ''))))));
       html += '<option value="' + escapeHtml(keys[i]) + '">' + escapeHtml(label) + '</option>';
     }
     select.innerHTML = html;
@@ -2350,7 +2749,13 @@
   function viewSelectedDay() {
     var select = document.getElementById('daysSelect');
     if (!select || !select.value) return;
-    openDay(select.value);
+    openDay(select.value, true);
+  }
+
+  function loadSelectedDayForEditing() {
+    var select = document.getElementById('daysSelect');
+    if (!select || !select.value) return;
+    openDay(select.value, false);
   }
 
   function deleteSelectedDay() {
@@ -2369,16 +2774,25 @@
         } catch (e) {}
       }
       serverSyncUp();
-      renderMainMenu();
+      renderHistoryPage();
     });
   }
 
-  function openDay(dateKey) {
+  // PERINI_VIEW_ONLY: when true, a saved day is being displayed as a
+  // read-only snapshot (from History > View). Score-entry taps are ignored
+  // and nothing gets written back to localStorage while it's on, so
+  // looking at an old day can never overwrite it or the live tournament.
+  var PERINI_VIEW_ONLY = false;
+  var PERINI_VIEWING_DATEKEY = null;
+
+  function openDay(dateKey, viewOnly) {
     var days = getDays();
     var snap = days[dateKey];
     if (!snap) { appAlert('Could not find that saved day.'); return; }
 
     function loadIt() {
+      PERINI_VIEW_ONLY = !!viewOnly;
+      PERINI_VIEWING_DATEKEY = viewOnly ? dateKey : null;
       if (snap.gameType === 'partner8') {
         activeDateKey8 = dateKey;
         players8 = snap.players;
@@ -2415,6 +2829,14 @@
         gamesFu = snap.games;
         showFusionUI();
         goToFuPage();
+      } else if (snap.gameType === 'playoff12') {
+        activeDateKeyP7 = dateKey;
+        teamsP7 = snap.teams;
+        gamesP7 = snap.games;
+        seedOrderP7 = snap.seedOrder || null;
+        modeP7 = null;
+        showPlayoffP7UI();
+        goToP7Page();
       } else {
         activeDateKey = dateKey;
         teams = snap.teams;
@@ -2423,14 +2845,73 @@
         showTournamentUI();
         goToAppPage();
       }
+      if (viewOnly) {
+        // Keep the History page visible and show the snapshot directly
+        // beneath it, instead of navigating to a separate full screen.
+        document.getElementById('historyPage').className = 'wrap';
+        renderHistoryPage();
+        setTimeout(function () {
+          var banner = document.getElementById('viewOnlyBanner');
+          var bannerH = banner && banner.className.indexOf('hidden') === -1 ? banner.offsetHeight : 0;
+          var target = document.getElementById('daysCard');
+          if (target) {
+            var y = target.getBoundingClientRect().bottom + window.pageYOffset - bannerH - 10;
+            window.scrollTo(0, y < 0 ? 0 : y);
+          }
+        }, 50);
+      }
+      updateViewOnlyBanner();
     }
 
-    var current = getActiveTournament();
-    if (current && current.dateKey !== dateKey) {
-      appConfirm('Viewing "' + dateKey + '" will switch away from today\'s in-progress tournament. Your progress today is saved and you can resume it from the main menu. Continue?', loadIt);
-    } else {
+    if (viewOnly) {
+      // Read-only: never touches the active/resumable tournament, so no
+      // need to warn about switching away from anything in progress.
       loadIt();
+    } else {
+      var current = getActiveTournament();
+      if (current && current.dateKey !== dateKey) {
+        appConfirm('Loading "' + dateKey + '" for editing will switch away from today\'s in-progress tournament. Your progress today is saved and you can resume it from the main menu. Continue?', loadIt);
+      } else {
+        loadIt();
+      }
     }
+  }
+
+  function updateViewOnlyBanner() {
+    var banner = document.getElementById('viewOnlyBanner');
+    if (!banner) return;
+    banner.className = PERINI_VIEW_ONLY ? 'view-only-banner' : 'view-only-banner hidden';
+    // "Start Over" should never be tappable while looking at a read-only
+    // snapshot from History -- hide it entirely rather than just leaving it
+    // disabled-looking, regardless of whether that tournament was finished.
+    if (PERINI_VIEW_ONLY) {
+      var resetIds = ['resetCard', 'resetCard8', 'resetCardTR', 'resetCardRT', 'resetCardCl', 'resetCardFu', 'resetCardP7'];
+      for (var i = 0; i < resetIds.length; i++) {
+        var el = document.getElementById(resetIds[i]);
+        if (el) el.className = 'card hidden';
+      }
+    }
+    // While a saved day is shown as a read-only snapshot beneath the History
+    // page, that page's own "Perini Points" title header and back button are
+    // redundant with History's own header directly above -- hide them to
+    // save space and let the Matchups card sit right under Saved Days.
+    var headerIds = ['appPageHeader', 'prPageHeader', 'trPageHeader', 'rtPageHeader', 'clPageHeader', 'fuPageHeader', 'p7PageHeader'];
+    for (var j = 0; j < headerIds.length; j++) {
+      var h = document.getElementById(headerIds[j]);
+      if (h) h.className = PERINI_VIEW_ONLY ? 'hidden' : '';
+    }
+  }
+
+  function loadViewedDayForEditing() {
+    if (!PERINI_VIEWING_DATEKEY) return;
+    openDay(PERINI_VIEWING_DATEKEY, false);
+  }
+
+  function exitViewOnly() {
+    PERINI_VIEW_ONLY = false;
+    PERINI_VIEWING_DATEKEY = null;
+    updateViewOnlyBanner();
+    goToHistoryPage();
   }
 
   // ================== Setup mode toggle ==================
@@ -2514,8 +2995,8 @@
   // here only takes it out of the dropdown list -- it never touches any
   // scores already saved under that name in a completed day.
   var PERINI_ROSTER = 'periniPoints_roster';
-  var DEFAULT_ROSTER = ['Keaton', 'Phil', 'Kime', 'Corey', 'Caroline', 'Gary', 'Carlos', 'Joe (AC)',
-    'Donovan', 'Jeff', 'John', 'Joe (SB)', 'Joe (P)', 'Mike S', 'Mike G', 'Nico', 'Michael dB', 'Colby'];
+  var DEFAULT_ROSTER = ['Keaton', 'Phil', 'Kime', 'Corey', 'Caroline', 'Gary', 'Carlos', 'Joe (A/C)',
+    'Donovan', 'Jeff', 'John', 'Joe (SnB)', 'Joe (Pol.)', 'Mike S', 'Mike G', 'Nico', 'Michael dB', 'Colby'];
 
   function getRoster() {
     try {
@@ -2579,6 +3060,7 @@
         '</div>' +
         '<input type="text" class="name-manual-input hidden" id="' + prefix + i + '_manual" placeholder="Type a name" ' +
         'onkeydown="handleManualNameKey(event, \'' + prefix + '\', ' + i + ', ' + count + ', \'' + (dupNoteId || '') + '\')" ' +
+        'oninput="scheduleManualNameCheck(\'' + prefix + '\', ' + i + ', ' + count + ', \'' + (dupNoteId || '') + '\')" ' +
         'onblur="commitManualName(\'' + prefix + '\', ' + i + ', ' + count + ', \'' + (dupNoteId || '') + '\')">' +
         '</div>';
       // stash the intended default so refreshNameGrid can select it below
@@ -2637,6 +3119,7 @@
     var input = document.getElementById(prefix + i + '_manual');
     input.className = 'name-manual-input';
     input.value = '';
+    input.placeholder = 'Type a name';
     setTimeout(function () { input.focus(); }, 50);
   }
 
@@ -2651,16 +3134,138 @@
     }
   }
 
-  function commitManualName(prefix, i, count, dupNoteId) {
-    var input = document.getElementById(prefix + i + '_manual');
-    var val = input.value.trim();
-    if (val) {
-      addToRoster(val);
-      window['__nameGridDefault_' + prefix + i] = '';
-      var sel = document.getElementById(prefix + i);
-      sel.innerHTML = '<option value="' + escapeHtml(val) + '" selected>' + escapeHtml(val) + '</option>';
-      sel.value = val;
+  // ================== Duplicate-name check against saved history ==================
+  // Looks through every saved day's player/team data for names that match
+  // (case-insensitively) whatever text is passed in, so a manually-typed
+  // name that already has games logged under it can be flagged before it's
+  // added -- important so two different "John"s don't end up sharing one
+  // stats history down the line.
+  function addNameCandidate(str, set) {
+    if (!str || typeof str !== 'string') return;
+    var parts = str.indexOf(' / ') !== -1 ? str.split(' / ') : [str];
+    for (var i = 0; i < parts.length; i++) {
+      var nm = parts[i].trim();
+      if (nm) set[nm.toLowerCase()] = nm;
     }
+  }
+
+  function collectNamesFromValue(val, set) {
+    if (!val) return;
+    if (typeof val === 'string') {
+      addNameCandidate(val, set);
+    } else if (val instanceof Array) {
+      for (var i = 0; i < val.length; i++) collectNamesFromValue(val[i], set);
+    } else if (typeof val === 'object') {
+      for (var k in val) {
+        if (val.hasOwnProperty(k) && typeof val[k] === 'string') addNameCandidate(val[k], set);
+      }
+    }
+  }
+
+  function collectHistoryNames() {
+    var days = getDays();
+    var set = {};
+    for (var key in days) {
+      if (!days.hasOwnProperty(key)) continue;
+      var snap = days[key];
+      collectNamesFromValue(snap.players, set);
+      collectNamesFromValue(snap.teams, set);
+      collectNamesFromValue(snap.groupA, set);
+      collectNamesFromValue(snap.groupB, set);
+      collectNamesFromValue(snap.team1, set);
+      collectNamesFromValue(snap.team2, set);
+    }
+    return set;
+  }
+
+  function findHistoryNameMatch(name) {
+    var set = collectHistoryNames();
+    var lc = (name || '').trim().toLowerCase();
+    return set.hasOwnProperty(lc) ? set[lc] : null;
+  }
+
+  // Runs the history duplicate-name check and, if there's a match, shows the
+  // "Same Person / Different Person" prompt. Shared by commitManualName
+  // (on blur/Enter) and the debounced oninput check below, so the check
+  // re-runs fresh against whatever text is currently in the field, however
+  // it's triggered -- not just once per field.
+  var manualNameModalOpen = false;
+  function checkManualNameAgainstHistory(prefix, i, count, dupNoteId, onNoMatch) {
+    if (manualNameModalOpen) return;
+    var input = document.getElementById(prefix + i + '_manual');
+    if (!input) return;
+    var val = input.value.trim();
+    if (!val) { if (onNoMatch) onNoMatch(); return; }
+
+    var existing = findHistoryNameMatch(val);
+    if (existing) {
+      manualNameModalOpen = true;
+      modalShow('A player named "' + existing + '" already has games saved in your history. Is this the same ' + existing + ', or a different person?', {
+        showCancel: true,
+        okLabel: 'Same Person',
+        cancelLabel: 'Different Person',
+        onOk: function () { manualNameModalOpen = false; finishManualName(prefix, i, count, dupNoteId, existing); },
+        onCancel: function () {
+          manualNameModalOpen = false;
+          // Keep them in manual-entry mode so they can type something that
+          // distinguishes this person from the existing one. Clearing the
+          // text here also means the very next character they type will
+          // schedule a fresh check via scheduleManualNameCheck below --
+          // rather than only re-checking the next time the field loses
+          // focus -- so a second existing name gets caught right away too.
+          var freshInput = document.getElementById(prefix + i + '_manual');
+          if (freshInput) {
+            freshInput.value = '';
+            freshInput.placeholder = 'Enter a unique name, e.g. "' + existing + ' S"';
+            setTimeout(function () { freshInput.focus(); }, 50);
+          }
+        }
+      });
+      return;
+    }
+    if (onNoMatch) onNoMatch();
+  }
+
+  var manualNameCheckTimer = null;
+  // Debounced re-check as the person types, so a name that matches history
+  // gets flagged as soon as they pause typing, rather than only once when
+  // the field finally loses focus.
+  function scheduleManualNameCheck(prefix, i, count, dupNoteId) {
+    clearTimeout(manualNameCheckTimer);
+    manualNameCheckTimer = setTimeout(function () {
+      var input = document.getElementById(prefix + i + '_manual');
+      // Only auto-prompt while they're still actively editing this field.
+      if (input && document.activeElement === input) {
+        checkManualNameAgainstHistory(prefix, i, count, dupNoteId);
+      }
+    }, 600);
+  }
+
+  function commitManualName(prefix, i, count, dupNoteId) {
+    clearTimeout(manualNameCheckTimer);
+    var input = document.getElementById(prefix + i + '_manual');
+    // If the debounced check above already committed (or is mid-prompt for)
+    // this field, there's nothing left to commit here.
+    if (!input || input.className.indexOf('hidden') !== -1) return;
+    var val = input.value.trim();
+    if (!val) {
+      input.className = 'name-manual-input hidden';
+      document.getElementById(prefix + i + '_row').className = 'name-field-row';
+      refreshNameGrid(prefix, count, dupNoteId);
+      return;
+    }
+    checkManualNameAgainstHistory(prefix, i, count, dupNoteId, function () {
+      finishManualName(prefix, i, count, dupNoteId, val);
+    });
+  }
+
+  function finishManualName(prefix, i, count, dupNoteId, val) {
+    addToRoster(val);
+    window['__nameGridDefault_' + prefix + i] = '';
+    var sel = document.getElementById(prefix + i);
+    sel.innerHTML = '<option value="' + escapeHtml(val) + '" selected>' + escapeHtml(val) + '</option>';
+    sel.value = val;
+    var input = document.getElementById(prefix + i + '_manual');
     input.className = 'name-manual-input hidden';
     document.getElementById(prefix + i + '_row').className = 'name-field-row';
     refreshNameGrid(prefix, count, dupNoteId);
@@ -2778,6 +3383,9 @@
       html += '<div class="pair-line">Team ' + (q + 1) + ': ' + escapeHtml(pairs[q]) + '</div>';
     }
     box.innerHTML = html;
+    // Scroll the newly-added teams list into view -- otherwise it loads
+    // off the bottom of the screen below the fold.
+    setTimeout(function () { window.scrollTo(0, document.body.scrollHeight); }, 0);
   }
 
   // ================== Partner Round Robin (8 players) setup ==================
@@ -2883,7 +3491,6 @@
             '<span class="matchline">' + escapeHtml(firstNameOnlyPair(g.t1)) + '</span>' +
             '<span class="vs-sep">vs</span>' +
             '<span class="matchline">' + escapeHtml(firstNameOnlyPair(g.t2)) + '</span>' +
-            '<span class="enterhint">tap to enter</span>' +
             '</button></td>';
         }
       }
@@ -2941,6 +3548,7 @@
   var activeField8 = 'top';
 
   function openEntry8(i) {
+    if (PERINI_VIEW_ONLY) return;
     activeGameIdx8 = i;
     activeField8 = 'top';
     var g = games8[i];
@@ -3386,7 +3994,6 @@
             '<span class="matchline"><span class="team1-name">' + escapeHtml(firstNameOnlyPair(g.t1)) + '</span></span>' +
             '<span class="vs-sep">vs</span>' +
             '<span class="matchline"><span class="team2-name">' + escapeHtml(firstNameOnlyPair(g.t2)) + '</span></span>' +
-            '<span class="enterhint">tap to enter</span>' +
             '</button></td>';
         }
       }
@@ -3444,6 +4051,7 @@
   var activeFieldTR = 'top';
 
   function openEntryTR(i) {
+    if (PERINI_VIEW_ONLY) return;
     var g = gamesTR[i];
     if (!g || g.t1 === null || g.t2 === null) {
       appAlert('Game 7 unlocks once Games 1-6 are complete.');
@@ -3545,20 +4153,29 @@
     if (activeGameIdxTR === null) return;
     var vTop = document.getElementById('entryTopTR').value;
     var vSide = document.getElementById('entrySideTR').value;
+    var g = gamesTR[activeGameIdxTR];
+    var wasRoundLE5 = g.round <= 5;
 
     if (vTop === '' && vSide === '') {
-      gamesTR[activeGameIdxTR].s1 = null;
-      gamesTR[activeGameIdxTR].s2 = null;
-      gamesTR[activeGameIdxTR].rawS1 = null;
-      gamesTR[activeGameIdxTR].rawS2 = null;
-      gamesTR[activeGameIdxTR].entered = false;
-      activeGameIdxTR = null;
-      document.getElementById('entryPanelTR').className = 'entry-panel hidden';
-      resetGame7IfIncompleteTR();
-      renderScheduleTR();
-      renderScoreLogTR();
-      renderStandingsTR();
-      autosaveCurrentTR();
+      var clearCommitTR = function () {
+        g.s1 = null;
+        g.s2 = null;
+        g.rawS1 = null;
+        g.rawS2 = null;
+        g.entered = false;
+        activeGameIdxTR = null;
+        document.getElementById('entryPanelTR').className = 'entry-panel hidden';
+        resetGame7IfIncompleteTR();
+        renderScheduleTR();
+        renderScoreLogTR();
+        renderStandingsTR();
+        autosaveCurrentTR();
+      };
+      if (g.entered && wasRoundLE5 && downstreamBuiltTR()) {
+        appConfirm('Are you sure you want to clear this score? It will affect the Game 7 matchups already set up from it, and will erase any scores already entered there.', clearCommitTR);
+        return;
+      }
+      clearCommitTR();
       return;
     }
 
@@ -3585,19 +4202,29 @@
       return;
     }
 
-    var adj = adjustGameScore(nTop, nSide);
-    gamesTR[activeGameIdxTR].s1 = adj.s1;
-    gamesTR[activeGameIdxTR].s2 = adj.s2;
-    gamesTR[activeGameIdxTR].rawS1 = nTop;
-    gamesTR[activeGameIdxTR].rawS2 = nSide;
-    gamesTR[activeGameIdxTR].entered = true;
-    activeGameIdxTR = null;
-    document.getElementById('entryPanelTR').className = 'entry-panel hidden';
-    renderScheduleTR();
-    renderScoreLogTR();
-    renderStandingsTR();
-    autosaveCurrentTR();
-    maybeBuildGame7TR();
+    var wasAlreadyEntered = g.entered;
+
+    var saveCommitTR = function () {
+      var adj = adjustGameScore(nTop, nSide);
+      g.s1 = adj.s1;
+      g.s2 = adj.s2;
+      g.rawS1 = nTop;
+      g.rawS2 = nSide;
+      g.entered = true;
+      activeGameIdxTR = null;
+      document.getElementById('entryPanelTR').className = 'entry-panel hidden';
+      renderScheduleTR();
+      renderScoreLogTR();
+      renderStandingsTR();
+      autosaveCurrentTR();
+      if (wasRoundLE5) maybeBuildGame7TR();
+    };
+
+    if (wasAlreadyEntered && wasRoundLE5 && downstreamBuiltTR()) {
+      appConfirm('Are you sure you want to change this score? It will affect the Game 7 matchups already set up from it, and will erase any scores already entered there.', saveCommitTR);
+      return;
+    }
+    saveCommitTR();
   }
 
   // ================== Team Rotation Game 7 (winners/losers showdown) ==================
@@ -3648,6 +4275,17 @@
     }
   }
 
+  // True if Game 7 has already been set up (matchups assigned or scored)
+  // from the round 1-5 results -- used to decide whether to warn before
+  // saving a correction to one of those games.
+  function downstreamBuiltTR() {
+    for (var i = 0; i < gamesTR.length; i++) {
+      var g = gamesTR[i];
+      if (g.round === 6 && (g.t1 || g.entered)) return true;
+    }
+    return false;
+  }
+
   function maybeBuildGame7TR() {
     for (var i = 0; i < gamesTR.length; i++) {
       if (gamesTR[i].round <= 5 && !gamesTR[i].entered) return;
@@ -3659,6 +4297,10 @@
         for (var i = 0; i < gamesTR.length; i++) {
           var g = gamesTR[i];
           if (g.round !== 6) continue;
+          // Reassigning matchups here -- clear out any score that was
+          // already entered against the old matchup so it doesn't get
+          // misattributed to the new one.
+          g.s1 = null; g.s2 = null; g.rawS1 = null; g.rawS2 = null; g.entered = false;
           if (g.court === 0) { g.t1 = [order1[0], order1[1]]; g.t2 = [order2[0], order2[1]]; }
           else { g.t1 = [order1[2], order1[3]]; g.t2 = [order2[2], order2[3]]; }
         }
@@ -3908,7 +4550,6 @@
             '<span class="matchline">' + escapeHtml(firstNameOnlyPairRT(g.t1)) + '</span>' +
             '<span class="vs-sep">vs</span>' +
             '<span class="matchline">' + escapeHtml(firstNameOnlyPairRT(g.t2)) + '</span>' +
-            '<span class="enterhint">tap to enter</span>' +
             '</button></td>';
         }
       }
@@ -3966,6 +4607,7 @@
   var activeFieldRT = 'top';
 
   function openEntryRT(i) {
+    if (PERINI_VIEW_ONLY) return;
     activeGameIdxRT = i;
     activeFieldRT = 'top';
     var g = gamesRT[i];
@@ -4371,7 +5013,6 @@
             '<span class="matchline">' + escapeHtml(firstNameOnlyPair(g.t1)) + '</span>' +
             '<span class="vs-sep">vs</span>' +
             '<span class="matchline">' + escapeHtml(firstNameOnlyPair(g.t2)) + '</span>' +
-            '<span class="enterhint">tap to enter</span>' +
             '</button></td>';
         }
       }
@@ -4424,6 +5065,7 @@
   }
 
   function openEntryCl(i) {
+    if (PERINI_VIEW_ONLY) return;
     var g = gamesCl[i];
     if (!g || !g.t1) return; // TBD cell, not yet scheduled
 
@@ -4524,24 +5166,31 @@
     var vTop = document.getElementById('entryTopCl').value;
     var vSide = document.getElementById('entrySideCl').value;
     var g = gamesCl[activeGameIdxCl];
+    var wasFirstPhase = g.round <= 2;
 
     if (vTop === '' && vSide === '') {
-      var wasFirstPhase = g.round <= 2;
-      g.s1 = null;
-      g.s2 = null;
-      g.rawS1 = null;
-      g.rawS2 = null;
-      g.entered = false;
-      activeGameIdxCl = null;
-      document.getElementById('entryPanelCl').className = 'entry-panel hidden';
-      // If an earlier (games 1-3) score gets cleared after games 4-7 were
-      // already built off of it, wipe games 4-7 back to TBD so they can be
-      // rebuilt fresh once games 1-3 are complete again.
-      if (wasFirstPhase) resetBracketGamesCl();
-      renderScheduleCl();
-      renderScoreLogCl();
-      renderStandingsCl();
-      autosaveCurrentCl();
+      var clearCommitCl = function () {
+        g.s1 = null;
+        g.s2 = null;
+        g.rawS1 = null;
+        g.rawS2 = null;
+        g.entered = false;
+        activeGameIdxCl = null;
+        document.getElementById('entryPanelCl').className = 'entry-panel hidden';
+        // If an earlier (games 1-3) score gets cleared after games 4-7 were
+        // already built off of it, wipe games 4-7 back to TBD so they can be
+        // rebuilt fresh once games 1-3 are complete again.
+        if (wasFirstPhase) resetBracketGamesCl();
+        renderScheduleCl();
+        renderScoreLogCl();
+        renderStandingsCl();
+        autosaveCurrentCl();
+      };
+      if (g.entered && wasFirstPhase && downstreamBuiltCl()) {
+        appConfirm('Are you sure you want to clear this score? It will affect the games already set up from it, and will erase any scores already entered in those games.', clearCommitCl);
+        return;
+      }
+      clearCommitCl();
       return;
     }
 
@@ -4568,29 +5217,49 @@
       return;
     }
 
-    var adj = adjustGameScore(nTop, nSide);
-    g.s1 = adj.s1;
-    g.s2 = adj.s2;
-    g.rawS1 = nTop;
-    g.rawS2 = nSide;
-    g.entered = true;
-    var wasFirstPhaseGame = g.round <= 2;
-    activeGameIdxCl = null;
-    document.getElementById('entryPanelCl').className = 'entry-panel hidden';
-    renderScheduleCl();
-    renderScoreLogCl();
-    renderStandingsCl();
-    autosaveCurrentCl();
-    // Only check whether games 1-3 just became complete when a games 1-3
-    // score was the one just saved (avoids re-checking on every game 4-7 save).
-    if (wasFirstPhaseGame) {
-      // If the bracket (games 4-7) was already built off the old totals,
-      // an edit to a games 1-3 score can change who should be in the
-      // Winners/Losers courts -- so wipe games 4-7 back to TBD and rebuild
-      // them fresh from the updated totals, exactly like clearing does.
-      resetBracketGamesCl();
-      maybeBuildBracketCl();
+    var wasAlreadyEntered = g.entered;
+
+    var saveCommitCl = function () {
+      var adj = adjustGameScore(nTop, nSide);
+      g.s1 = adj.s1;
+      g.s2 = adj.s2;
+      g.rawS1 = nTop;
+      g.rawS2 = nSide;
+      g.entered = true;
+      activeGameIdxCl = null;
+      document.getElementById('entryPanelCl').className = 'entry-panel hidden';
+      renderScheduleCl();
+      renderScoreLogCl();
+      renderStandingsCl();
+      autosaveCurrentCl();
+      // Only check whether games 1-3 just became complete when a games 1-3
+      // score was the one just saved (avoids re-checking on every game 4-7 save).
+      if (wasFirstPhase) {
+        // If the bracket (games 4-7) was already built off the old totals,
+        // an edit to a games 1-3 score can change who should be in the
+        // Winners/Losers courts -- so wipe games 4-7 back to TBD and rebuild
+        // them fresh from the updated totals, exactly like clearing does.
+        resetBracketGamesCl();
+        maybeBuildBracketCl();
+      }
+    };
+
+    if (wasAlreadyEntered && wasFirstPhase && downstreamBuiltCl()) {
+      appConfirm('Are you sure you want to change this score? It will affect the games already set up from it, and will erase any scores already entered in those games.', saveCommitCl);
+      return;
     }
+    saveCommitCl();
+  }
+
+  // True if games 4-7 have already been set up (matchups assigned or
+  // scored) from the games 1-3 totals -- used to decide whether to warn
+  // before saving a correction to one of those games.
+  function downstreamBuiltCl() {
+    for (var i = 0; i < gamesCl.length; i++) {
+      var g = gamesCl[i];
+      if (g.round >= 3 && (g.t1 || g.entered)) return true;
+    }
+    return false;
   }
 
   // Wipes games 4-7 back to TBD placeholders (used when a games 1-3 score
@@ -4691,10 +5360,10 @@
   // ---------- Tie-break overlay ----------
   var tieState = null; // { names, needed, onDone, selected }
 
-  function tieBreakPrompt(names, needed, label, onDone) {
+  function tieBreakPrompt(names, needed, label, onDone, customMsg) {
     tieState = { names: names.slice(), needed: needed, onDone: onDone, selected: [] };
-    var msg = 'Tie for 2nd place in ' + label + ' \u2014 select ' + needed +
-      (needed === 1 ? ' player' : ' players') + ' to move up to the Winners Court:';
+    var msg = customMsg || ('Tie for 2nd place in ' + label + ' \u2014 select ' + needed +
+      (needed === 1 ? ' player' : ' players') + ' to move up to the Winners Court:');
     document.getElementById('tieMsg').textContent = msg;
     renderTieChoices();
     document.getElementById('tieOverlay').className = 'modal-overlay';
@@ -5010,7 +5679,6 @@
             '<span class="matchline">' + escapeHtml(firstNameOnlyPair(g.t1)) + '</span>' +
             '<span class="vs-sep">vs</span>' +
             '<span class="matchline">' + escapeHtml(firstNameOnlyPair(g.t2)) + '</span>' +
-            '<span class="enterhint">tap to enter</span>' +
             '</button></td>';
         }
       }
@@ -5063,6 +5731,7 @@
   }
 
   function openEntryFu(i) {
+    if (PERINI_VIEW_ONLY) return;
     var g = gamesFu[i];
     if (!g || !g.t1) return;
 
@@ -5432,6 +6101,9 @@
     activeDateKey = dateKeyFor();
     showTournamentUI();
     autosaveCurrent();
+    // Land at the top of the schedule page instead of wherever the setup
+    // form happened to be scrolled to.
+    setTimeout(function () { window.scrollTo(0, 0); }, 0);
   }
 
   // ================== Round / court grid rendering ==================
@@ -5475,16 +6147,15 @@
         if (isDone) {
           var r1 = computePoints(g.s1, g.s2);
           html += '<td class="' + cellClass + '"><button class="cellbtn" onclick="openEntry(' + gi + ')">' +
-            '<span class="matchline">' + escapeHtml(firstNameOnly(g.t1)) + ' <span class="score">' + g.s1 + '</span> <span class="pts">(' + r1.pts1 + ' pts)</span></span>' +
+            '<span class="matchline">' + escapeHtml(firstNameOnly(g.t1)) + ' - <span class="score">' + g.s1 + '</span> <span class="pts">(' + r1.pts1 + ' pts)</span></span>' +
             '<span class="vs-sep">vs</span>' +
-            '<span class="matchline">' + escapeHtml(firstNameOnly(g.t2)) + ' <span class="score">' + g.s2 + '</span> <span class="pts">(' + r1.pts2 + ' pts)</span></span>' +
+            '<span class="matchline">' + escapeHtml(firstNameOnly(g.t2)) + ' - <span class="score">' + g.s2 + '</span> <span class="pts">(' + r1.pts2 + ' pts)</span></span>' +
             '</button></td>';
         } else {
           html += '<td class="' + cellClass + '"><button class="cellbtn" onclick="openEntry(' + gi + ')">' +
             '<span class="matchline">' + escapeHtml(firstNameOnly(g.t1)) + '</span>' +
             '<span class="vs-sep">vs</span>' +
             '<span class="matchline">' + escapeHtml(firstNameOnly(g.t2)) + '</span>' +
-            '<span class="enterhint">tap to enter</span>' +
             '</button></td>';
         }
       }
@@ -5501,6 +6172,7 @@
   var activeField = 'top';
 
   function openEntry(i) {
+    if (PERINI_VIEW_ONLY) return;
     activeGameIdx = i;
     activeField = 'top';
     var g = games[i];
@@ -5759,6 +6431,890 @@
     });
   }
 
+  // ================== Playoff Scoring (12 players, 7 games + bracket) ==================
+  function showModeP7(m) {
+    modeP7 = m;
+    document.getElementById('playerModeP7').className = (m === 'players') ? '' : 'hidden';
+    document.getElementById('teamModeP7').className = (m === 'teams') ? '' : 'hidden';
+    if (m === 'players' && document.getElementById('playerInputsP7').children.length === 0) {
+      buildPlayerInputsP7();
+    }
+    if (m === 'teams' && document.getElementById('teamInputsP7').children.length === 0) {
+      buildTeamInputsP7();
+    }
+  }
+
+  function buildPlayerInputsP7() {
+    buildNameGrid('playerInputsP7', 'p7_', 12, DEFAULT_PLAYERS, 'dupNoteP7');
+  }
+
+  function buildTeamInputsP7() {
+    var box = document.getElementById('teamInputsP7');
+    var html = '';
+    for (var i = 1; i <= 6; i++) {
+      var nextId = (i < 6) ? ('t7_' + (i + 1)) : '';
+      html += '<label>Team ' + i + '</label>' +
+        '<input type="text" id="t7_' + i + '" placeholder="e.g. Mike / Sue" style="margin-bottom:8px;" onkeydown="handleNameEnter(event, \'' + nextId + '\')">';
+    }
+    box.innerHTML = html;
+  }
+
+  function randomPairPlayersP7() {
+    var names = [];
+    for (var i = 1; i <= 12; i++) {
+      var v = document.getElementById('p7_' + i).value.trim();
+      if (v) names.push(v);
+    }
+    if (names.length !== 12) {
+      appAlert('Please fill in all 12 player names first.');
+      return;
+    }
+    if (checkDuplicateNames('p7_', 12, 'dupNoteP7')) {
+      appAlert('Two players have the exact same name. Please make each name unique (e.g. "Mike S" / "Mike G") before continuing.');
+      return;
+    }
+    for (var j = names.length - 1; j > 0; j--) {
+      var k = Math.floor(Math.random() * (j + 1));
+      var tmp = names[j]; names[j] = names[k]; names[k] = tmp;
+    }
+    var pairs = [];
+    for (var p = 0; p < 12; p += 2) {
+      pairs.push(names[p] + ' / ' + names[p + 1]);
+    }
+    teamsP7 = pairs;
+    var box = document.getElementById('pairPreviewP7');
+    var html = '<div class="card-title" style="margin-top:10px;">Teams (tap Generate Schedule to lock in)</div>';
+    for (var q = 0; q < pairs.length; q++) {
+      html += '<div class="pair-line">Team ' + (q + 1) + ': ' + escapeHtml(pairs[q]) + '</div>';
+    }
+    box.innerHTML = html;
+    // Scroll the newly-added teams list into view -- otherwise it loads
+    // off the bottom of the screen below the fold.
+    setTimeout(function () { window.scrollTo(0, document.body.scrollHeight); }, 0);
+  }
+
+  function generateScheduleP7() {
+    if (modeP7 === 'teams') {
+      teamsP7 = [];
+      for (var i = 1; i <= 6; i++) {
+        var v = document.getElementById('t7_' + i).value.trim();
+        if (!v) v = 'Team ' + i;
+        teamsP7.push(v);
+      }
+    }
+    if (!teamsP7 || teamsP7.length !== 6) {
+      appAlert('Please set up 6 teams first (either pair 12 players, or type 6 team names).');
+      return;
+    }
+
+    var schedule = buildRoundRobinCourts();
+    gamesP7 = [];
+    for (var r = 0; r < schedule.length; r++) {
+      for (var c = 0; c < schedule[r].length; c++) {
+        var m = schedule[r][c];
+        gamesP7.push({
+          t1: teamsP7[m.a], t2: teamsP7[m.b],
+          s1: null, s2: null, entered: false,
+          round: r, court: m.court
+        });
+      }
+    }
+    // Games 6 & 7 (playoff bracket) are left blank until seeding is resolved.
+    for (var r6 = 5; r6 <= 6; r6++) {
+      for (var c6 = 0; c6 < 3; c6++) {
+        gamesP7.push({ t1: null, t2: null, s1: null, s2: null, entered: false, round: r6, court: c6, label: '' });
+      }
+    }
+
+    seedOrderP7 = null;
+    activeDateKeyP7 = dateKeyFor() + '-p7';
+    showPlayoffP7UI();
+    autosaveCurrentP7();
+    // Land at the top of the schedule page instead of wherever the setup
+    // form happened to be scrolled to.
+    setTimeout(function () { window.scrollTo(0, 0); }, 0);
+  }
+
+  function showPlayoffP7UI() {
+    document.getElementById('setupCardP7').className = 'card hidden';
+    document.getElementById('scheduleCardP7').className = 'card';
+    document.getElementById('standingsCardP7').className = 'card';
+    document.getElementById('resetCardP7').className = 'card';
+    renderScheduleP7();
+    renderStandingsP7();
+  }
+
+  function gameAtP7(round, court) {
+    for (var i = 0; i < gamesP7.length; i++) {
+      if (gamesP7[i].round === round && gamesP7[i].court === court) return i;
+    }
+    return -1;
+  }
+
+  var CAP_P7 = 8;
+
+  function computePointsP7(a, b) {
+    var diff = a - b;
+    var p1 = diff, p2 = -diff;
+    var capped1 = false, capped2 = false;
+    if (p1 > CAP_P7) { p1 = CAP_P7; capped1 = true; }
+    if (p1 < -CAP_P7) { p1 = -CAP_P7; capped1 = true; }
+    if (p2 > CAP_P7) { p2 = CAP_P7; capped2 = true; }
+    if (p2 < -CAP_P7) { p2 = -CAP_P7; capped2 = true; }
+    return { pts1: p1, pts2: p2, capped1: capped1, capped2: capped2 };
+  }
+
+  function fmtPtsP7(n) {
+    var r = Math.round(n * 10) / 10;
+    var s = (r % 1 === 0) ? String(Math.abs(r)) : Math.abs(r).toFixed(1);
+    return (r < 0 ? '-' : (r > 0 ? '+' : '')) + s;
+  }
+
+  // Builds the "(+5 pts)" / "(-8 pts, cap)" parenthetical shown next to a score.
+  function ptsParenP7(pts, capped) {
+    return '(' + fmtPtsP7(pts) + ' pts' + (capped ? ', cap' : '') + ')';
+  }
+
+  // ---------- Round-robin (games 1-5) grid rendering ----------
+  function renderScheduleP7() {
+    var box = document.getElementById('gridWrapP7');
+    var numRounds = 5, numCourts = 3;
+    var html = '<table class="grid">';
+
+    html += '<tr><th class="corner"></th>';
+    for (var c = 0; c < numCourts; c++) {
+      html += '<th class="colhead">Court ' + (c + 1) + '</th>';
+    }
+    html += '</tr>';
+
+    for (var r = 0; r < numRounds; r++) {
+      html += '<tr>';
+      html += '<th class="rowhead">Game ' + (r + 1) + '</th>';
+      for (var c2 = 0; c2 < numCourts; c2++) {
+        var gi = gameAtP7(r, c2);
+        if (gi === -1) { html += '<td class="cell"></td>'; continue; }
+        var g = gamesP7[gi];
+        var isDone = g.entered;
+        var selClass = (activeGameIdxP7 === gi) ? ' selected-cell' : '';
+        var cellClass = (isDone ? 'cell done' : 'cell') + selClass;
+
+        if (isDone) {
+          var r1 = computePointsP7(g.s1, g.s2);
+          html += '<td class="' + cellClass + '"><button class="cellbtn" onclick="openEntryP7(' + gi + ')">' +
+            '<span class="matchline">' + escapeHtml(firstNameOnly(g.t1)) + ' - <span class="score">' + g.s1 + '</span> <span class="pts">' + ptsParenP7(r1.pts1, r1.capped1) + '</span></span>' +
+            '<span class="vs-sep">vs</span>' +
+            '<span class="matchline">' + escapeHtml(firstNameOnly(g.t2)) + ' - <span class="score">' + g.s2 + '</span> <span class="pts">' + ptsParenP7(r1.pts2, r1.capped2) + '</span></span>' +
+            '</button></td>';
+        } else {
+          html += '<td class="' + cellClass + '"><button class="cellbtn" onclick="openEntryP7(' + gi + ')">' +
+            '<span class="matchline">' + escapeHtml(firstNameOnly(g.t1)) + '</span>' +
+            '<span class="vs-sep">vs</span>' +
+            '<span class="matchline">' + escapeHtml(firstNameOnly(g.t2)) + '</span>' +
+            '</button></td>';
+        }
+      }
+      html += '</tr>';
+    }
+
+    html += '</table>';
+    box.innerHTML = html;
+    autosizeSchedule('gridWrapP7');
+    renderBracketP7();
+  }
+
+  // ---------- Bracket (games 6-7) rendering ----------
+  function bracketBoxHtmlP7(gi, title) {
+    if (gi === -1) return '';
+    var g = gamesP7[gi];
+    var filled = !!(g.t1 && g.t2);
+    var isDone = g.entered;
+    var showSeeds = !(g.round === 6 && g.court === 2); // no seeds for the shuffled fun match
+    var cls = 'bracket-box' + (isDone ? ' done' : '') + (!filled ? ' tbd' : '') + (activeGameIdxP7 === gi ? ' selected-cell' : '');
+
+    function nameLine(team, seed) {
+      var label = escapeHtml(firstNameOnly(team));
+      if (showSeeds && seed) label = '<span class="bracket-seed">#' + seed + '</span> ' + label;
+      return label;
+    }
+
+    // The Game 7 fun match uses new, reshuffled partners, so its point
+    // differential isn't part of anyone's real point totals -- show the
+    // score without a points parenthetical.
+    var isFunMatch = (g.round === 6 && g.court === 2);
+
+    var inner;
+    if (!g.t1 && !g.t2) {
+      inner = '<div class="bracket-tbd">TBD</div>';
+    } else if (isDone) {
+      var pts1Html = '', pts2Html = '';
+      if (!isFunMatch) {
+        var r = computePointsP7(g.s1, g.s2);
+        pts1Html = ' <span class="pts">' + ptsParenP7(r.pts1, r.capped1) + '</span>';
+        pts2Html = ' <span class="pts">' + ptsParenP7(r.pts2, r.capped2) + '</span>';
+      }
+      inner = '<div class="bracket-line">' + nameLine(g.t1, g.seed1) + ' - <span class="score">' + g.s1 + '</span>' + pts1Html + '</div>' +
+        '<div class="bracket-vs">vs</div>' +
+        '<div class="bracket-line">' + nameLine(g.t2, g.seed2) + ' - <span class="score">' + g.s2 + '</span>' + pts2Html + '</div>';
+    } else {
+      inner = '<div class="bracket-line">' + (g.t1 ? nameLine(g.t1, g.seed1) : '<span class="bracket-tbd-inline">TBD</span>') + '</div>' +
+        '<div class="bracket-vs">vs</div>' +
+        '<div class="bracket-line">' + (g.t2 ? nameLine(g.t2, g.seed2) : '<span class="bracket-tbd-inline">TBD</span>') + '</div>';
+    }
+    var attrs = filled ? ' onclick="openEntryP7(' + gi + ')"' : ' disabled';
+    var titleHtml = title ? ('<div class="bracket-box-title">' + escapeHtml(title) + '</div>') : '';
+    return '<button class="' + cls + '"' + attrs + '>' +
+      titleHtml + inner + '</button>';
+  }
+
+  function renderBracketP7() {
+    var box = document.getElementById('bracketWrapP7');
+    if (!box) return;
+    if (!seedOrderP7) {
+      box.innerHTML = '<div class="empty-note">Playoff matchups appear here once all 5 seeding games are entered.</div>';
+      return;
+    }
+    var semi1 = gameAtP7(5, 0), semi2 = gameAtP7(5, 1), consol = gameAtP7(5, 2);
+    var champ = gameAtP7(6, 0), third = gameAtP7(6, 1), fun = gameAtP7(6, 2);
+
+    var seedNote = '<div class="empty-note" style="margin-bottom:10px;">Seeds: 1. ' + escapeHtml(firstNameOnly(seedOrderP7[0])) +
+      ' &middot; 2. ' + escapeHtml(firstNameOnly(seedOrderP7[1])) +
+      ' &middot; 3. ' + escapeHtml(firstNameOnly(seedOrderP7[2])) +
+      ' &middot; 4. ' + escapeHtml(firstNameOnly(seedOrderP7[3])) +
+      ' &middot; 5. ' + escapeHtml(firstNameOnly(seedOrderP7[4])) +
+      ' &middot; 6. ' + escapeHtml(firstNameOnly(seedOrderP7[5])) + '</div>';
+
+    var html = seedNote + '<div class="bracket-wrap">';
+    html += '<div class="bracket-col">';
+    html += '<div class="bracket-round-title">Game 6 &middot; Semifinals</div>';
+    html += bracketBoxHtmlP7(semi1, '');
+    html += bracketBoxHtmlP7(semi2, '');
+    html += '</div>';
+    html += '<div class="bracket-col">';
+    html += '<div class="bracket-round-title">Game 7 &middot; Finals</div>';
+    html += bracketBoxHtmlP7(champ, 'Championship (1st/2nd)');
+    html += bracketBoxHtmlP7(third, '3rd Place Game');
+    html += '</div>';
+    html += '</div>';
+
+    html += '<div class="bracket-wrap" style="margin-top:4px;">';
+    html += '<div class="bracket-col">';
+    html += '<div class="bracket-round-title">Game 6 &middot; 5th/6th Place</div>';
+    html += bracketBoxHtmlP7(consol, '');
+    html += '</div>';
+    html += '<div class="bracket-col">';
+    html += '<div class="bracket-round-title">Game 7 &middot; Fun Match</div>';
+    html += bracketBoxHtmlP7(fun, 'New Partners (for fun)');
+    html += '</div>';
+    html += '</div>';
+
+    box.innerHTML = html;
+  }
+
+  // ---------- Entry panel ----------
+  var activeGameIdxP7 = null;
+  var activeFieldP7 = 'top';
+  var activePanelIdP7 = 'entryPanelP7';
+  var MAX_SCORE_P7 = 11;
+
+  function openEntryP7(i) {
+    if (PERINI_VIEW_ONLY) return;
+    var g = gamesP7[i];
+    if (!g || !g.t1 || !g.t2) return; // playoff slot not filled in yet
+    activeGameIdxP7 = i;
+    activeFieldP7 = 'top';
+    // Seeding games (1-5) use the panel next to the seeding grid; playoff
+    // games (6-7) use the panel right under the "Playoffs" heading so the
+    // user doesn't have to scroll up to score a bracket game.
+    activePanelIdP7 = (g.round <= 4) ? 'entryPanelP7' : 'entryPanelP7b';
+    var otherId = (activePanelIdP7 === 'entryPanelP7') ? 'entryPanelP7b' : 'entryPanelP7';
+    var otherPanel = document.getElementById(otherId);
+    if (otherPanel) { otherPanel.className = 'entry-panel hidden'; otherPanel.innerHTML = ''; }
+
+    var panel = document.getElementById(activePanelIdP7);
+    panel.className = 'entry-panel';
+
+    var html = '<div class="score-row">';
+    html += '<div class="score-block"><div class="team-name-label">' + escapeHtml(firstNameOnly(g.t1)) + '</div>' +
+      '<input class="score-input-big" type="text" readonly id="entryTopP7" value="' + (g.s1 !== null ? g.s1 : '') + '" onclick="setActiveFieldP7(\'top\')"></div>';
+    html += '<div class="score-block"><div class="team-name-label">' + escapeHtml(firstNameOnly(g.t2)) + '</div>' +
+      '<input class="score-input-big" type="text" readonly id="entrySideP7" value="' + (g.s2 !== null ? g.s2 : '') + '" onclick="setActiveFieldP7(\'side\')"></div>';
+    html += '</div>';
+
+    html += '<div class="numpad">';
+    var nums = ['1', '2', '3', '4', '5', '6', '7', '8', '9'];
+    for (var n = 0; n < nums.length; n++) {
+      html += '<button class="numbtn" ontouchend="fastTap(event, function(){numpadPressP7(\'' + nums[n] + '\')})" onclick="fastTap(null, function(){numpadPressP7(\'' + nums[n] + '\')})">' + nums[n] + '</button>';
+    }
+    html += '<button class="numbtn clearbtn" ontouchend="fastTap(event, numpadClearP7)" onclick="fastTap(null, numpadClearP7)">C</button>';
+    html += '<button class="numbtn" ontouchend="fastTap(event, function(){numpadPressP7(\'0\')})" onclick="fastTap(null, function(){numpadPressP7(\'0\')})">0</button>';
+    html += '<button class="numbtn clearbtn" ontouchend="fastTap(event, numpadBackP7)" onclick="fastTap(null, numpadBackP7)">&larr;</button>';
+    html += '</div>';
+
+    html += '<div class="btn-panel-row">';
+    html += '<button class="btn btn-primary" onclick="saveEntryP7()">Save Score</button>';
+    html += '<button class="btn btn-secondary" onclick="closeEntryP7()">Cancel</button>';
+    html += '</div>';
+
+    panel.innerHTML = html;
+    setActiveFieldP7('top');
+    renderScheduleP7();
+  }
+
+  function setActiveFieldP7(which) {
+    activeFieldP7 = which;
+    var topInput = document.getElementById('entryTopP7');
+    var sideInput = document.getElementById('entrySideP7');
+    if (topInput) topInput.className = 'score-input-big' + (which === 'top' ? ' active-input' : '');
+    if (sideInput) sideInput.className = 'score-input-big' + (which === 'side' ? ' active-input' : '');
+  }
+
+  function numpadPressP7(digit) {
+    var fieldId = (activeFieldP7 === 'top') ? 'entryTopP7' : 'entrySideP7';
+    var otherFieldId = (activeFieldP7 === 'top') ? 'entrySideP7' : 'entryTopP7';
+    var input = document.getElementById(fieldId);
+    var otherInput = document.getElementById(otherFieldId);
+    if (!input) return;
+
+    var cur = input.value || '';
+    if (cur.length >= 2) return;
+    if (cur.length === 1 && cur !== '1') return;
+
+    var candidate = cur + digit;
+    var candidateNum = parseInt(candidate, 10);
+    if (candidateNum > MAX_SCORE_P7) return;
+
+    input.value = candidate;
+
+    var isFirstDigit = (cur.length === 0);
+    var otherIsEmpty = otherInput && otherInput.value === '';
+
+    if (isFirstDigit && digit === '1') return;
+
+    if (input.value.length >= 1 && otherIsEmpty) {
+      var otherField = (activeFieldP7 === 'top') ? 'side' : 'top';
+      setActiveFieldP7(otherField);
+    }
+  }
+
+  function numpadBackP7() {
+    var input = document.getElementById(activeFieldP7 === 'top' ? 'entryTopP7' : 'entrySideP7');
+    if (!input) return;
+    input.value = input.value.slice(0, -1);
+  }
+
+  function numpadClearP7() {
+    var input = document.getElementById(activeFieldP7 === 'top' ? 'entryTopP7' : 'entrySideP7');
+    if (!input) return;
+    input.value = '';
+  }
+
+  function closeEntryP7() {
+    activeGameIdxP7 = null;
+    document.getElementById(activePanelIdP7).className = 'entry-panel hidden';
+    renderScheduleP7();
+  }
+
+  function resetSingleGameP7(i) {
+    var g = gamesP7[i];
+    g.s1 = null; g.s2 = null; g.entered = false;
+    if (g.round <= 4 && seedOrderP7) { resetPlayoffPhaseP7(); }
+    else if (g.round === 5) {
+      if (g.court === 2) { invalidateGame7FunFromConsolP7(); }
+      else { invalidateGame7FromSemisP7(); }
+    }
+  }
+
+  // True if correcting a game at this round/court would tear down playoff
+  // matchups (and possibly scores) that were already set up from it --
+  // used to decide whether to warn before saving.
+  function downstreamBuiltP7(round, court) {
+    if (round <= 4) return !!seedOrderP7;
+    if (round === 5) {
+      if (court === 2) {
+        var fun = gamesP7[gameAtP7(6, 2)];
+        return !!(fun && (fun.t1 || fun.entered));
+      }
+      var champ = gamesP7[gameAtP7(6, 0)];
+      var third = gamesP7[gameAtP7(6, 1)];
+      return !!((champ && (champ.t1 || champ.entered)) || (third && (third.t1 || third.entered)));
+    }
+    return false;
+  }
+
+  // Wipes the seed and both playoff rounds (used when a seeding-game score
+  // is corrected after the bracket was already built off the old result).
+  function resetPlayoffPhaseP7() {
+    seedOrderP7 = null;
+    for (var i = 0; i < gamesP7.length; i++) {
+      if (gamesP7[i].round >= 5) {
+        gamesP7[i].t1 = null; gamesP7[i].t2 = null; gamesP7[i].s1 = null; gamesP7[i].s2 = null;
+        gamesP7[i].entered = false; gamesP7[i].label = ''; gamesP7[i].seed1 = null; gamesP7[i].seed2 = null;
+      }
+    }
+  }
+
+  // Invalidates the Championship + 3rd Place games (used when either
+  // semifinal is corrected or cleared after they were already relied on)
+  // and re-derives them from whatever semifinal results currently exist.
+  function invalidateGame7FromSemisP7() {
+    var champ = gamesP7[gameAtP7(6, 0)];
+    var third = gamesP7[gameAtP7(6, 1)];
+    if (champ && champ.entered) { champ.s1 = null; champ.s2 = null; champ.entered = false; }
+    if (third && third.entered) { third.s1 = null; third.s2 = null; third.entered = false; }
+    refreshGame7SlotsP7();
+  }
+
+  // Invalidates the Fun Match (used when the 5th/6th place game is
+  // corrected or cleared) and re-derives it from the current result.
+  function invalidateGame7FunFromConsolP7() {
+    var fun = gamesP7[gameAtP7(6, 2)];
+    if (fun) { fun.t1 = null; fun.t2 = null; fun.s1 = null; fun.s2 = null; fun.entered = false; }
+    refreshGame7SlotsP7();
+  }
+
+  function saveEntryP7() {
+    var vTop = document.getElementById('entryTopP7').value;
+    var vSide = document.getElementById('entrySideP7').value;
+    var g = gamesP7[activeGameIdxP7];
+
+    if (vTop === '' && vSide === '') {
+      var clearCommitP7 = function () {
+        resetSingleGameP7(activeGameIdxP7);
+        activeGameIdxP7 = null;
+        document.getElementById(activePanelIdP7).className = 'entry-panel hidden';
+        renderScheduleP7();
+        renderStandingsP7();
+        autosaveCurrentP7();
+      };
+      if (g.entered && downstreamBuiltP7(g.round, g.court)) {
+        appConfirm('Are you sure you want to clear this score? It will affect the playoff games already set up from it, and will erase any scores already entered in those games.', clearCommitP7);
+        return;
+      }
+      clearCommitP7();
+      return;
+    }
+
+    if (vTop === '' || vSide === '') {
+      appAlert('Enter both scores before saving.');
+      return;
+    }
+    var nTop = parseInt(vTop, 10);
+    var nSide = parseInt(vSide, 10);
+    if (isNaN(nTop) || isNaN(nSide) || nTop < 0 || nSide < 0) {
+      appAlert('Scores must be numbers 0 or higher.');
+      return;
+    }
+    if (nTop > 11 || nSide > 11) {
+      appAlert('Games are capped at 11 points.');
+      return;
+    }
+    if (nTop === nSide) {
+      appAlert('Games can\'t end in a tie -- if time expired tied, play one more point and enter the final score (e.g. 9-8).');
+      return;
+    }
+
+    var wasRound = g.round;
+    var wasCourt = g.court;
+    var wasAlreadyEntered = g.entered;
+
+    var saveCommitP7 = function () {
+      g.s1 = nTop; g.s2 = nSide; g.entered = true;
+      activeGameIdxP7 = null;
+      document.getElementById(activePanelIdP7).className = 'entry-panel hidden';
+
+      // If this corrects a score that downstream rounds already relied on,
+      // tear those down so they get rebuilt off the corrected result.
+      if (wasRound <= 4 && seedOrderP7) {
+        resetPlayoffPhaseP7();
+      } else if (wasRound === 5) {
+        if (wasCourt === 2) { invalidateGame7FunFromConsolP7(); }
+        else { invalidateGame7FromSemisP7(); }
+      }
+
+      renderScheduleP7();
+      renderStandingsP7();
+      autosaveCurrentP7();
+      maybeBuildGame6P7();
+    };
+
+    if (wasAlreadyEntered && downstreamBuiltP7(wasRound, wasCourt)) {
+      appConfirm('Are you sure you want to change this score? It will affect the playoff games already set up from it, and will erase any scores already entered in those games.', saveCommitP7);
+      return;
+    }
+    saveCommitP7();
+  }
+
+  // ---------- Seeding + bracket construction ----------
+  function computeTeamStatsSeedP7() {
+    var wins = {}, pts = {};
+    for (var i = 0; i < teamsP7.length; i++) { wins[teamsP7[i]] = 0; pts[teamsP7[i]] = 0; }
+    for (var j = 0; j < gamesP7.length; j++) {
+      var g = gamesP7[j];
+      if (g.round > 4 || !g.entered) continue;
+      var r = computePointsP7(g.s1, g.s2);
+      pts[g.t1] = (pts[g.t1] || 0) + r.pts1;
+      pts[g.t2] = (pts[g.t2] || 0) + r.pts2;
+      if (g.s1 > g.s2) wins[g.t1] = (wins[g.t1] || 0) + 1;
+      else wins[g.t2] = (wins[g.t2] || 0) + 1;
+    }
+    return { wins: wins, pts: pts };
+  }
+
+  // Wins/points totals used for the Final Placement table: seeding games
+  // (1-5) plus every playoff game except the non-scoring Game 7 fun match.
+  function computeFinalStatsP7() {
+    var wins = {}, pts = {};
+    for (var i = 0; i < teamsP7.length; i++) { wins[teamsP7[i]] = 0; pts[teamsP7[i]] = 0; }
+    for (var j = 0; j < gamesP7.length; j++) {
+      var g = gamesP7[j];
+      if (!g.entered) continue;
+      if (g.round === 6 && g.court === 2) continue; // exclude the fun match
+      if (!(g.t1 in wins)) continue; // safety
+      var r = computePointsP7(g.s1, g.s2);
+      pts[g.t1] = (pts[g.t1] || 0) + r.pts1;
+      pts[g.t2] = (pts[g.t2] || 0) + r.pts2;
+      if (g.s1 > g.s2) wins[g.t1] = (wins[g.t1] || 0) + 1;
+      else wins[g.t2] = (wins[g.t2] || 0) + 1;
+    }
+    return { wins: wins, pts: pts };
+  }
+
+  // Tries to resolve a tied group (2 or 3 teams, all equal on wins and
+  // point differential) using head-to-head results from the seeding games
+  // (rounds 1-5) among just those teams. Returns the team that should take
+  // the higher spot, or null if it can't be determined automatically (not
+  // every pair has played, or -- for 3 teams -- each team split 1-1
+  // against the other two, a genuine three-way cycle).
+  function headToHeadWinnerP7(group) {
+    var winsAmong = {};
+    for (var gi = 0; gi < group.length; gi++) winsAmong[group[gi]] = 0;
+    var totalPossiblePairs = group.length * (group.length - 1) / 2;
+    var playedPairs = 0;
+    for (var j = 0; j < gamesP7.length; j++) {
+      var g = gamesP7[j];
+      if (g.round > 4 || !g.entered) continue;
+      if (group.indexOf(g.t1) !== -1 && group.indexOf(g.t2) !== -1) {
+        playedPairs++;
+        var winner = g.s1 > g.s2 ? g.t1 : g.t2;
+        winsAmong[winner]++;
+      }
+    }
+    if (playedPairs < totalPossiblePairs) return null; // not every pair has met
+    if (group.length === 2) {
+      for (var k = 0; k < group.length; k++) {
+        if (winsAmong[group[k]] === 1) return group[k];
+      }
+      return null;
+    }
+    if (group.length === 3) {
+      for (var m = 0; m < group.length; m++) {
+        if (winsAmong[group[m]] === 2) return group[m]; // beat both others
+      }
+      return null; // every team split 1-1 -- true three-way tie
+    }
+    return null; // groups larger than 3 still go to the manual prompt
+  }
+
+  // Given a group of 2 or 3 teams tied on wins and point differential,
+  // returns them fully ordered (higher spot first) using head-to-head
+  // results among just those teams from the seeding games (rounds 1-5),
+  // or null if it can't be fully resolved (not every pair has played yet,
+  // or -- for 3 teams -- a genuine three-way cycle where each team split
+  // 1-1 against the other two). Used for the Standings ranking numbers.
+  function headToHeadOrderP7(group) {
+    if (group.length !== 2 && group.length !== 3) return null;
+    var winsAmong = {};
+    for (var gi = 0; gi < group.length; gi++) winsAmong[group[gi]] = 0;
+    var totalPossiblePairs = group.length * (group.length - 1) / 2;
+    var playedPairs = 0;
+    for (var j = 0; j < gamesP7.length; j++) {
+      var g = gamesP7[j];
+      if (g.round > 4 || !g.entered) continue;
+      if (group.indexOf(g.t1) !== -1 && group.indexOf(g.t2) !== -1) {
+        playedPairs++;
+        var winner = g.s1 > g.s2 ? g.t1 : g.t2;
+        winsAmong[winner]++;
+      }
+    }
+    if (playedPairs < totalPossiblePairs) return null;
+    var sorted = group.slice().sort(function (a, b) { return winsAmong[b] - winsAmong[a]; });
+    for (var k = 0; k < sorted.length - 1; k++) {
+      if (winsAmong[sorted[k]] === winsAmong[sorted[k + 1]]) return null; // not fully resolvable
+    }
+    return sorted;
+  }
+
+  // Ranks all 6 teams by wins then point differential, resolving ties of 2
+  // or 3 teams automatically via head-to-head where possible, and
+  // prompting the user one tie at a time (picking who takes the higher
+  // spot) whenever it can't be determined automatically.
+  function computeSeedOrderP7(callback) {
+    var stats = computeTeamStatsSeedP7();
+    var remaining = teamsP7.slice().sort(function (a, b) {
+      if (stats.wins[b] !== stats.wins[a]) return stats.wins[b] - stats.wins[a];
+      if (stats.pts[b] !== stats.pts[a]) return stats.pts[b] - stats.pts[a];
+      return 0;
+    });
+    var result = [];
+    function step() {
+      if (!remaining.length) { callback(result); return; }
+      var head = remaining[0];
+      var group = [head];
+      for (var i = 1; i < remaining.length; i++) {
+        if (stats.wins[remaining[i]] === stats.wins[head] && stats.pts[remaining[i]] === stats.pts[head]) group.push(remaining[i]);
+      }
+      if (group.length === 1) {
+        result.push(head);
+        remaining.splice(0, 1);
+        step();
+        return;
+      }
+      var placeLabel = 'seed #' + (result.length + 1);
+      var autoWinner = (group.length === 2 || group.length === 3) ? headToHeadWinnerP7(group) : null;
+      if (autoWinner) {
+        result.push(autoWinner);
+        var autoIdx = remaining.indexOf(autoWinner);
+        remaining.splice(autoIdx, 1);
+        step();
+        return;
+      }
+      tieBreakPrompt(group, 1, placeLabel, function (selected) {
+        var winner = selected[0];
+        result.push(winner);
+        var idx = remaining.indexOf(winner);
+        remaining.splice(idx, 1);
+        step();
+      }, 'Tie for ' + placeLabel + ' \u2014 same wins and point differential. Select the team that takes the higher seed:');
+    }
+    step();
+  }
+
+  function maybeBuildGame6P7() {
+    if (seedOrderP7) return; // already built
+    var seedGames = gamesP7.filter(function (g) { return g.round <= 4; });
+    if (seedGames.length !== 15 || !seedGames.every(function (g) { return g.entered; })) return;
+
+    computeSeedOrderP7(function (order) {
+      seedOrderP7 = order;
+      var s1 = order[0], s2 = order[1], s3 = order[2], s4 = order[3], s5 = order[4], s6 = order[5];
+      for (var i = 0; i < gamesP7.length; i++) {
+        var g = gamesP7[i];
+        if (g.round !== 5) continue;
+        if (g.court === 0) { g.t1 = s1; g.seed1 = 1; g.t2 = s4; g.seed2 = 4; g.label = 'Semifinal (1 vs 4)'; }
+        else if (g.court === 1) { g.t1 = s2; g.seed1 = 2; g.t2 = s3; g.seed2 = 3; g.label = 'Semifinal (2 vs 3)'; }
+        else { g.t1 = s5; g.seed1 = 5; g.t2 = s6; g.seed2 = 6; g.label = '5th/6th Place Game'; }
+      }
+      renderScheduleP7();
+      renderStandingsP7();
+      autosaveCurrentP7();
+    });
+  }
+
+  // Reshuffles the two bottom-seed teams' 4 players into 2 new pairs for
+  // the Game 7 fun match -- guaranteed different from the original teams.
+  function buildFunPairP7(teamA, teamB) {
+    if (teamA.indexOf(' / ') === -1 || teamB.indexOf(' / ') === -1) {
+      // Typed-in team names (no individual players to reshuffle) -- just replay.
+      return [teamA, teamB];
+    }
+    var a = teamA.split(' / '), b = teamB.split(' / ');
+    var A = a[0], B = a[1], C = b[0], D = b[1];
+    var opt1 = [A + ' / ' + C, B + ' / ' + D];
+    var opt2 = [A + ' / ' + D, B + ' / ' + C];
+    return (Math.random() < 0.5) ? opt1 : opt2;
+  }
+
+  // Fills in whatever Game 7 slots can currently be determined:
+  // Championship/3rd Place populate as soon as each semifinal is entered
+  // (independently -- one slot fills in while the other still shows TBD),
+  // and the Fun Match populates as soon as the 5th/6th place game is
+  // entered. Never touches a Game 7 game that's already been scored.
+  function refreshGame7SlotsP7() {
+    var semi1 = gamesP7[gameAtP7(5, 0)];
+    var semi2 = gamesP7[gameAtP7(5, 1)];
+    var consol = gamesP7[gameAtP7(5, 2)];
+    var champ = gamesP7[gameAtP7(6, 0)];
+    var third = gamesP7[gameAtP7(6, 1)];
+    var fun = gamesP7[gameAtP7(6, 2)];
+    if (!semi1 || !semi2 || !consol || !champ || !third || !fun) return;
+
+    champ.label = 'Championship (1st/2nd)';
+    third.label = '3rd Place Game';
+    fun.label = 'Fun Match (new partners)';
+
+    if (!champ.entered) {
+      if (semi1.entered) { champ.t1 = semi1.s1 > semi1.s2 ? semi1.t1 : semi1.t2; champ.seed1 = semi1.s1 > semi1.s2 ? semi1.seed1 : semi1.seed2; }
+      else { champ.t1 = null; champ.seed1 = null; }
+      if (semi2.entered) { champ.t2 = semi2.s1 > semi2.s2 ? semi2.t1 : semi2.t2; champ.seed2 = semi2.s1 > semi2.s2 ? semi2.seed1 : semi2.seed2; }
+      else { champ.t2 = null; champ.seed2 = null; }
+    }
+    if (!third.entered) {
+      if (semi1.entered) { third.t1 = semi1.s1 > semi1.s2 ? semi1.t2 : semi1.t1; third.seed1 = semi1.s1 > semi1.s2 ? semi1.seed2 : semi1.seed1; }
+      else { third.t1 = null; third.seed1 = null; }
+      if (semi2.entered) { third.t2 = semi2.s1 > semi2.s2 ? semi2.t2 : semi2.t1; third.seed2 = semi2.s1 > semi2.s2 ? semi2.seed2 : semi2.seed1; }
+      else { third.t2 = null; third.seed2 = null; }
+    }
+    if (!fun.entered) {
+      if (consol.entered) {
+        if (!fun.t1) { // only randomize the reshuffle once per consolation result
+          var funPair = buildFunPairP7(consol.t1, consol.t2);
+          fun.t1 = funPair[0]; fun.t2 = funPair[1];
+        }
+      } else {
+        fun.t1 = null; fun.t2 = null;
+      }
+    }
+  }
+
+  // ---------- Standings ----------
+  var standingsSortP7 = 'wins';
+  var standingsDirP7 = 'desc';
+
+  function setStandingsSortP7(key) {
+    if (standingsSortP7 === key) {
+      standingsDirP7 = (standingsDirP7 === 'desc') ? 'asc' : 'desc';
+    } else {
+      standingsSortP7 = key;
+      standingsDirP7 = 'desc';
+    }
+    renderStandingsP7();
+  }
+
+  function renderStandingsP7() {
+    var box = document.getElementById('standingsBoxP7');
+    var anyEntered = gamesP7.some(function (g) { return g.round <= 4 && g.entered; });
+    if (!anyEntered) {
+      box.innerHTML = '<div class="empty-note">Enter scores above to populate</div>';
+      return;
+    }
+    var stats = computeTeamStatsSeedP7();
+    var names = teamsP7.slice();
+    var dirMult = (standingsDirP7 === 'asc') ? 1 : -1;
+
+    // Ranking numbers always follow wins then point differential (regardless
+    // of which column the table is currently sorted by). Ties of 2 or 3
+    // teams are broken using head-to-head results among just those teams,
+    // same as the seeding/bracket logic -- a clear head-to-head winner gets
+    // the higher rank, a genuine tie (not fully resolvable) keeps everyone
+    // in the group at the same rank number.
+    var rankOrder = names.slice().sort(function (x, y) {
+      if (stats.wins[y] !== stats.wins[x]) return stats.wins[y] - stats.wins[x];
+      if (stats.pts[y] !== stats.pts[x]) return stats.pts[y] - stats.pts[x];
+      return 0;
+    });
+    var rankOf = {};
+    var gIdx = 0;
+    while (gIdx < rankOrder.length) {
+      var groupStart = gIdx;
+      var group = [rankOrder[gIdx]];
+      var gj = gIdx + 1;
+      while (gj < rankOrder.length &&
+        stats.wins[rankOrder[gj]] === stats.wins[rankOrder[groupStart]] &&
+        stats.pts[rankOrder[gj]] === stats.pts[rankOrder[groupStart]]) {
+        group.push(rankOrder[gj]);
+        gj++;
+      }
+      var resolved = (group.length === 2 || group.length === 3) ? headToHeadOrderP7(group) : null;
+      if (resolved) {
+        for (var oi = 0; oi < resolved.length; oi++) rankOf[resolved[oi]] = groupStart + 1 + oi;
+      } else {
+        for (var gi2 = 0; gi2 < group.length; gi2++) rankOf[group[gi2]] = groupStart + 1;
+      }
+      gIdx = gj;
+    }
+
+    names.sort(function (x, y) {
+      var pX, pY, sX, sY;
+      if (standingsSortP7 === 'wins') { pX = stats.wins[x]; pY = stats.wins[y]; sX = stats.pts[x]; sY = stats.pts[y]; }
+      else { pX = stats.pts[x]; pY = stats.pts[y]; sX = stats.wins[x]; sY = stats.wins[y]; }
+      if (pX !== pY) return (pX - pY) * dirMult;
+      if (sX !== sY) return (sX - sY) * dirMult;
+      // Same wins & point diff -- follow the head-to-head-resolved rank
+      // number so display order always matches the # column.
+      return (rankOf[x] - rankOf[y]) * -dirMult;
+    });
+
+    var winsActive = standingsSortP7 === 'wins';
+    var ptsActive = standingsSortP7 === 'points';
+    var arrowChar = (standingsDirP7 === 'asc') ? '&#9650;' : '&#9660;';
+
+    var html = '<div class="card-title" style="margin-top:0;">Seeding (Games 1-5)</div>';
+    html += '<table class="standings-table"><tr><th>#</th><th>Team</th>' +
+      '<th class="num sortable' + (winsActive ? ' active' : '') + '" onclick="setStandingsSortP7(\'wins\')">Wins' +
+      (winsActive ? '<span class="arrow">' + arrowChar + '</span>' : '') + '</th>' +
+      '<th class="num sortable' + (ptsActive ? ' active' : '') + '" onclick="setStandingsSortP7(\'points\')">Point Diff.' +
+      (ptsActive ? '<span class="arrow">' + arrowChar + '</span>' : '') + '</th></tr>';
+    for (var k = 0; k < names.length; k++) {
+      html += '<tr><td>' + rankOf[names[k]] + '</td><td>' + escapeHtml(names[k]) +
+        '</td><td class="num">' + stats.wins[names[k]] + '</td><td class="num">' + fmtPtsP7(stats.pts[names[k]]) + '</td></tr>';
+    }
+    html += '</table>';
+
+    var champGi = gameAtP7(6, 0), thirdGi = gameAtP7(6, 1), consolGi = gameAtP7(5, 2);
+    var champG = champGi !== -1 ? gamesP7[champGi] : null;
+    var thirdG = thirdGi !== -1 ? gamesP7[thirdGi] : null;
+    var consolG = consolGi !== -1 ? gamesP7[consolGi] : null;
+    if (champG && champG.entered && thirdG && thirdG.entered) {
+      var first = champG.s1 > champG.s2 ? champG.t1 : champG.t2;
+      var second = champG.s1 > champG.s2 ? champG.t2 : champG.t1;
+      var thirdPl = thirdG.s1 > thirdG.s2 ? thirdG.t1 : thirdG.t2;
+      var fourthPl = thirdG.s1 > thirdG.s2 ? thirdG.t2 : thirdG.t1;
+      var finalStats = computeFinalStatsP7();
+      function placementRowP7(place, team, note) {
+        var noteHtml = note ? ' <span class="note-inline">' + note + '</span>' : '';
+        return '<tr><td>' + place + '</td><td>' + escapeHtml(team) + noteHtml +
+          '</td><td class="num">' + finalStats.wins[team] + '</td><td class="num">' + fmtPtsP7(finalStats.pts[team]) + '</td></tr>';
+      }
+      html += '<div class="card-title" style="margin-top:18px;">Final Placement</div>';
+      html += '<table class="standings-table"><tr><th>#</th><th>Team</th><th class="num">Wins</th><th class="num">Point Diff.</th></tr>';
+      html += placementRowP7(1, first);
+      html += placementRowP7(2, second);
+      html += placementRowP7(3, thirdPl);
+      html += placementRowP7(4, fourthPl);
+      if (consolG && consolG.entered) {
+        var fifth = consolG.s1 > consolG.s2 ? consolG.t1 : consolG.t2;
+        var sixth = consolG.s1 > consolG.s2 ? consolG.t2 : consolG.t1;
+        html += placementRowP7(5, fifth, '(only 6 games)');
+        html += placementRowP7(6, sixth, '(only 6 games)');
+      }
+      html += '</table>';
+    }
+
+    box.innerHTML = html;
+  }
+
+  function resetAllP7() {
+    appConfirm('Start a new playoff tournament? This clears today\'s scores from the screen (the day already played stays saved under Saved Days).', function () {
+      teamsP7 = [];
+      gamesP7 = [];
+      seedOrderP7 = null;
+      modeP7 = null;
+      activeDateKeyP7 = null;
+      document.getElementById('playerInputsP7').innerHTML = '';
+      document.getElementById('teamInputsP7').innerHTML = '';
+      document.getElementById('pairPreviewP7').innerHTML = '';
+      document.getElementById('playerModeP7').className = 'hidden';
+      document.getElementById('teamModeP7').className = 'hidden';
+      document.getElementById('setupCardP7').className = 'card';
+      document.getElementById('scheduleCardP7').className = 'card hidden';
+      document.getElementById('standingsCardP7').className = 'card hidden';
+      document.getElementById('resetCardP7').className = 'card hidden';
+      clearActiveTournament();
+    });
+  }
+
+  function autosaveCurrentP7() {
+    if (!storageOk()) return;
+    if (!teamsP7 || teamsP7.length !== 6 || !activeDateKeyP7) return;
+    try {
+      var days = getDays();
+      days[activeDateKeyP7] = { teams: teamsP7, games: gamesP7, seedOrder: seedOrderP7, dateKey: activeDateKeyP7, gameType: 'playoff12', updatedAt: new Date().toISOString() };
+      setDays(days);
+      window.localStorage.setItem(PERINI_ACTIVE, activeDateKeyP7);
+    } catch (e) { /* ignore quota / access errors */ }
+    serverSyncUp();
+  }
+
   function escapeHtml(s) {
     return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
   }
@@ -5808,6 +7364,7 @@
 
   function setDays(obj) {
     if (!storageOk()) return;
+    if (PERINI_VIEW_ONLY) return; // never persist over saved data while viewing a read-only snapshot
     try { window.localStorage.setItem(PERINI_DAYS, JSON.stringify(obj)); } catch (e) {}
   }
 
@@ -5872,8 +7429,287 @@
     } catch (e) { if (callback) callback(); }
   }
 
-  function openBackup() {
-    window.open('/api/export', '_blank');
+  // ================== Score photo export ==================
+  // iOS 9.3.5 has no Web Share API and no Files app, but long-press-to-
+  // "Save Image" on an <img> has worked since the earliest iOS versions, so
+  // that's the export path here: draw the schedule / score log / standings
+  // tables (already on screen as real <table> elements) onto a canvas,
+  // turn that into a PNG, and show it full-size so the user can press and
+  // hold it to save straight to Photos.
+
+  function gatherSnapshotTables(suffix) {
+    var out = [];
+    var gridWrap = document.getElementById('gridWrap' + suffix);
+    if (gridWrap) {
+      var t1 = gridWrap.querySelector('table');
+      if (t1) out.push({ label: 'Schedule', table: t1 });
+    }
+    var scoreLogWrap = document.getElementById('scoreLogWrap' + suffix);
+    if (scoreLogWrap) {
+      var t2 = scoreLogWrap.querySelector('table');
+      if (t2) out.push({ label: 'Score Log', table: t2 });
+    }
+    if (suffix === 'P7') {
+      var bracketRows = buildSnapshotRowsP7Bracket();
+      if (bracketRows.length > 1) out.push({ label: 'Playoffs (Games 6-7)', rows: bracketRows });
+    }
+    var standingsBox = document.getElementById('standingsBox' + suffix);
+    if (standingsBox) {
+      // Playoff Scoring shows two tables here (Seeding + Final Placement,
+      // once the bracket wraps up) -- grab all of them, not just the first.
+      var standingsTables = standingsBox.getElementsByTagName('table');
+      for (var sti = 0; sti < standingsTables.length; sti++) {
+        if (suffix === 'P7' && sti === 0) {
+          // Seeding standings (Games 1-5) -- shown with a "Seeding Games
+          // (1-5)" line above the underlined "STANDINGS" heading.
+          out.push({ label: 'STANDINGS', sub: 'Seeding Games (1-5)', underline: true, table: standingsTables[sti] });
+        } else {
+          var stLabel = (standingsTables.length > 1) ? (sti === 0 ? 'Standings' : 'Final Placement') : 'Standings';
+          out.push({ label: stLabel, table: standingsTables[sti] });
+        }
+      }
+    }
+    return out;
+  }
+
+  // Builds a Playoffs (Games 6-7) section for the score photo -- the
+  // bracket is drawn with styled boxes rather than a real <table>, so it
+  // isn't picked up by gatherSnapshotTables automatically like the other
+  // sections are.
+  function buildSnapshotRowsP7Bracket() {
+    var rows = [['Game', 'Team 1', 'Team 2', 'Result']];
+    function addRow(gi, label) {
+      if (gi === -1) return;
+      var g = gamesP7[gi];
+      if (!g || (!g.t1 && !g.t2)) { rows.push([label, 'TBD', 'TBD', '']); return; }
+      var showSeeds = !(g.round === 6 && g.court === 2);
+      var n1 = g.t1 ? ((showSeeds && g.seed1 ? '#' + g.seed1 + ' ' : '') + firstNameOnly(g.t1)) : 'TBD';
+      var n2 = g.t2 ? ((showSeeds && g.seed2 ? '#' + g.seed2 + ' ' : '') + firstNameOnly(g.t2)) : 'TBD';
+      var result = '';
+      var isFunRow = (g.round === 6 && g.court === 2);
+      if (g.entered) {
+        if (isFunRow) {
+          result = g.s1 + ' - ' + g.s2;
+        } else {
+          var r = computePointsP7(g.s1, g.s2);
+          result = g.s1 + ' - ' + g.s2 + ' (' + fmtPtsP7(r.pts1) + ' / ' + fmtPtsP7(r.pts2) + ' pts)';
+        }
+      } else if (g.t1 && g.t2) {
+        result = 'not yet played';
+      }
+      rows.push([label, n1, n2, result]);
+    }
+    addRow(gameAtP7(5, 0), 'Game 6 (1v4)');
+    addRow(gameAtP7(5, 1), 'Game 6 (2v3)');
+    addRow(gameAtP7(5, 2), 'Game 6 (5v6)');
+    addRow(gameAtP7(6, 0), 'Game 7 (Champ)');
+    addRow(gameAtP7(6, 1), 'Game 7 (3rd)');
+    addRow(gameAtP7(6, 2), 'Game 7 (Fun)');
+    return rows;
+  }
+
+  // Pulls plain text rows out of a real <table> element (cell by cell).
+  function tableToRows(table) {
+    var rows = [];
+    var trs = table.getElementsByTagName('tr');
+    for (var i = 0; i < trs.length; i++) {
+      var cells = trs[i].children;
+      var row = [];
+      for (var j = 0; j < cells.length; j++) {
+        row.push(cellText(cells[j]));
+      }
+      rows.push(row);
+    }
+    return rows;
+  }
+
+  // Each schedule cell is built from several adjacent <span> elements (team
+  // name, "-", score, "vs", ...) with no whitespace text node between them,
+  // so a plain .textContent read runs them together, e.g. "11vsColby".
+  // This walks the cell's nodes and inserts a space after every element's
+  // contents so sibling spans never end up glued to each other, then
+  // collapses any doubled-up spaces. It also drops the "tap to enter" hint
+  // entirely, since that's UI chrome rather than score data.
+  function cellText(el) {
+    var parts = [];
+    function walk(node) {
+      if (node.nodeType === 3) {
+        if (node.textContent) parts.push(node.textContent);
+        return;
+      }
+      if (node.nodeType !== 1) return;
+      if (node.className && node.className.indexOf('enterhint') !== -1) return;
+      if (node.tagName === 'BR') { parts.push(' '); return; }
+      var childNodes = node.childNodes;
+      for (var k = 0; k < childNodes.length; k++) walk(childNodes[k]);
+      parts.push(' ');
+    }
+    var kids = el.childNodes;
+    for (var i = 0; i < kids.length; i++) walk(kids[i]);
+    return parts.join('').replace(/[\u25B2\u25BC]/g, '').replace(/\s+/g, ' ').trim();
+  }
+
+  // A snapshot section either wraps a real <table> (most modes) or a
+  // pre-built rows array (the Playoff Scoring bracket) -- normalize both.
+  function sectionRowsP(section) {
+    return section.rows ? section.rows : tableToRows(section.table);
+  }
+
+  function exportSnapshotImage(suffix, modeTitle) {
+    var sections = gatherSnapshotTables(suffix);
+    var anyRows = false;
+    for (var s = 0; s < sections.length; s++) {
+      if (sectionRowsP(sections[s]).length > 1) { anyRows = true; break; }
+    }
+    if (!anyRows) {
+      appAlert('No scores entered yet -- enter some scores before sharing a photo.');
+      return;
+    }
+
+    var dateKey = PERINI_VIEWING_DATEKEY || activeDateKey8 || activeDateKeyTR || activeDateKeyRT || activeDateKeyCl || activeDateKeyFu || activeDateKeyP7 || activeDateKey || dateKeyFor();
+    // Saved date keys carry a mode suffix ("-tr", "-8p", "-8t", "-cl", "-fu", "-p7")
+    // to keep different game types saved on the same day distinct -- strip
+    // that off for display since the mode is already shown in the title.
+    dateKey = dateKey.replace('-8p', '').replace('-8t', '').replace('-cl', '').replace('-fu', '').replace('-tr', '').replace('-p7', '');
+    var pad = 28;
+    var scale = 2; // draw at 2x for a crisper saved photo
+    var fontMain = 15;
+    var fontHead = 20;
+    var rowH = 32;
+    var colGap = 28;
+
+    // ---- pass 1: measure ----
+    var measureCanvas = document.createElement('canvas');
+    var mctx = measureCanvas.getContext('2d');
+    var contentWidth = 320;
+    var sectionData = [];
+    for (var si = 0; si < sections.length; si++) {
+      var rows = sectionRowsP(sections[si]);
+      if (!rows.length) continue;
+      var colCount = rows[0].length;
+      var colWidths = [];
+      for (var c = 0; c < colCount; c++) colWidths.push(0);
+      mctx.font = 'bold ' + fontMain + 'px Tahoma, Geneva, Verdana, sans-serif';
+      for (var r = 0; r < rows.length; r++) {
+        mctx.font = (r === 0 ? 'bold ' : '') + fontMain + 'px Tahoma, Geneva, Verdana, sans-serif';
+        for (var cc = 0; cc < rows[r].length; cc++) {
+          var w = mctx.measureText(rows[r][cc] || '').width;
+          if (w > (colWidths[cc] || 0)) colWidths[cc] = w;
+        }
+      }
+      var tableWidth = colGap + 8;
+      for (var cw = 0; cw < colWidths.length; cw++) tableWidth += colWidths[cw] + colGap;
+      if (tableWidth > contentWidth) contentWidth = tableWidth;
+      sectionData.push({ label: sections[si].label, sub: sections[si].sub, underline: sections[si].underline, rows: rows, colWidths: colWidths });
+    }
+    // No upper cap here -- letting the canvas grow to fit the widest row
+    // (e.g. a 3-court schedule) is what keeps the last column from being
+    // cropped off the saved photo.
+
+    // ---- compute total height ----
+    var totalH = pad + fontHead + 10 + 26 /* date line */ + 14;
+    for (var sh = 0; sh < sectionData.length; sh++) {
+      totalH += sectionData[sh].sub ? 62 : 36; // section title (+ sub line, if any)
+      totalH += sectionData[sh].rows.length * rowH;
+      totalH += 26;
+    }
+    totalH += pad;
+
+    var canvas = document.createElement('canvas');
+    canvas.width = (contentWidth + pad * 2) * scale;
+    canvas.height = totalH * scale;
+    var ctx = canvas.getContext('2d');
+    ctx.scale(scale, scale);
+    ctx.fillStyle = '#ffffff';
+    ctx.fillRect(0, 0, contentWidth + pad * 2, totalH);
+    ctx.textBaseline = 'alphabetic';
+
+    var y = pad;
+    var x0 = pad;
+    ctx.fillStyle = '#15202b';
+    ctx.font = 'bold ' + fontHead + 'px Tahoma, Geneva, Verdana, sans-serif';
+    ctx.fillText('Perini Points \u2014 ' + modeTitle, x0, y + fontHead);
+    y += fontHead + 8;
+    ctx.font = '13px Tahoma, Geneva, Verdana, sans-serif';
+    ctx.fillStyle = '#5a6b78';
+    ctx.fillText(dateKey, x0, y + 13);
+    y += 13 + 16;
+    ctx.strokeStyle = '#c94f4f';
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(x0, y);
+    ctx.lineTo(contentWidth + pad, y);
+    ctx.stroke();
+    y += 20;
+
+    for (var di = 0; di < sectionData.length; di++) {
+      var sec = sectionData[di];
+      ctx.fillStyle = '#15202b';
+      ctx.font = 'bold 15px Tahoma, Geneva, Verdana, sans-serif';
+      ctx.fillText(sec.label, x0, y + 14);
+      if (sec.underline) {
+        var labelW = ctx.measureText(sec.label).width;
+        ctx.strokeStyle = '#15202b';
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        ctx.moveTo(x0, y + 17);
+        ctx.lineTo(x0 + labelW, y + 17);
+        ctx.stroke();
+      }
+      y += 26;
+      if (sec.sub) {
+        ctx.fillStyle = '#15202b';
+        ctx.font = 'bold 15px Tahoma, Geneva, Verdana, sans-serif';
+        ctx.fillText(sec.sub, x0, y + 14);
+        y += 26;
+      }
+      y += 10;
+
+      // column x positions
+      var colX = [x0 + 8];
+      for (var cx = 0; cx < sec.colWidths.length - 1; cx++) {
+        colX.push(colX[cx] + sec.colWidths[cx] + colGap);
+      }
+
+      var rowLeft = x0 - 10;
+      var rowWidth = contentWidth - x0 + pad + 20;
+      for (var ri = 0; ri < sec.rows.length; ri++) {
+        var isHeaderRow = ri === 0;
+        if (isHeaderRow) {
+          ctx.fillStyle = '#eef2f4';
+          ctx.fillRect(rowLeft, y, rowWidth, rowH - 4);
+        } else if (ri % 2 === 0) {
+          ctx.fillStyle = '#f7f9fa';
+          ctx.fillRect(rowLeft, y, rowWidth, rowH - 4);
+        }
+        ctx.fillStyle = isHeaderRow ? '#15202b' : '#2b3944';
+        ctx.font = (isHeaderRow ? 'bold ' : '') + fontMain + 'px Tahoma, Geneva, Verdana, sans-serif';
+        for (var ci = 0; ci < sec.rows[ri].length; ci++) {
+          ctx.fillText(sec.rows[ri][ci] || '', colX[ci], y + rowH - 13);
+        }
+        y += rowH;
+      }
+      y += 26;
+    }
+
+    var dataUrl;
+    try {
+      dataUrl = canvas.toDataURL('image/png');
+    } catch (e) {
+      appAlert('Couldn\'t generate the image on this device.');
+      return;
+    }
+    document.getElementById('imageExportImg').src = dataUrl;
+    lastExportedImageDataUrl = dataUrl;
+    document.getElementById('imageExportOverlay').className = 'modal-overlay';
+  }
+
+  var lastExportedImageDataUrl = null;
+
+  function closeImageExport() {
+    document.getElementById('imageExportOverlay').className = 'modal-overlay hidden';
+    document.getElementById('imageExportImg').src = '';
+    lastExportedImageDataUrl = null;
   }
 
   function clearActiveTournament() {
@@ -5943,6 +7779,7 @@
     else if (lastPage === 'rtPage') { openRRTC(); }
     else if (lastPage === 'clPage') { openClassic(); }
     else if (lastPage === 'fuPage') { openFusion(); }
+    else if (lastPage === 'p7Page') { openPlayoff7(); }
     else { renderMainMenu(); } // instant paint from localStorage
   })();
 
