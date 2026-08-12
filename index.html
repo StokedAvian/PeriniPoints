@@ -586,6 +586,7 @@
     display: inline-block;
   }
   .toolbar-btn:active { background: var(--bg-tile-active); }
+  .toolbar-btn.active { background: var(--accent); color: var(--bg-input); font-weight: bold; border-color: var(--accent); }
 
   .surprise-btn {
     background: transparent;
@@ -1681,6 +1682,7 @@
     <button class="toolbar-btn surprise-btn" onclick="surpriseMe()"><span class="emoji">&#127920;</span> Surprise Me</button>
     <button class="toolbar-btn" onclick="openManageNames()">Manage Players</button>
     <button class="toolbar-btn" onclick="goToHistoryPage()">History</button>
+    <button class="toolbar-btn" onclick="goToStatsPage()">Stats</button>
   </div>
 
   <div class="game-grid" id="gameGrid"></div>
@@ -1707,6 +1709,23 @@
     </div>
   </div>
   <div class="empty-note hidden" id="noDaysNote">No saved days yet.</div>
+</div>
+
+<!-- ============ STATS PAGE ============ -->
+<div class="wrap hidden" id="statsPage">
+  <header>
+    <button class="header-btn back-btn" onclick="goToMainMenu()">&lsaquo;</button>
+    <div class="title-row">
+      <div class="ball ball-left">&#8226; &#8226; &#8226;</div>
+      <h1>Stats</h1>
+      <div class="ball ball-right">&#8226; &#8226; &#8226;</div>
+    </div>
+  </header>
+
+  <div class="menu-toolbar" id="statsTypeToolbar"></div>
+
+  <div class="card hidden" id="statsTableBox"></div>
+  <div class="empty-note hidden" id="noStatsNote">No games recorded yet. Play and save some games to see stats here.</div>
 </div>
 
 <!-- ============ TOURNAMENT / APP PAGE ============ -->
@@ -2379,6 +2398,7 @@
   function hideAllPages() {
     document.getElementById('mainMenuPage').className = 'wrap hidden';
     document.getElementById('historyPage').className = 'wrap hidden';
+    document.getElementById('statsPage').className = 'wrap hidden';
     document.getElementById('appPage').className = 'wrap hidden';
     document.getElementById('prPage').className = 'wrap hidden';
     document.getElementById('trPage').className = 'wrap hidden';
@@ -2404,6 +2424,13 @@
     document.getElementById('historyPage').className = 'wrap';
     renderHistoryPage();
     saveLastPage('historyPage');
+  }
+
+  function goToStatsPage() {
+    hideAllPages();
+    document.getElementById('statsPage').className = 'wrap';
+    renderStatsPage();
+    saveLastPage('statsPage');
   }
 
   function goToAppPage() {
@@ -2971,6 +2998,217 @@
     var current = getActiveTournament();
     var resumeBtn = document.getElementById('resumeBtn');
     resumeBtn.className = current ? 'header-btn resume-btn' : 'header-btn resume-btn hidden';
+  }
+
+  // ================== Player Stats (games played / wins / losses / win %) ==================
+  // Pulls from every saved day in Saved Days (across every game type/mode),
+  // so it reflects entered scores only -- games still in progress on screen
+  // but not yet saved as a day aren't counted until they're saved.
+  var statsSort = 'winpct';
+  var statsDir = 'desc';
+
+  // A game's t1/t2 side is either an array of player names (the 8-player
+  // formats) or a single "Name1 / Name2" team-name string (the 12-player
+  // formats, where a team can also just be an arbitrary typed name with no
+  // slash -- that whole string is then counted as one "player" entry).
+  function statsNamesFromSide(side) {
+    var out = [];
+    if (!side) return out;
+    if (typeof side === 'string') {
+      var parts = side.split(' / ');
+      for (var i = 0; i < parts.length; i++) {
+        var t = parts[i].trim();
+        if (t) out.push(t);
+      }
+      return out;
+    }
+    if (side.length !== undefined) {
+      for (var j = 0; j < side.length; j++) {
+        if (side[j]) out.push(side[j]);
+      }
+    }
+    return out;
+  }
+
+  // Reverse of GAME_TYPE_TO_DEF_ID: GAME_DEFS id -> the raw day.gameType
+  // value it's saved under, so the Stats page's per-game-type buttons can
+  // filter saved days by the same value renderHistoryPage/etc. use.
+  var DEF_ID_TO_DAY_GAMETYPE = {};
+  for (var _gtKey in GAME_TYPE_TO_DEF_ID) {
+    if (GAME_TYPE_TO_DEF_ID.hasOwnProperty(_gtKey)) DEF_ID_TO_DAY_GAMETYPE[GAME_TYPE_TO_DEF_ID[_gtKey]] = _gtKey;
+  }
+
+  // 'overall' shows every saved day regardless of game type; any other
+  // value is a raw day.gameType string (e.g. 'partner8') to filter to.
+  var statsActiveType = 'overall';
+
+  function setStatsType(type) {
+    statsActiveType = type;
+    statsSort = 'winpct';
+    statsDir = 'desc';
+    renderStatsPage();
+  }
+
+  // filterType: null/'overall' = every saved day. Otherwise a raw
+  // day.gameType string -- only days whose gameType matches (days saved
+  // before gameType existed are treated as 'partnerrr12', same fallback
+  // used everywhere else in the app).
+  function computePlayerStats(filterType) {
+    var stats = {};
+    function ensure(name) {
+      if (!stats[name]) stats[name] = { played: 0, wins: 0, losses: 0, points: 0, tourneys: {} };
+      return stats[name];
+    }
+    var days = getDays();
+    for (var key in days) {
+      if (!days.hasOwnProperty(key)) continue;
+      var snap = days[key];
+      var gamesArr = snap && snap.games;
+      if (!gamesArr || !gamesArr.length) continue;
+      var dayGameType = snap.gameType || 'partnerrr12';
+      if (filterType && filterType !== 'overall' && dayGameType !== filterType) continue;
+      for (var i = 0; i < gamesArr.length; i++) {
+        var g = gamesArr[i];
+        if (!g || !g.entered) continue;
+        if (g.s1 === null || g.s1 === undefined || g.s2 === null || g.s2 === undefined) continue;
+        if (g.s1 === g.s2) continue; // no ties in pickleball -- skip anything malformed
+        var names1 = statsNamesFromSide(g.t1);
+        var names2 = statsNamesFromSide(g.t2);
+        if (!names1.length || !names2.length) continue;
+        var team1Won = g.s1 > g.s2;
+        var a;
+        for (a = 0; a < names1.length; a++) {
+          var rec1 = ensure(names1[a]);
+          rec1.played++;
+          rec1.points += g.s1;
+          rec1.tourneys[key] = true;
+          if (team1Won) rec1.wins++; else rec1.losses++;
+        }
+        for (a = 0; a < names2.length; a++) {
+          var rec2 = ensure(names2[a]);
+          rec2.played++;
+          rec2.points += g.s2;
+          rec2.tourneys[key] = true;
+          if (team1Won) rec2.losses++; else rec2.wins++;
+        }
+      }
+    }
+    return stats;
+  }
+
+  function setStatsSort(col) {
+    if (statsSort === col) {
+      statsDir = (statsDir === 'asc') ? 'desc' : 'asc';
+    } else {
+      statsSort = col;
+      // Name defaults to A-Z first click; every numeric column defaults
+      // to highest-first, matching the rest of the app's sort behavior.
+      statsDir = (col === 'name') ? 'asc' : 'desc';
+    }
+    renderStatsPage();
+  }
+
+  function renderStatsTypeToolbar() {
+    var html = '<button class="toolbar-btn' + (statsActiveType === 'overall' ? ' active' : '') +
+      '" onclick="setStatsType(\'overall\')">Overall</button>';
+    for (var i = 0; i < GAME_DEFS.length; i++) {
+      var def = GAME_DEFS[i];
+      var dayType = DEF_ID_TO_DAY_GAMETYPE[def.id];
+      if (!dayType) continue;
+      html += '<button class="toolbar-btn' + (statsActiveType === dayType ? ' active' : '') +
+        '" onclick="setStatsType(\'' + dayType + '\')">' + escapeHtml(def.label) + '</button>';
+    }
+    document.getElementById('statsTypeToolbar').innerHTML = html;
+  }
+
+  function renderStatsPage() {
+    renderStatsTypeToolbar();
+
+    var stats = computePlayerStats(statsActiveType);
+    var names = [];
+    for (var n in stats) { if (stats.hasOwnProperty(n)) names.push(n); }
+
+    var box = document.getElementById('statsTableBox');
+    var note = document.getElementById('noStatsNote');
+
+    if (!names.length) {
+      box.className = 'card hidden';
+      box.innerHTML = '';
+      note.className = 'empty-note';
+      return;
+    }
+    box.className = 'card';
+    note.className = 'empty-note hidden';
+
+    var showPerType = statsActiveType !== 'overall';
+    var dirMult = (statsDir === 'asc') ? 1 : -1;
+
+    names.sort(function (x, y) {
+      var sx = stats[x], sy = stats[y];
+      var wx = sx.played ? (sx.wins / sx.played) : -1;
+      var wy = sy.played ? (sy.wins / sy.played) : -1;
+      if (statsSort === 'name') {
+        var cmp = x.localeCompare(y) * dirMult;
+        return cmp;
+      }
+      var px, py;
+      if (statsSort === 'played') { px = sx.played; py = sy.played; }
+      else if (statsSort === 'wins') { px = sx.wins; py = sy.wins; }
+      else if (statsSort === 'losses') { px = sx.losses; py = sy.losses; }
+      else if (statsSort === 'avgtourney') { px = sx.played ? sx.points / Object.keys(sx.tourneys).length : -1; py = sy.played ? sy.points / Object.keys(sy.tourneys).length : -1; }
+      else if (statsSort === 'avggame') { px = sx.played ? sx.points / sx.played : -1; py = sy.played ? sy.points / sy.played : -1; }
+      else { px = wx; py = wy; } // winpct
+      if (px !== py) return (px - py) * dirMult;
+      if (wx !== wy) return wy - wx;
+      return x.localeCompare(y);
+    });
+
+    function head(col, label) {
+      var active = (statsSort === col);
+      var arrow = (statsDir === 'asc') ? '&#9650;' : '&#9660;';
+      return '<th class="num sortable' + (active ? ' active' : '') + '" onclick="setStatsSort(\'' + col + '\')">' + label +
+        (active ? '<span class="arrow">' + arrow + '</span>' : '') + '</th>';
+    }
+    function headName() {
+      var active = (statsSort === 'name');
+      var arrow = (statsDir === 'asc') ? '&#9650;' : '&#9660;';
+      return '<th class="sortable' + (active ? ' active' : '') + '" onclick="setStatsSort(\'name\')">Player' +
+        (active ? '<span class="arrow">' + arrow + '</span>' : '') + '</th>';
+    }
+
+    var title = 'Player Stats' + (showPerType ? ' &middot; ' + escapeHtml(gameDefLabelForDayType(statsActiveType)) : ' &middot; Overall');
+    var html = '<div class="card-title">' + title + '</div>';
+    html += '<table class="standings-table"><tr><th>#</th>' + headName() +
+      head('played', 'GP') + head('wins', 'W') + head('losses', 'L') + head('winpct', 'Win %');
+    if (showPerType) {
+      html += head('avgtourney', 'Avg Pts/Wk') + head('avggame', 'Avg Pts/Gm');
+    }
+    html += '</tr>';
+    for (var k = 0; k < names.length; k++) {
+      var s = stats[names[k]];
+      var pct = s.played ? Math.round((s.wins / s.played) * 1000) / 10 : 0;
+      html += '<tr><td>' + (k + 1) + '</td><td>' + escapeHtml(names[k]) + '</td>' +
+        '<td class="num">' + s.played + '</td><td class="num">' + s.wins + '</td><td class="num">' + s.losses + '</td>' +
+        '<td class="num">' + pct.toFixed(1) + '%</td>';
+      if (showPerType) {
+        var tourneyCount = Object.keys(s.tourneys).length;
+        var avgTourney = tourneyCount ? (s.points / tourneyCount) : 0;
+        var avgGame = s.played ? (s.points / s.played) : 0;
+        html += '<td class="num">' + avgTourney.toFixed(1) + '</td><td class="num">' + avgGame.toFixed(1) + '</td>';
+      }
+      html += '</tr>';
+    }
+    html += '</table>';
+    box.innerHTML = html;
+  }
+
+  // Label for a raw day.gameType value, for the Stats page card title.
+  function gameDefLabelForDayType(dayType) {
+    var defId = GAME_TYPE_TO_DEF_ID[dayType];
+    for (var i = 0; i < GAME_DEFS.length; i++) {
+      if (GAME_DEFS[i].id === defId) return GAME_DEFS[i].label;
+    }
+    return dayType;
   }
 
   function renderHistoryPage() {
@@ -8737,6 +8975,7 @@
   (function restoreLastPage() {
     var lastPage = getLastPage();
     if (lastPage === 'appPage') { openPartnerRR(); }
+    else if (lastPage === 'statsPage') { goToStatsPage(); }
     else if (lastPage === 'prPage') { openRR(); }
     else if (lastPage === 'trPage') { openTeamRotation(); }
     else if (lastPage === 'rtPage') { openRRTC(); }
