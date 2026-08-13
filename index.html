@@ -474,6 +474,14 @@
     text-transform: uppercase;
     letter-spacing: 1px;
     color: var(--accent-light);
+    position: -webkit-sticky;
+    position: sticky;
+    top: 0;
+    z-index: 2;
+    background: var(--bg-card);
+    -webkit-background-clip: padding-box;
+    background-clip: padding-box;
+    box-shadow: 0 1px 0 var(--border);
   }
   .standings-table td.num, .standings-table th.num { text-align: right; }
   .standings-table th.sortable { cursor: pointer; -webkit-user-select: none; user-select: none; }
@@ -1715,6 +1723,9 @@
 <div class="wrap hidden" id="statsPage">
   <header>
     <button class="header-btn back-btn" onclick="goToMainMenu()">&lsaquo;</button>
+    <div class="header-icons">
+      <button class="header-btn icon-btn-header" onclick="exportStatsSnapshotImage()" aria-label="Share Score Photo" title="Share Score Photo&hellip;">&#128247;</button>
+    </div>
     <div class="title-row">
       <div class="ball ball-left">&#8226; &#8226; &#8226;</div>
       <h1>Stats</h1>
@@ -2429,6 +2440,7 @@
   function goToStatsPage() {
     hideAllPages();
     document.getElementById('statsPage').className = 'wrap';
+    statsActiveType = 'overall';
     renderStatsPage();
     saveLastPage('statsPage');
   }
@@ -3049,14 +3061,89 @@
     renderStatsPage();
   }
 
-  // filterType: null/'overall' = every saved day. Otherwise a raw
+  // Scramble, Fusion, and Fusion 2 are the same 8-player format (just a
+  // different game-4-7 rotation), so the Stats page treats them as one
+  // combined bucket under the 'scramble_fusions' pseudo-type.
+  var SCRAMBLE_FUSIONS_DAYTYPES = ['classic8', 'fusion8', 'fusion8_2'];
+
+  // filterType: null/'overall' = every saved day. 'scramble_fusions' = any
+  // of the three Scramble/Fusion/Fusion 2 day types. Otherwise a raw
   // day.gameType string -- only days whose gameType matches (days saved
   // before gameType existed are treated as 'partnerrr12', same fallback
   // used everywhere else in the app).
+  function dayMatchesStatsFilter(dayGameType, filterType) {
+    if (!filterType || filterType === 'overall') return true;
+    if (filterType === 'scramble_fusions') return SCRAMBLE_FUSIONS_DAYTYPES.indexOf(dayGameType) !== -1;
+    return dayGameType === filterType;
+  }
+
+  // Strips the per-game-type dateKey suffix (see dateKeyFor()/activeDateKeyXx
+  // usages above) back down to the plain "m/d/yy" the player recognizes,
+  // same substitutions renderHistoryPage() uses for its day-picker labels.
+  function baseDateLabelFromKey(key) {
+    return key.replace('-8p', '').replace('-8t', '').replace('-scr', '').replace('-fu2', '').replace('-fu', '').replace('-tr', '').replace('-p7', '');
+  }
+
+  // A day's "winner" is whoever finishes #1 in that day's own standings.
+  // Playoff (12-player bracket) ranks primarily by wins, same as its
+  // standings page defaults to; every other format ranks primarily by
+  // total points, also matching that format's own standings page default.
+  // Ties (identical primary + secondary values) share the same rank, same
+  // tie-share logic each individual standings page already uses.
+  function computeDayStandings(snap) {
+    var dayGameType = snap.gameType || 'partnerrr12';
+    var primaryIsWins = (dayGameType === 'playoff12');
+    var totals = {}, wins = {};
+    var gamesArr = snap.games || [];
+    for (var i = 0; i < gamesArr.length; i++) {
+      var g = gamesArr[i];
+      if (!g || !g.entered) continue;
+      if (g.s1 === null || g.s1 === undefined || g.s2 === null || g.s2 === undefined) continue;
+      if (g.s1 === g.s2) continue;
+      var names1 = statsNamesFromSide(g.t1);
+      var names2 = statsNamesFromSide(g.t2);
+      if (!names1.length || !names2.length) continue;
+      var team1Won = g.s1 > g.s2;
+      var a;
+      for (a = 0; a < names1.length; a++) {
+        var n1 = names1[a];
+        totals[n1] = (totals[n1] || 0) + g.s1;
+        if (!wins.hasOwnProperty(n1)) wins[n1] = 0;
+        if (team1Won) wins[n1]++;
+      }
+      for (a = 0; a < names2.length; a++) {
+        var n2 = names2[a];
+        totals[n2] = (totals[n2] || 0) + g.s2;
+        if (!wins.hasOwnProperty(n2)) wins[n2] = 0;
+        if (!team1Won) wins[n2]++;
+      }
+    }
+    var names = Object.keys(totals);
+    if (!names.length) return null;
+    function primaryOf(n) { return primaryIsWins ? wins[n] : totals[n]; }
+    function secondaryOf(n) { return primaryIsWins ? totals[n] : wins[n]; }
+    names.sort(function (x, y) {
+      if (primaryOf(y) !== primaryOf(x)) return primaryOf(y) - primaryOf(x);
+      if (secondaryOf(y) !== secondaryOf(x)) return secondaryOf(y) - secondaryOf(x);
+      return x.localeCompare(y);
+    });
+    var rankOf = {};
+    for (var ri = 0; ri < names.length; ri++) {
+      if (ri === 0) {
+        rankOf[names[ri]] = 1;
+      } else {
+        var prev = names[ri - 1], cur = names[ri];
+        var tie = (primaryOf(cur) === primaryOf(prev)) && (secondaryOf(cur) === secondaryOf(prev));
+        rankOf[cur] = tie ? rankOf[prev] : (ri + 1);
+      }
+    }
+    return { names: names, rankOf: rankOf };
+  }
+
   function computePlayerStats(filterType) {
     var stats = {};
     function ensure(name) {
-      if (!stats[name]) stats[name] = { played: 0, wins: 0, losses: 0, points: 0, tourneys: {} };
+      if (!stats[name]) stats[name] = { played: 0, wins: 0, losses: 0, points: 0, tourneys: {}, wksWon: 0, lastWinAt: '', lastWinLabel: '', finishes: [] };
       return stats[name];
     }
     var days = getDays();
@@ -3066,7 +3153,7 @@
       var gamesArr = snap && snap.games;
       if (!gamesArr || !gamesArr.length) continue;
       var dayGameType = snap.gameType || 'partnerrr12';
-      if (filterType && filterType !== 'overall' && dayGameType !== filterType) continue;
+      if (!dayMatchesStatsFilter(dayGameType, filterType)) continue;
       for (var i = 0; i < gamesArr.length; i++) {
         var g = gamesArr[i];
         if (!g || !g.entered) continue;
@@ -3092,8 +3179,64 @@
           if (team1Won) rec2.losses++; else rec2.wins++;
         }
       }
+      // Wks Won / Last Win / Avg Finish all key off that day's own
+      // #1-through-last standings, computed once per saved day.
+      var standing = computeDayStandings(snap);
+      if (standing) {
+        for (var si = 0; si < standing.names.length; si++) {
+          var nm = standing.names[si];
+          var rec = ensure(nm);
+          var rnk = standing.rankOf[nm];
+          rec.finishes.push(rnk);
+          if (rnk === 1) {
+            rec.wksWon++;
+            var whenKey = snap.updatedAt || '';
+            if (!rec.lastWinAt || whenKey > rec.lastWinAt) {
+              rec.lastWinAt = whenKey;
+              rec.lastWinLabel = baseDateLabelFromKey(key);
+            }
+          }
+        }
+      }
     }
     return stats;
+  }
+
+  // Computes each player's *fixed* rank (independent of whatever column the
+  // table is currently sorted by) so the "#" column always reflects the
+  // same ranking factor: win% on the Overall page, or that game type's own
+  // primary standings factor (wins for Playoff, points for everything
+  // else) on an individual game-type page. Ties share a rank, same
+  // tie-share convention used throughout the app's standings pages.
+  function computeStatsFixedRanks(stats, names, statsActiveType) {
+    var isOverall = (statsActiveType === 'overall' || !statsActiveType);
+    var usesWins = (statsActiveType === 'playoff12');
+    function primaryOf(n) {
+      var s = stats[n];
+      if (isOverall) return s.played ? (s.wins / s.played) : -1;
+      return usesWins ? s.wins : s.points;
+    }
+    function secondaryOf(n) {
+      var s = stats[n];
+      return (isOverall || !usesWins) ? s.wins : s.points;
+    }
+    var order = names.slice();
+    order.sort(function (x, y) {
+      if (primaryOf(y) !== primaryOf(x)) return primaryOf(y) - primaryOf(x);
+      if (secondaryOf(y) !== secondaryOf(x)) return secondaryOf(y) - secondaryOf(x);
+      return x.localeCompare(y);
+    });
+    var rankOf = {};
+    for (var i = 0; i < order.length; i++) {
+      if (i === 0) {
+        rankOf[order[i]] = 1;
+      } else {
+        var prev = order[i - 1], cur = order[i];
+        var tie = (primaryOf(cur) === primaryOf(prev)) && (secondaryOf(cur) === secondaryOf(prev));
+        rankOf[cur] = tie ? rankOf[prev] : (i + 1);
+      }
+    }
+    return rankOf;
   }
 
   function setStatsSort(col) {
@@ -3108,11 +3251,18 @@
     renderStatsPage();
   }
 
+  // Scramble/Fusion/Fusion 2 share one combined toolbar button; every other
+  // game type still gets its own.
+  var SCRAMBLE_FUSIONS_DEF_IDS = ['classic', 'fusion', 'fusion2'];
+
   function renderStatsTypeToolbar() {
     var html = '<button class="toolbar-btn' + (statsActiveType === 'overall' ? ' active' : '') +
       '" onclick="setStatsType(\'overall\')">Overall</button>';
+    html += '<button class="toolbar-btn' + (statsActiveType === 'scramble_fusions' ? ' active' : '') +
+      '" onclick="setStatsType(\'scramble_fusions\')">Scramble &amp; Fusions</button>';
     for (var i = 0; i < GAME_DEFS.length; i++) {
       var def = GAME_DEFS[i];
+      if (SCRAMBLE_FUSIONS_DEF_IDS.indexOf(def.id) !== -1) continue;
       var dayType = DEF_ID_TO_DAY_GAMETYPE[def.id];
       if (!dayType) continue;
       html += '<button class="toolbar-btn' + (statsActiveType === dayType ? ' active' : '') +
@@ -3143,6 +3293,16 @@
     var showPerType = statsActiveType !== 'overall';
     var dirMult = (statsDir === 'asc') ? 1 : -1;
 
+    // Fixed "#" rank, independent of whichever column the table is sorted
+    // by: win% on Overall, or that game type's own primary standings
+    // factor (wins for Playoff, points for everything else) on a
+    // per-type page.
+    var fixedRankOf = computeStatsFixedRanks(stats, names, statsActiveType);
+
+    function avgPlaceOf(s) {
+      return s.finishes.length ? (s.finishes.reduce(function (a, b) { return a + b; }, 0) / s.finishes.length) : null;
+    }
+
     names.sort(function (x, y) {
       var sx = stats[x], sy = stats[y];
       var wx = sx.played ? (sx.wins / sx.played) : -1;
@@ -3157,6 +3317,17 @@
       else if (statsSort === 'losses') { px = sx.losses; py = sy.losses; }
       else if (statsSort === 'avgtourney') { px = sx.played ? sx.points / Object.keys(sx.tourneys).length : -1; py = sy.played ? sy.points / Object.keys(sy.tourneys).length : -1; }
       else if (statsSort === 'avggame') { px = sx.played ? sx.points / sx.played : -1; py = sy.played ? sy.points / sy.played : -1; }
+      else if (statsSort === 'avgwinswk') { px = sx.played ? sx.wins / Object.keys(sx.tourneys).length : -1; py = sy.played ? sy.wins / Object.keys(sy.tourneys).length : -1; }
+      else if (statsSort === 'wksWon') { px = sx.wksWon; py = sy.wksWon; }
+      else if (statsSort === 'lastWin') { px = sx.lastWinAt || ''; py = sy.lastWinAt || ''; return (px > py ? 1 : (px < py ? -1 : 0)) * dirMult; }
+      else if (statsSort === 'avgplace') {
+        var fx = avgPlaceOf(sx), fy = avgPlaceOf(sy);
+        px = (fx === null) ? Infinity : fx; py = (fy === null) ? Infinity : fy;
+        // Lower average finish is better, so flip the usual high-first default.
+        if (px !== py) return (px - py) * -dirMult;
+        if (wx !== wy) return wy - wx;
+        return x.localeCompare(y);
+      }
       else { px = wx; py = wy; } // winpct
       if (px !== py) return (px - py) * dirMult;
       if (wx !== wy) return wy - wx;
@@ -3181,29 +3352,38 @@
     html += '<table class="standings-table"><tr><th>#</th>' + headName() +
       head('played', 'GP') + head('wins', 'W') + head('losses', 'L') + head('winpct', 'Win %');
     if (showPerType) {
-      html += head('avgtourney', 'Avg Pts/Wk') + head('avggame', 'Avg Pts/Gm');
+      html += head('avgtourney', 'Avg Pts/Wk') + head('avggame', 'Avg Pts/Gm') + head('avgwinswk', 'Avg Wins/Wk') + head('avgplace', 'Avg Place #');
     }
+    html += head('wksWon', 'Wks Won') + head('lastWin', 'Last Win');
     html += '</tr>';
     for (var k = 0; k < names.length; k++) {
       var s = stats[names[k]];
       var pct = s.played ? Math.round((s.wins / s.played) * 1000) / 10 : 0;
-      html += '<tr><td>' + (k + 1) + '</td><td>' + escapeHtml(names[k]) + '</td>' +
+      html += '<tr><td>' + fixedRankOf[names[k]] + '</td><td>' + escapeHtml(names[k]) + '</td>' +
         '<td class="num">' + s.played + '</td><td class="num">' + s.wins + '</td><td class="num">' + s.losses + '</td>' +
         '<td class="num">' + pct.toFixed(1) + '%</td>';
       if (showPerType) {
         var tourneyCount = Object.keys(s.tourneys).length;
         var avgTourney = tourneyCount ? (s.points / tourneyCount) : 0;
         var avgGame = s.played ? (s.points / s.played) : 0;
-        html += '<td class="num">' + avgTourney.toFixed(1) + '</td><td class="num">' + avgGame.toFixed(1) + '</td>';
+        var avgWinsWk = tourneyCount ? (s.wins / tourneyCount) : 0;
+        var avgPlace = avgPlaceOf(s);
+        html += '<td class="num">' + avgTourney.toFixed(1) + '</td><td class="num">' + avgGame.toFixed(1) + '</td>' +
+          '<td class="num">' + avgWinsWk.toFixed(1) + '</td>' +
+          '<td class="num">' + (avgPlace === null ? '&mdash;' : avgPlace.toFixed(1)) + '</td>';
       }
+      html += '<td class="num">' + s.wksWon + '</td><td class="num">' + (s.lastWinLabel || '&mdash;') + '</td>';
       html += '</tr>';
     }
     html += '</table>';
     box.innerHTML = html;
   }
 
-  // Label for a raw day.gameType value, for the Stats page card title.
+  // Label for a stats-page type value (either a raw day.gameType, or the
+  // 'scramble_fusions' combined pseudo-type), for the Stats page card title
+  // and toolbar.
   function gameDefLabelForDayType(dayType) {
+    if (dayType === 'scramble_fusions') return 'Scramble &amp; Fusions';
     var defId = GAME_TYPE_TO_DEF_ID[dayType];
     for (var i = 0; i < GAME_DEFS.length; i++) {
       if (GAME_DEFS[i].id === defId) return GAME_DEFS[i].label;
@@ -8772,6 +8952,30 @@
     // that off for display since the mode is already shown in the title.
     // "-fu2" must be stripped before "-fu" or the trailing "2" would be left behind.
     dateKey = dateKey.replace('-8p', '').replace('-8t', '').replace('-scr', '').replace('-fu2', '').replace('-fu', '').replace('-tr', '').replace('-p7', '');
+    drawSnapshotImage(sections, modeTitle, dateKey);
+  }
+
+  // Builds a snapshot image for whichever Stats view is currently on
+  // screen (Overall / Scramble & Fusions / a specific game type) -- pulls
+  // straight from the rendered #statsTableBox table, same as the
+  // tournament-page exports pull from their on-screen tables.
+  function exportStatsSnapshotImage() {
+    var box = document.getElementById('statsTableBox');
+    var table = box ? box.querySelector('table') : null;
+    if (!table) {
+      appAlert('No stats to share yet -- play and save some games first.');
+      return;
+    }
+    var sections = [{ label: gameDefLabelForDayType(statsActiveType), table: table }];
+    var todayKey = dateKeyFor();
+    drawSnapshotImage(sections, 'Stats', todayKey);
+  }
+
+  // Shared canvas-drawing pass used by both exportSnapshotImage (tournament
+  // pages) and exportStatsSnapshotImage (Stats page) -- takes normalized
+  // sections (see sectionRowsP) plus a title/date and renders them into the
+  // same styled table image, then shows it in the Save to Photos modal.
+  function drawSnapshotImage(sections, modeTitle, dateKey) {
     var pad = 28;
     var scale = 2; // draw at 2x for a crisper saved photo
     var fontMain = 15;
