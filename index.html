@@ -77,7 +77,8 @@
     --accent-active: #1f7a97;
     --accent-glow: rgba(40,150,184,0.22);
     --danger: #d9483f;
-    --ball-color: #8a9a12;
+ //   --ball-color: #96b400;
+    --ball-color: #c8f028;
     --pts-color: #7a8a3a;
     --pts-color-done: #5f7a2a;
     --team1-color: #1c7c9c;
@@ -172,7 +173,7 @@
   }
 
   header .ball {
-    font-size: 18px;
+    font-size: 36px;
     letter-spacing: 3px;
     color: var(--ball-color);
     -webkit-box-flex: 0;
@@ -241,6 +242,10 @@
     margin-left: 6px;
   }
   .header-btn.icon-btn-header:first-child { margin-left: 0; }
+  .header-btn.icon-btn-header svg {
+    display: block;
+    vertical-align: middle;
+  }
 
   /* Hidden (rather than the whole header) when viewing a read-only saved-day
      snapshot from History, so the Share Score Photo icon can stay usable
@@ -759,6 +764,17 @@
   }
   .days-row .icon-btn svg {
     display: block;
+  }
+  /* Smaller square icon buttons (Save/Delete/Edit) used in the inline
+     roster-name editor row, sized to match the height of the name
+     input box they sit next to. Higher specificity than the base
+     ".days-row .icon-btn" rule above so it overrides the 60x60 default. */
+  .days-row .icon-btn.icon-btn-sm {
+    width: 48px;
+    height: 48px;
+  }
+  .days-row .icon-btn.icon-btn-sm.icon-btn-sm-spaced {
+    margin-right: 8px;
   }
   .btn-danger {
     background: transparent;
@@ -1713,6 +1729,7 @@
       <select id="daysSelect" class="days-select days-select-narrow"></select>
       <button class="btn btn-secondary days-row-btn" onclick="viewSelectedDay()">View</button>
       <button class="btn btn-primary days-row-btn" onclick="loadSelectedDayForEditing()">Edit</button>
+      <button class="btn btn-secondary days-row-btn" onclick="renameSelectedDay()">Rename</button>
       <button class="btn btn-danger icon-btn" onclick="deleteSelectedDay()" aria-label="Delete" title="Delete"><div class="icon-btn-inner"><svg viewBox="0 0 24 24" width="30" height="30" ><path fill="currentColor" d="M9 3h6l1 2h5v2H3V5h5l1-2zm-3 6h12l-1 12H7L6 9zm4 2v8h1v-8H10zm3 0v8h1v-8h-1z"/></svg></div></button>
     </div>
   </div>
@@ -1746,7 +1763,7 @@
     <button class="header-btn back-btn header-hideable" onclick="goToMainMenu()">&lsaquo;</button>
     <div class="header-icons hidden" id="appIcons">
       <button class="header-btn icon-btn-header" onclick="exportSnapshotImage('', 'Classic (6 Team)')" aria-label="Share Score Photo" title="Share Score Photo&hellip;">&#128247;</button>
-      <button class="header-btn icon-btn-header header-hideable" onclick="resetAll()" aria-label="Start Over (new tournament)" title="Start Over (new tournament)">&#8630;</button>
+      <button class="header-btn icon-btn-header header-hideable" onclick="resetAll()" aria-label="Start Over (new tournament)" title="Start Over (new tournament)"><svg viewBox="0 0 24 24" width="19" height="19"><g transform="scale(1,-1) translate(0,-24)"><path fill="currentColor" d="M12 5V1L7 6l5 5V7c3.31 0 6 2.69 6 6s-2.69 6-6 6-6-2.69-6-6H4c0 4.42 3.58 8 8 8s8-3.58 8-8-3.58-8-8-8z"/></g></svg></button>
     </div>
     <div class="title-row header-hideable">
       <div class="ball ball-left">&#8226; &#8226; &#8226;</div>
@@ -1760,8 +1777,8 @@
     <div class="card-title">Set Up Teams</div>
 
     <div class="two-col" style="margin-bottom:10px;">
-      <div><button class="btn btn-secondary" onclick="showMode('players')">Enter 12 Players &amp; Pair Them</button></div>
-      <div><button class="btn btn-secondary" onclick="showMode('teams')">Type 6 Team Names Directly</button></div>
+      <div><button class="btn btn-secondary" onclick="showMode('players')">12 Players Names</button></div>
+      <div><button class="btn btn-secondary" onclick="showMode('teams')">6 Team Names</button></div>
     </div>
 
     <!-- PLAYER MODE -->
@@ -1810,8 +1827,8 @@
   <header id="p7PageHeader">
     <button class="header-btn back-btn header-hideable" onclick="goToMainMenu()">&lsaquo;</button>
     <div class="header-icons hidden" id="p7Icons">
-      <button class="header-btn icon-btn-header" onclick="exportSnapshotImage('P7', 'Playoff (12 Team)')" aria-label="Share Score Photo" title="Share Score Photo&hellip;">&#128247;</button>
-      <button class="header-btn icon-btn-header header-hideable" onclick="resetAllP7()" aria-label="Start Over (new tournament)" title="Start Over (new tournament)">&#8630;</button>
+      <button class="header-btn icon-btn-header" onclick="exportSnapshotImage('P7', 'Playoff (12 Players, 6 Teams)')" aria-label="Share Score Photo" title="Share Score Photo&hellip;">&#128247;</button>
+      <button class="header-btn icon-btn-header header-hideable" onclick="resetAllP7()" aria-label="Start Over (new tournament)" title="Start Over (new tournament)"><svg viewBox="0 0 24 24" width="19" height="19"><g transform="scale(1,-1) translate(0,-24)"><path fill="currentColor" d="M12 5V1L7 6l5 5V7c3.31 0 6 2.69 6 6s-2.69 6-6 6-6-2.69-6-6H4c0 4.42 3.58 8 8 8s8-3.58 8-8-3.58-8-8-8z"/></g></svg></button>
     </div>
     <div class="title-row header-hideable">
       <div class="ball ball-left">&#8226; &#8226; &#8226;</div>
@@ -1825,8 +1842,8 @@
     <div class="card-title">Set Up Teams</div>
 
     <div class="two-col" style="margin-bottom:10px;">
-      <div><button class="btn btn-secondary" onclick="showModeP7('players')">Enter 12 Players &amp; Pair Them</button></div>
-      <div><button class="btn btn-secondary" onclick="showModeP7('teams')">Type 6 Team Names Directly</button></div>
+      <div><button class="btn btn-secondary" onclick="showModeP7('players')">12 Players Names</button></div>
+      <div><button class="btn btn-secondary" onclick="showModeP7('teams')">6 Team Names</button></div>
     </div>
 
     <!-- PLAYER MODE -->
@@ -1882,7 +1899,7 @@
     <button class="header-btn back-btn header-hideable" onclick="goToMainMenu()">&lsaquo;</button>
     <div class="header-icons hidden" id="prIcons">
       <button class="header-btn icon-btn-header" onclick="exportSnapshotImage('8', 'Partner Round Robin')" aria-label="Share Score Photo" title="Share Score Photo&hellip;">&#128247;</button>
-      <button class="header-btn icon-btn-header header-hideable" onclick="resetAll8()" aria-label="Start Over (new tournament)" title="Start Over (new tournament)">&#8630;</button>
+      <button class="header-btn icon-btn-header header-hideable" onclick="resetAll8()" aria-label="Start Over (new tournament)" title="Start Over (new tournament)"><svg viewBox="0 0 24 24" width="19" height="19"><g transform="scale(1,-1) translate(0,-24)"><path fill="currentColor" d="M12 5V1L7 6l5 5V7c3.31 0 6 2.69 6 6s-2.69 6-6 6-6-2.69-6-6H4c0 4.42 3.58 8 8 8s8-3.58 8-8-3.58-8-8-8z"/></g></svg></button>
     </div>
     <div class="title-row header-hideable">
       <div class="ball ball-left">&#8226; &#8226; &#8226;</div>
@@ -1931,7 +1948,7 @@
     <button class="header-btn back-btn header-hideable" onclick="goToMainMenu()">&lsaquo;</button>
     <div class="header-icons hidden" id="trIcons">
       <button class="header-btn icon-btn-header" onclick="exportSnapshotImage('TR', 'Team Rotation')" aria-label="Share Score Photo" title="Share Score Photo&hellip;">&#128247;</button>
-      <button class="header-btn icon-btn-header header-hideable" onclick="resetAllTR()" aria-label="Start Over (new tournament)" title="Start Over (new tournament)">&#8630;</button>
+      <button class="header-btn icon-btn-header header-hideable" onclick="resetAllTR()" aria-label="Start Over (new tournament)" title="Start Over (new tournament)"><svg viewBox="0 0 24 24" width="19" height="19"><g transform="scale(1,-1) translate(0,-24)"><path fill="currentColor" d="M12 5V1L7 6l5 5V7c3.31 0 6 2.69 6 6s-2.69 6-6 6-6-2.69-6-6H4c0 4.42 3.58 8 8 8s8-3.58 8-8-3.58-8-8-8z"/></g></svg></button>
     </div>
     <div class="title-row header-hideable">
       <div class="ball ball-left">&#8226; &#8226; &#8226;</div>
@@ -1984,7 +2001,7 @@
     <button class="header-btn back-btn header-hideable" onclick="goToMainMenu()">&lsaquo;</button>
     <div class="header-icons hidden" id="rtIcons">
       <button class="header-btn icon-btn-header" onclick="exportSnapshotImage('RT', 'Round Robin (Time Cap)')" aria-label="Share Score Photo" title="Share Score Photo&hellip;">&#128247;</button>
-      <button class="header-btn icon-btn-header header-hideable" onclick="resetAllRT()" aria-label="Start Over (new tournament)" title="Start Over (new tournament)">&#8630;</button>
+      <button class="header-btn icon-btn-header header-hideable" onclick="resetAllRT()" aria-label="Start Over (new tournament)" title="Start Over (new tournament)"><svg viewBox="0 0 24 24" width="19" height="19"><g transform="scale(1,-1) translate(0,-24)"><path fill="currentColor" d="M12 5V1L7 6l5 5V7c3.31 0 6 2.69 6 6s-2.69 6-6 6-6-2.69-6-6H4c0 4.42 3.58 8 8 8s8-3.58 8-8-3.58-8-8-8z"/></g></svg></button>
     </div>
     <div class="title-row header-hideable">
       <div class="ball ball-left">&#8226; &#8226; &#8226;</div>
@@ -2033,7 +2050,7 @@
     <button class="header-btn back-btn header-hideable" onclick="goToMainMenu()">&lsaquo;</button>
     <div class="header-icons hidden" id="clIcons">
       <button class="header-btn icon-btn-header" onclick="exportSnapshotImage('Cl', 'Scramble')" aria-label="Share Score Photo" title="Share Score Photo&hellip;">&#128247;</button>
-      <button class="header-btn icon-btn-header header-hideable" onclick="resetAllCl()" aria-label="Start Over (new tournament)" title="Start Over (new tournament)">&#8630;</button>
+      <button class="header-btn icon-btn-header header-hideable" onclick="resetAllCl()" aria-label="Start Over (new tournament)" title="Start Over (new tournament)"><svg viewBox="0 0 24 24" width="19" height="19"><g transform="scale(1,-1) translate(0,-24)"><path fill="currentColor" d="M12 5V1L7 6l5 5V7c3.31 0 6 2.69 6 6s-2.69 6-6 6-6-2.69-6-6H4c0 4.42 3.58 8 8 8s8-3.58 8-8-3.58-8-8-8z"/></g></svg></button>
     </div>
     <div class="title-row header-hideable">
       <div class="ball ball-left">&#8226; &#8226; &#8226;</div>
@@ -2082,7 +2099,7 @@
     <button class="header-btn back-btn header-hideable" onclick="goToMainMenu()">&lsaquo;</button>
     <div class="header-icons hidden" id="fuIcons">
       <button class="header-btn icon-btn-header" onclick="exportSnapshotImage('Fu', 'Fusion')" aria-label="Share Score Photo" title="Share Score Photo&hellip;">&#128247;</button>
-      <button class="header-btn icon-btn-header header-hideable" onclick="resetAllFu()" aria-label="Start Over (new tournament)" title="Start Over (new tournament)">&#8630;</button>
+      <button class="header-btn icon-btn-header header-hideable" onclick="resetAllFu()" aria-label="Start Over (new tournament)" title="Start Over (new tournament)"><svg viewBox="0 0 24 24" width="19" height="19"><g transform="scale(1,-1) translate(0,-24)"><path fill="currentColor" d="M12 5V1L7 6l5 5V7c3.31 0 6 2.69 6 6s-2.69 6-6 6-6-2.69-6-6H4c0 4.42 3.58 8 8 8s8-3.58 8-8-3.58-8-8-8z"/></g></svg></button>
     </div>
     <div class="title-row header-hideable">
       <div class="ball ball-left">&#8226; &#8226; &#8226;</div>
@@ -2130,7 +2147,7 @@
     <button class="header-btn back-btn header-hideable" onclick="goToMainMenu()">&lsaquo;</button>
     <div class="header-icons hidden" id="fu2Icons">
       <button class="header-btn icon-btn-header" onclick="exportSnapshotImage('Fu2', 'Fusion 2')" aria-label="Share Score Photo" title="Share Score Photo&hellip;">&#128247;</button>
-      <button class="header-btn icon-btn-header header-hideable" onclick="resetAllFu2()" aria-label="Start Over (new tournament)" title="Start Over (new tournament)">&#8630;</button>
+      <button class="header-btn icon-btn-header header-hideable" onclick="resetAllFu2()" aria-label="Start Over (new tournament)" title="Start Over (new tournament)"><svg viewBox="0 0 24 24" width="19" height="19"><g transform="scale(1,-1) translate(0,-24)"><path fill="currentColor" d="M12 5V1L7 6l5 5V7c3.31 0 6 2.69 6 6s-2.69 6-6 6-6-2.69-6-6H4c0 4.42 3.58 8 8 8s8-3.58 8-8-3.58-8-8-8z"/></g></svg></button>
     </div>
     <div class="title-row header-hideable">
       <div class="ball ball-left">&#8226; &#8226; &#8226;</div>
@@ -2933,26 +2950,104 @@
 
   function closeManageNames() {
     document.getElementById('manageNamesOverlay').className = 'modal-overlay hidden';
+    editingRosterName = null;
     // picking up any additions/removals on every screen that's already built
     if (typeof refreshAllNameGridsOnScreen === 'function') refreshAllNameGridsOnScreen();
   }
+
+  var TRASH_ICON_SVG = '<svg viewBox="0 0 24 24" width="30" height="30" ><path fill="currentColor" d="M9 3h6l1 2h5v2H3V5h5l1-2zm-3 6h12l-1 12H7L6 9zm4 2v8h1v-8H10zm3 0v8h1v-8h-1z"/></svg>';
+  var EDIT_ICON_SVG = '<svg viewBox="0 0 24 24" width="30" height="30" ><path fill="currentColor" d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34a.9959.9959 0 0 0-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/></svg>';
+  var SAVE_ICON_SVG = '<svg viewBox="0 0 24 24" width="30" height="30" ><path fill="currentColor" d="M9 16.2 4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z"/></svg>';
+
+  // Which roster name (if any) is currently open for inline editing in the
+  // Manage Players list. Only one row can be in edit mode at a time.
+  var editingRosterName = null;
 
   function renderManageNames() {
     var roster = sortedRoster();
     var html = '';
     for (var i = 0; i < roster.length; i++) {
-      html += '<div class="days-row" style="margin-bottom:8px;">' +
-        '<div style="-webkit-box-flex:1;-webkit-flex:1;flex:1;font-size:17px;padding:8px 0;">' + escapeHtml(roster[i]) + '</div>' +
-        '<button class="btn btn-danger icon-btn" aria-label="Remove" title="Remove" onclick="removeNameFromList(\'' + escapeHtml(roster[i]).replace(/'/g, "\\'") + '\')"><div class="icon-btn-inner"><svg viewBox="0 0 24 24" width="30" height="30" ><path fill="currentColor" d="M9 3h6l1 2h5v2H3V5h5l1-2zm-3 6h12l-1 12H7L6 9zm4 2v8h1v-8H10zm3 0v8h1v-8h-1z"/></svg></div></button>' +
-        '</div>';
+      var nm = roster[i];
+      var nmJs = escapeHtml(nm).replace(/'/g, "\\'");
+      if (editingRosterName !== null && nm === editingRosterName) {
+        html += '<div class="days-row" style="margin-bottom:8px;">' +
+          '<input type="text" class="modal-input selectable" id="editNameInput" value="' + escapeHtml(nm) + '" ' +
+          'style="margin-bottom:0;margin-right:8px;height:48px;-webkit-box-flex:1;-webkit-flex:1;flex:1;width:auto;">' +
+          '<button class="btn btn-primary icon-btn icon-btn-sm icon-btn-sm-spaced" aria-label="Save" title="Save" onclick="saveEditedRosterName(\'' + nmJs + '\')"><div class="icon-btn-inner">' + SAVE_ICON_SVG + '</div></button>' +
+          '<button class="btn btn-danger icon-btn icon-btn-sm" aria-label="Remove" title="Remove" onclick="removeNameFromList(\'' + nmJs + '\')"><div class="icon-btn-inner">' + TRASH_ICON_SVG + '</div></button>' +
+          '</div>';
+      } else {
+        html += '<div class="days-row" style="margin-bottom:8px;">' +
+          '<div style="-webkit-box-flex:1;-webkit-flex:1;flex:1;font-size:17px;padding:8px 0;">' + escapeHtml(nm) + '</div>' +
+          '<button class="btn btn-secondary icon-btn icon-btn-sm" aria-label="Edit" title="Edit" onclick="startEditRosterName(\'' + nmJs + '\')"><div class="icon-btn-inner">' + EDIT_ICON_SVG + '</div></button>' +
+          '</div>';
+      }
     }
     if (!roster.length) html = '<div class="empty-note">No names yet.</div>';
     document.getElementById('manageNamesList').innerHTML = html;
+
+    if (editingRosterName !== null) {
+      var inp = document.getElementById('editNameInput');
+      if (inp) {
+        setTimeout(function () { inp.focus(); inp.select(); }, 50);
+        inp.onkeydown = function (e) {
+          var key = e.key || e.keyCode;
+          if (key === 'Enter' || key === 13) {
+            e.preventDefault();
+            saveEditedRosterName(editingRosterName);
+          } else if (key === 'Escape' || key === 27) {
+            editingRosterName = null;
+            renderManageNames();
+          }
+        };
+      }
+    }
+  }
+
+  function startEditRosterName(name) {
+    editingRosterName = name;
+    renderManageNames();
+  }
+
+  function saveEditedRosterName(oldName) {
+    var input = document.getElementById('editNameInput');
+    if (!input) return;
+    var newName = input.value.trim();
+    if (!newName || newName === oldName) {
+      editingRosterName = null;
+      renderManageNames();
+      return;
+    }
+
+    // Guard against a rename accidentally merging two different people's
+    // history together: block if the new name already belongs to someone
+    // else, either in the quick-pick roster or in saved game history.
+    var newLc = newName.toLowerCase();
+    var oldLc = oldName.toLowerCase();
+    var roster = getRoster();
+    for (var i = 0; i < roster.length; i++) {
+      if (roster[i].toLowerCase() === newLc && roster[i].toLowerCase() !== oldLc) {
+        appAlert('"' + roster[i] + '" is already a different player. Choose a different name (e.g. add a last initial).');
+        return;
+      }
+    }
+    var histMatch = findHistoryNameMatch(newName);
+    if (histMatch && histMatch.toLowerCase() !== oldLc) {
+      appAlert('"' + histMatch + '" already has games saved under that name. Choose a different name so their history doesn\'t get mixed in.');
+      return;
+    }
+
+    appConfirm('Rename "' + oldName + '" to "' + newName + '"? This updates the name in every saved game, tournament, and the stats page, and re-syncs the backup file.', function () {
+      applyPlayerRenameEverywhere(oldName, newName);
+      editingRosterName = null;
+      renderManageNames();
+    });
   }
 
   function removeNameFromList(name) {
     appConfirm('Remove "' + name + '" from the quick-pick list? (Any scores already saved under this name are not affected.)', function () {
       removeFromRoster(name);
+      if (editingRosterName === name) editingRosterName = null;
       renderManageNames();
     });
   }
@@ -3391,6 +3486,20 @@
     return dayType;
   }
 
+  // Human-friendly label for a saved day, e.g. "8/10/26 \u00b7 Fusion" --
+  // used both for the History page dropdown and anywhere else (like the
+  // "load for editing" confirm prompt) that needs to show a day to the
+  // user instead of its raw dateKey.
+  function dayDisplayLabel(dateKey, dayObj) {
+    // Days saved before gameType was recorded (the original Partner Round
+    // Robin) have no gameType field at all -- treat that as 'partnerrr12'.
+    var dayGameType = dayObj && dayObj.gameType;
+    var defId = GAME_TYPE_TO_DEF_ID[dayGameType || 'partnerrr12'];
+    var gameLabel = defId ? gameDefLabel(defId) : '';
+    return dateKey.replace('-8p', '').replace('-8t', '').replace('-scr', '').replace('-fu2', '').replace('-fu', '').replace('-tr', '').replace('-p7', '') +
+      (gameLabel ? ' \u00b7 ' + gameLabel : '');
+  }
+
   function renderHistoryPage() {
     var days = getDays();
     var keys = Object.keys(days);
@@ -3413,13 +3522,7 @@
     var prevSelected = select.value;
     var html = '';
     for (var i = 0; i < keys.length; i++) {
-      var dayGameType = days[keys[i]] && days[keys[i]].gameType;
-      // Days saved before gameType was recorded (the original Partner Round
-      // Robin) have no gameType field at all -- treat that as 'partnerrr12'.
-      var defId = GAME_TYPE_TO_DEF_ID[dayGameType || 'partnerrr12'];
-      var gameLabel = defId ? gameDefLabel(defId) : '';
-      var label = keys[i].replace('-8p', '').replace('-8t', '').replace('-scr', '').replace('-fu2', '').replace('-fu', '').replace('-tr', '').replace('-p7', '') +
-        (gameLabel ? ' \u00b7 ' + gameLabel : '');
+      var label = dayDisplayLabel(keys[i], days[keys[i]]);
       html += '<option value="' + escapeHtml(keys[i]) + '">' + escapeHtml(label) + '</option>';
     }
     select.innerHTML = html;
@@ -3459,6 +3562,79 @@
       }
       serverSyncUp();
       renderHistoryPage();
+    });
+  }
+
+  // Every mode's suffix, matching the strip-list in dayDisplayLabel() /
+  // exportSnapshotImage() above. Longest-first ("-fu2" before "-fu") so a
+  // key isn't mismatched to the wrong suffix.
+  var DATEKEY_SUFFIXES = ['-fu2', '-8p', '-8t', '-scr', '-fu', '-tr', '-p7'];
+
+  // Lets you change ONLY the date portion of a saved day's key (keeping its
+  // game-type suffix), so a tournament set up the night before can be filed
+  // under the morning it was actually played. Renaming just changes which
+  // key the same saved data lives under in localStorage/the server file --
+  // the players, games, and scores inside it are untouched, so stats
+  // (which are always recomputed live from whatever days currently exist)
+  // and any photos already exported/saved are unaffected either way.
+  function renameSelectedDay() {
+    var select = document.getElementById('daysSelect');
+    if (!select || !select.value) return;
+    var oldKey = select.value;
+    var days = getDays();
+    var snap = days[oldKey];
+    if (!snap) return;
+
+    var suffix = '';
+    for (var i = 0; i < DATEKEY_SUFFIXES.length; i++) {
+      if (oldKey.slice(-DATEKEY_SUFFIXES[i].length) === DATEKEY_SUFFIXES[i]) { suffix = DATEKEY_SUFFIXES[i]; break; }
+    }
+    var oldDatePart = suffix ? oldKey.slice(0, oldKey.length - suffix.length) : oldKey;
+
+    appPrompt('Enter the date this tournament was actually played (M/D/YY):', oldDatePart, function (typed) {
+      var newDatePart = (typed || '').trim();
+      if (!newDatePart || newDatePart === oldDatePart) return;
+      if (!/^\d{1,2}\/\d{1,2}\/\d{2}$/.test(newDatePart)) {
+        appAlert('Please enter the date as M/D/YY, e.g. 8/13/26.');
+        return;
+      }
+      var newKey = newDatePart + suffix;
+      if (days.hasOwnProperty(newKey)) {
+        appAlert('A saved day already exists for "' + dayDisplayLabel(newKey, days[newKey]) + '". Delete or rename that one first, or pick a different date.');
+        return;
+      }
+
+      snap.dateKey = newKey;
+      days[newKey] = snap;
+      delete days[oldKey];
+      setDays(days);
+
+      // If this saved day is also the one currently loaded on screen,
+      // repoint its in-memory active-key so the NEXT autosave writes to
+      // the new key instead of silently recreating the old one (or, worse,
+      // reverting to today's date -- once renamed, it stays renamed until
+      // you rename it again).
+      if (typeof activeDateKey !== 'undefined' && activeDateKey === oldKey) activeDateKey = newKey;
+      if (typeof activeDateKey8 !== 'undefined' && activeDateKey8 === oldKey) activeDateKey8 = newKey;
+      if (typeof activeDateKeyTR !== 'undefined' && activeDateKeyTR === oldKey) activeDateKeyTR = newKey;
+      if (typeof activeDateKeyRT !== 'undefined' && activeDateKeyRT === oldKey) activeDateKeyRT = newKey;
+      if (typeof activeDateKeyCl !== 'undefined' && activeDateKeyCl === oldKey) activeDateKeyCl = newKey;
+      if (typeof activeDateKeyFu !== 'undefined' && activeDateKeyFu === oldKey) activeDateKeyFu = newKey;
+      if (typeof activeDateKeyFu2 !== 'undefined' && activeDateKeyFu2 === oldKey) activeDateKeyFu2 = newKey;
+      if (typeof activeDateKeyP7 !== 'undefined' && activeDateKeyP7 === oldKey) activeDateKeyP7 = newKey;
+      if (PERINI_VIEWING_DATEKEY === oldKey) PERINI_VIEWING_DATEKEY = newKey;
+
+      if (storageOk()) {
+        try {
+          if (window.localStorage.getItem(PERINI_ACTIVE) === oldKey) {
+            window.localStorage.setItem(PERINI_ACTIVE, newKey);
+          }
+        } catch (e) {}
+      }
+
+      serverSyncUp();
+      renderHistoryPage();
+      select.value = newKey;
     });
   }
 
@@ -3562,7 +3738,7 @@
     } else {
       var current = getActiveTournament();
       if (current && current.dateKey !== dateKey) {
-        appConfirm('Loading "' + dateKey + '" for editing will switch away from today\'s in-progress tournament. Your progress today is saved and you can resume it from the main menu. Continue?', loadIt);
+        appConfirm('Loading "' + dayDisplayLabel(dateKey, snap) + '" for editing will switch away from today\'s in-progress tournament. Your progress today is saved and you can resume it from the main menu. Continue?', loadIt);
       } else {
         loadIt();
       }
@@ -3888,6 +4064,96 @@
     var set = collectHistoryNames();
     var lc = (name || '').trim().toLowerCase();
     return set.hasOwnProperty(lc) ? set[lc] : null;
+  }
+
+  // ================== Player rename (propagate through history) ==================
+  // Recursively walks any saved-day-shaped value (objects, arrays, plain
+  // strings, and "Name / Name" doubles-team strings) and swaps out an exact
+  // (case-insensitive) name match for the new name. Returns the original
+  // value unchanged (same reference) if nothing inside it matched, so
+  // callers can tell whether anything was touched.
+  function renameNameInValue(val, oldLc, newName) {
+    if (typeof val === 'string') {
+      if (val.indexOf(' / ') !== -1) {
+        var parts = val.split(' / ');
+        var partsChanged = false;
+        for (var p = 0; p < parts.length; p++) {
+          if (parts[p].trim().toLowerCase() === oldLc) { parts[p] = newName; partsChanged = true; }
+        }
+        return partsChanged ? parts.join(' / ') : val;
+      }
+      return val.trim().toLowerCase() === oldLc ? newName : val;
+    }
+    if (val instanceof Array) {
+      var outArr = [];
+      var arrChanged = false;
+      for (var i = 0; i < val.length; i++) {
+        var rv = renameNameInValue(val[i], oldLc, newName);
+        if (rv !== val[i]) arrChanged = true;
+        outArr.push(rv);
+      }
+      return arrChanged ? outArr : val;
+    }
+    if (val && typeof val === 'object') {
+      var outObj = {};
+      var objChanged = false;
+      for (var k in val) {
+        if (!val.hasOwnProperty(k)) continue;
+        var rv2 = renameNameInValue(val[k], oldLc, newName);
+        if (rv2 !== val[k]) objChanged = true;
+        outObj[k] = rv2;
+      }
+      return objChanged ? outObj : val;
+    }
+    return val;
+  }
+
+  // Every top-level global that can hold player/team names for a
+  // tournament currently in progress on screen. Renaming needs to touch
+  // these too, or the next autosave would write the old name straight
+  // back into localStorage/the server after a rename "fixed" it there.
+  var IN_MEMORY_NAME_VARS = [
+    'teams', 'games',
+    'players8', 'games8',
+    'playersTR', 'team1TR', 'team2TR', 'gamesTR',
+    'playersRT', 'gamesRT',
+    'playersCl', 'groupACl', 'groupBCl', 'gamesCl',
+    'teamsP7', 'gamesP7', 'seedOrderP7',
+    'playersFu', 'groupAFu', 'groupBFu', 'gamesFu',
+    'playersFu2', 'groupAFu2', 'groupBFu2', 'gamesFu2'
+  ];
+
+  // Renames a player everywhere: the quick-pick roster, every saved day in
+  // history (localStorage cache), whatever tournament is currently loaded
+  // in memory (so an in-progress day doesn't revert on its next autosave),
+  // and finally pushes the corrected history to the Python server so
+  // perini_data.json on disk stays in sync too.
+  function applyPlayerRenameEverywhere(oldName, newName) {
+    var oldLc = oldName.trim().toLowerCase();
+
+    // 1. Quick-pick roster list
+    var roster = getRoster();
+    for (var i = 0; i < roster.length; i++) {
+      if (roster[i].toLowerCase() === oldLc) roster[i] = newName;
+    }
+    saveRoster(roster);
+
+    // 2. Every saved day (schedules, scores, teams, standings inputs)
+    var days = getDays();
+    var newDays = renameNameInValue(days, oldLc, newName);
+    setDays(newDays);
+
+    // 3. Whatever tournament is currently in progress in memory
+    for (var v = 0; v < IN_MEMORY_NAME_VARS.length; v++) {
+      var varName = IN_MEMORY_NAME_VARS[v];
+      if (typeof window[varName] !== 'undefined' && window[varName]) {
+        window[varName] = renameNameInValue(window[varName], oldLc, newName);
+      }
+    }
+
+    // 4. Push the corrected data to the local Python server so the
+    // perini_data.json backup on disk reflects the rename too.
+    serverSyncUp();
   }
 
   // Runs the history duplicate-name check and, if there's a match, shows the
@@ -4524,7 +4790,7 @@
   }
 
   function resetAll8() {
-    appConfirm('Start a new Partner Round Robin tournament? This clears today\'s scores from the screen (the day already played stays saved under Saved Days).', function () {
+    appConfirm('Start a new Partner Round Robin tournament? This clears today\'s scores from the screen (previous days remain saved in History).', function () {
       players8 = [];
       games8 = [];
       activeDateKey8 = null;
@@ -5182,7 +5448,7 @@
   }
 
   function resetAllTR() {
-    appConfirm('Start a new Team/Partner Rotation tournament? This clears today\'s scores from the screen (the day already played stays saved under Saved Days).', function () {
+    appConfirm('Start a new Team/Partner Rotation tournament? This clears today\'s scores from the screen (previous days remain saved in History).', function () {
       playersTR = [];
       team1TR = [];
       team2TR = [];
@@ -5636,7 +5902,7 @@
   }
 
   function resetAllRT() {
-    appConfirm('Start a new Round Robin (time cap) tournament? This clears today\'s scores from the screen (the day already played stays saved under Saved Days).', function () {
+    appConfirm('Start a new Round Robin (time cap) tournament? This clears today\'s scores from the screen (previous days remain saved in History).', function () {
       playersRT = [];
       gamesRT = [];
       activeDateKeyRT = null;
@@ -6329,7 +6595,7 @@
   }
 
   function resetAllCl() {
-    appConfirm('Start a new Scramble tournament? This clears today\'s scores from the screen (the day already played stays saved under Saved Days).', function () {
+    appConfirm('Start a new Scramble tournament? This clears today\'s scores from the screen (previous days remain saved in History).', function () {
       playersCl = [];
       groupACl = [];
       groupBCl = [];
@@ -6814,7 +7080,7 @@
   }
 
   function resetAllFu() {
-    appConfirm('Start a new Fusion tournament? This clears today\'s scores from the screen (the day already played stays saved under Saved Days).', function () {
+    appConfirm('Start a new Fusion tournament? This clears today\'s scores from the screen (previous days remain saved in History).', function () {
       playersFu = [];
       groupAFu = [];
       groupBFu = [];
@@ -7294,7 +7560,7 @@
   }
 
   function resetAllFu2() {
-    appConfirm('Start a new Fusion 2 tournament? This clears today\'s scores from the screen (the day already played stays saved under Saved Days).', function () {
+    appConfirm('Start a new Fusion 2 tournament? This clears today\'s scores from the screen (previous days remain saved in History).', function () {
       playersFu2 = [];
       groupAFu2 = [];
       groupBFu2 = [];
@@ -7721,7 +7987,7 @@
   }
 
   function resetAll() {
-    appConfirm('Start a new Round Robin tournament? This clears today\'s scores from the screen (the day already played stays saved under Saved Days).', function () {
+    appConfirm('Start a new Round Robin tournament? This clears today\'s scores from the screen (previous days remain saved in History).', function () {
       teams = [];
       games = [];
       mode = null;
@@ -8663,7 +8929,7 @@
   }
 
   function resetAllP7() {
-    appConfirm('Start a new Playoff tournament? This clears today\'s scores from the screen (the day already played stays saved under Saved Days).', function () {
+    appConfirm('Start a new Playoff tournament? This clears today\'s scores from the screen (previous days remain saved in History).', function () {
       teamsP7 = [];
       gamesP7 = [];
       seedOrderP7 = null;
