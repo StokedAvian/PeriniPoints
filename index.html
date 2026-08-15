@@ -332,6 +332,8 @@
   .btn-primary:active { background: var(--accent-active); }
   .btn-secondary { background: transparent; color: var(--accent-light); border: 1px solid var(--border-strong); font-size: 16px; }
   .btn-secondary:active { background: var(--bg-tile-active); }
+  .btn-secondary.mode-active { background: var(--accent); color: var(--bg-input); border-color: var(--accent); font-weight: bold; }
+  .btn-secondary.mode-active:active { background: var(--accent-active); }
   .btn-small {
     padding: 10px 15px;
     font-size: 16px;
@@ -352,6 +354,82 @@
     padding-right: 6px;
   }
   .players-grid .field-row:nth-child(2n) { padding-right: 0; padding-left: 6px; }
+
+  .team-inline-row {
+    display: -webkit-box;
+    display: -webkit-flex;
+    display: flex;
+    -webkit-box-align: center;
+    -webkit-align-items: center;
+    align-items: center;
+  }
+  .team-inline-row .team-inline-label {
+    -webkit-flex-shrink: 0;
+    flex-shrink: 0;
+    width: 46px;
+    margin-right: 6px;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--accent-light);
+    text-align: center;
+  }
+  .team-inline-row .team-inline-label .team-inline-num {
+    display: block;
+    font-size: 17px;
+    letter-spacing: 0;
+    color: var(--text);
+    font-weight: bold;
+  }
+  .team-inline-row .team-inline-name {
+    width: 27%;
+    margin-right: 6px;
+  }
+  .team-inline-row .team-inline-name .name-select {
+    height: 44px;
+    font-size: 18px;
+    padding: 0 22px 0 8px;
+    background-position: right 6px center;
+    background-size: 14px 14px;
+  }
+  .team-inline-row .team-inline-name .name-manual-btn {
+    width: 34px;
+    margin-left: 4px;
+    font-size: 16px;
+  }
+  .team-inline-row .team-inline-name .name-manual-input {
+    height: 44px;
+    font-size: 18px;
+    padding: 0 8px;
+  }
+  .team-inline-row .team-inline-teamname {
+    width: auto;
+    -webkit-box-flex: 1;
+    -webkit-flex: 1 1 0%;
+    flex: 1 1 0%;
+    min-width: 0;
+    height: 44px;
+    font-size: 18px;
+    padding: 0 8px;
+  }
+
+  .team-row-block {
+    padding-bottom: 8px;
+    margin-bottom: 8px;
+    border-bottom: 1px dashed var(--border);
+  }
+  .team-row-block:last-child {
+    border-bottom: none;
+    margin-bottom: 0;
+  }
+  .team-row-block label {
+    display: block;
+    font-size: 14px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--accent-light);
+    margin-bottom: 4px;
+  }
 
   .name-field-row {
     display: -webkit-box;
@@ -495,6 +573,12 @@
   .team1-name { color: var(--team1-color); }
   .team2-name { color: var(--team2-color); }
   .standings-table td.team1-name, .standings-table td.team2-name { font-weight: 600; }
+  .standings-players {
+    font-size: 12px;
+    font-weight: normal;
+    color: var(--text-dim);
+    margin-top: 2px;
+  }
 
   .empty-note {
     text-align: center;
@@ -1363,6 +1447,88 @@
     color: var(--text-dim);
   }
 
+  .pair-line-block {
+    display: -webkit-box;
+    display: -webkit-flex;
+    display: flex;
+    -webkit-box-orient: horizontal;
+    -webkit-box-align: center;
+    -webkit-align-items: center;
+    align-items: center;
+    -webkit-flex-wrap: nowrap;
+    flex-wrap: nowrap;
+    padding: 8px 5px 10px 5px;
+    border-bottom: 1px dashed var(--border);
+  }
+  .pair-line-players {
+    font-size: 19.2px;
+    color: var(--text-dim);
+    margin-bottom: 0;
+    margin-right: 10px;
+    -webkit-box-flex: 1;
+    -webkit-flex: 1;
+    flex: 1;
+    width: 1%; /* helps old webkit shrink evenly instead of overflowing */
+  }
+  .team-name-input {
+    width: 45%;
+    -webkit-box-flex: 0;
+    -webkit-flex: 0 0 45%;
+    flex: 0 0 45%;
+    padding: 10px 8px;
+    font-size: 17px;
+    font-family: Tahoma, Geneva, Verdana, sans-serif;
+    border: 1px solid var(--border-strong);
+    border-radius: 3px;
+    background: var(--bg-input);
+    color: var(--text);
+    -webkit-user-select: text;
+    user-select: text;
+    -webkit-box-sizing: border-box;
+    box-sizing: border-box;
+  }
+
+  /* 6-box team reference strip shown above the schedule grid on the
+     12-player modes. Flexbox (no "gap") so it still lays out on iOS 9. */
+  .team-summary-row {
+    display: -webkit-box;
+    display: -webkit-flex;
+    display: flex;
+    -webkit-flex-wrap: nowrap;
+    flex-wrap: nowrap;
+    margin: 0 -2px 14px -2px;
+  }
+  .team-summary-box {
+    -webkit-box-flex: 1;
+    -webkit-flex: 1;
+    flex: 1;
+    width: 1%; /* helps old webkit shrink items evenly instead of overflowing */
+    margin: 0 2px;
+    padding: 5px 2px;
+    border: 1px solid var(--border-strong);
+    border-radius: 4px;
+    background: var(--bg-card);
+    text-align: center;
+  }
+  .team-summary-name {
+    font-size: 10.5px;
+    font-weight: bold;
+    color: var(--accent-light);
+    text-transform: uppercase;
+    letter-spacing: 0.2px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .team-summary-players {
+    font-size: 9.5px;
+    color: var(--text-dim);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    margin-top: 2px;
+  }
+
   footer {
     text-align: center;
     font-size: 13px;
@@ -1777,8 +1943,8 @@
     <div class="card-title">Set Up Teams</div>
 
     <div class="two-col" style="margin-bottom:10px;">
-      <div><button class="btn btn-secondary" onclick="showMode('players')">12 Players Names</button></div>
-      <div><button class="btn btn-secondary" onclick="showMode('teams')">6 Team Names</button></div>
+      <div><button class="btn btn-secondary" id="modeBtnPlayers" onclick="showMode('players')">12 Player Names</button></div>
+      <div><button class="btn btn-secondary" id="modeBtnTeams" onclick="showMode('teams')">6 Team Names</button></div>
     </div>
 
     <!-- PLAYER MODE -->
@@ -1802,6 +1968,8 @@
   <!-- SCHEDULE CARD -->
   <div class="card hidden" id="scheduleCard">
     <div class="card-title" id="scheduleTitle">Matchups</div>
+
+    <div id="teamSummary"></div>
 
     <div class="schedule-flex">
       <div class="grid-scroll" id="gridWrap"></div>
@@ -1842,8 +2010,8 @@
     <div class="card-title">Set Up Teams</div>
 
     <div class="two-col" style="margin-bottom:10px;">
-      <div><button class="btn btn-secondary" onclick="showModeP7('players')">12 Players Names</button></div>
-      <div><button class="btn btn-secondary" onclick="showModeP7('teams')">6 Team Names</button></div>
+      <div><button class="btn btn-secondary" id="modeBtnPlayersP7" onclick="showModeP7('players')">12 Player Names</button></div>
+      <div><button class="btn btn-secondary" id="modeBtnTeamsP7" onclick="showModeP7('teams')">6 Team Names</button></div>
     </div>
 
     <!-- PLAYER MODE -->
@@ -1867,6 +2035,8 @@
   <!-- SCHEDULE CARD -->
   <div class="card hidden" id="scheduleCardP7">
     <div class="card-title">Seeding Games (1-5)</div>
+
+    <div id="teamSummaryP7"></div>
 
     <div class="schedule-flex">
       <div class="grid-scroll" id="gridWrapP7"></div>
@@ -2255,9 +2425,26 @@
 </div>
 
 <script>
+  // ================== Demo / test player rosters ==================
+  // Uncomment ONE (or both) of the lines below to auto-fill every scoring
+  // type's name-entry screen with placeholder players for quick testing --
+  // demo8 fills any 8-player game type, demo12 fills any 12-player game
+  // type. Comment the line back out (leave the "var demo8 = ..." text so
+  // you can find it again) to return that game size to normal manual name
+  // entry. It's safe to comment these out -- every game type checks
+  // whether they exist before using them.
+  // var demo8 = ['Keaton', 'Caroline', 'Phil', 'Corey', 'Gary', 'Jeff', 'Colby', 'Kime'];
+  // var demo12 = ['Keaton', 'Caroline', 'Phil', 'Corey', 'Gary', 'Jeff', 'Colby', 'Kime', 'John', 'Carlos', 'Nico', 'Joe'];
+
   var CAP = 8;
   var BASE = 10;
   var teams = [];      // array of team name strings, length 6
+  // Optional custom team names for the 12-player "Randomly Pair Into Teams"
+  // flow. Keyed by the underlying "Player A / Player B" string (which stays
+  // the real team identifier everywhere -- games, standings totals, stats --
+  // so per-player stats keep working); the value is the assigned team name
+  // (e.g. "The Dinkers") shown instead of/alongside the player names.
+  var teamLabels = {};
   var games = [];       // {t1, t2, s1, s2, entered, round, court}
   var mode = null;
   var activeDateKey = null; // date key ("m/d/yy") of the tournament currently on screen
@@ -2275,8 +2462,6 @@
     { court1: [[0,6],[3,5]], court2: [[1,7],[2,4]] },
     { court1: [[0,7],[1,6]], court2: [[2,5],[3,4]] }
   ];
-  var DEFAULT_PARTNER_PLAYERS = ['Keaton', 'Caroline', 'Phil', 'Corey', 'Gary', 'Jeff', 'Colby', 'Kime'];
-
   var players8 = [];    // array of 8 player name strings
   var games8 = [];       // {t1:[nameA,nameB], t2:[nameA,nameB], s1, s2, rawS1, rawS2, entered, round, court}
                           // s1/s2 = adjusted (11-9 rebalanced) score used for standings; rawS1/rawS2 = actual final score entered (shows overtime, e.g. 15-13)
@@ -2317,10 +2502,6 @@
   var activeDateKeyRT = null;
 
   // ---------- Scramble Scoring (8 players, groups of 4, winners/losers courts) ----------
-  // Comment out the line below (leave this comment) to blank out the Scramble
-  // Scoring name fields instead of auto-filling them -- handy when you want
-  // people to type in their own names instead of seeing the demo roster.
-  var DEFAULT_SCRAMBLE_PLAYERS_PLAYERS = ['Keaton', 'Caroline', 'Phil', 'Corey', 'Gary', 'Jeff', 'Colby', 'Kime'];
   var playersCl = [];    // array of 8 player names (in current group order: [groupA x4, groupB x4])
   var groupACl = [];
   var groupBCl = [];
@@ -2342,6 +2523,7 @@
   // match" for the bottom 2 teams' players (new partners, doesn't affect
   // placement).
   var teamsP7 = [];
+  var teamLabelsP7 = {}; // same idea as teamLabels above, for the Playoff (12-player) mode
   var gamesP7 = [];      // {t1, t2, s1, s2, entered, round, court, label}
                           // round 0-4 = games 1-5 (seeding), round 5 = game 6, round 6 = game 7
   var seedOrderP7 = null; // array of 6 team-name strings, seed 1 first, once seeding is resolved
@@ -2520,16 +2702,23 @@
     if (current && current.gameType !== 'partner8' && current.gameType !== 'rrtc8' && current.gameType !== 'classic8' && current.gameType !== 'fusion8' && current.gameType !== 'fusion8_2' && current.gameType !== 'teamrot8' && current.gameType !== 'playoff12') {
       activeDateKey = current.dateKey;
       teams = current.teams;
+      teamLabels = current.teamLabels || {};
       games = current.games;
       mode = null;
       showTournamentUI();
       goToAppPage();
       return;
     }
-    // Nothing in progress -- fresh setup screen.
-    teams = [];
-    games = [];
-    mode = null;
+    // Nothing in progress -- fresh setup screen. If teams were already
+    // randomized (but Generate Schedule hasn't been tapped yet), keep that
+    // draft in place instead of wiping it out -- otherwise leaving this
+    // screen and coming back forces re-randomizing before Generate Schedule
+    // will work, even though the teams are still shown on screen.
+    if (!teams || teams.length === 0) {
+      teams = [];
+      games = [];
+      mode = null;
+    }
     document.getElementById('setupCard').className = 'card';
     document.getElementById('scheduleCard').className = 'card hidden';
     document.getElementById('standingsCard').className = 'card hidden';
@@ -2582,13 +2771,19 @@
       goToTRPage();
       return;
     }
-    // Nothing in progress -- fresh setup screen.
-    playersTR = [];
-    team1TR = [];
-    team2TR = [];
-    gamesTR = [];
-    buildPlayerTRInputs();
-    document.getElementById('teamPreviewTR').innerHTML = '';
+    // Nothing in progress -- fresh setup screen. If teams were already
+    // randomized (but Generate Schedule hasn't been tapped yet), keep that
+    // draft in place instead of wiping it out -- otherwise leaving this
+    // screen and coming back forces re-randomizing before Generate Schedule
+    // will work, even though the teams are still shown on screen.
+    if (!team1TR || team1TR.length === 0) {
+      playersTR = [];
+      team1TR = [];
+      team2TR = [];
+      gamesTR = [];
+      buildPlayerTRInputs();
+      document.getElementById('teamPreviewTR').innerHTML = '';
+    }
     document.getElementById('setupCardTR').className = 'card';
     document.getElementById('scheduleCardTR').className = 'card hidden';
     document.getElementById('standingsCardTR').className = 'card hidden';
@@ -2727,6 +2922,7 @@
     if (current && current.gameType === 'playoff12') {
       activeDateKeyP7 = current.dateKey;
       teamsP7 = current.teams;
+      teamLabelsP7 = current.teamLabels || {};
       gamesP7 = current.games;
       seedOrderP7 = current.seedOrder || null;
       modeP7 = null;
@@ -2734,11 +2930,17 @@
       goToP7Page();
       return;
     }
-    // Nothing in progress -- fresh setup screen.
-    teamsP7 = [];
-    gamesP7 = [];
-    seedOrderP7 = null;
-    modeP7 = null;
+    // Nothing in progress -- fresh setup screen. If teams were already
+    // randomized (but Generate Schedule hasn't been tapped yet), keep that
+    // draft in place instead of wiping it out -- otherwise leaving this
+    // screen and coming back forces re-randomizing before Generate Schedule
+    // will work, even though the teams are still shown on screen.
+    if (!teamsP7 || teamsP7.length === 0) {
+      teamsP7 = [];
+      gamesP7 = [];
+      seedOrderP7 = null;
+      modeP7 = null;
+    }
     document.getElementById('setupCardP7').className = 'card';
     document.getElementById('scheduleCardP7').className = 'card hidden';
     document.getElementById('standingsCardP7').className = 'card hidden';
@@ -2797,6 +2999,7 @@
       } else if (current.gameType === 'playoff12') {
         activeDateKeyP7 = current.dateKey;
         teamsP7 = current.teams;
+        teamLabelsP7 = current.teamLabels || {};
         gamesP7 = current.games;
         seedOrderP7 = current.seedOrder || null;
         modeP7 = null;
@@ -2805,6 +3008,7 @@
       } else {
         activeDateKey = current.dateKey;
         teams = current.teams;
+        teamLabels = current.teamLabels || {};
         games = current.games;
         mode = null;
         showTournamentUI();
@@ -3062,7 +3266,7 @@
     // it's typed in, not just from the schedule screens.
     var existing = findHistoryNameMatch(val);
     if (existing) {
-      modalShow('A player named "' + existing + '" already has games saved in your history. Is this the same ' + existing + ', or a different person?', {
+      modalShow('A player named "' + existing + '" is already in your player list. Is this the same ' + existing + ', or a different person?', {
         showCancel: true,
         okLabel: 'Same Person',
         cancelLabel: 'Different Person',
@@ -3700,6 +3904,7 @@
       } else if (snap.gameType === 'playoff12') {
         activeDateKeyP7 = dateKey;
         teamsP7 = snap.teams;
+        teamLabelsP7 = snap.teamLabels || {};
         gamesP7 = snap.games;
         seedOrderP7 = snap.seedOrder || null;
         modeP7 = null;
@@ -3708,6 +3913,7 @@
       } else {
         activeDateKey = dateKey;
         teams = snap.teams;
+        teamLabels = snap.teamLabels || {};
         games = snap.games;
         mode = null;
         showTournamentUI();
@@ -3801,6 +4007,8 @@
     mode = m;
     document.getElementById('playerMode').className = (m === 'players') ? '' : 'hidden';
     document.getElementById('teamMode').className = (m === 'teams') ? '' : 'hidden';
+    document.getElementById('modeBtnPlayers').className = 'btn btn-secondary' + (m === 'players' ? ' mode-active' : '');
+    document.getElementById('modeBtnTeams').className = 'btn btn-secondary' + (m === 'teams' ? ' mode-active' : '');
 
     if (m === 'players' && document.getElementById('playerInputs').children.length === 0) {
       buildPlayerInputs();
@@ -4057,6 +4265,11 @@
       collectNamesFromValue(snap.team1, set);
       collectNamesFromValue(snap.team2, set);
     }
+    // Also include the Manage Players roster, so a name that's been added
+    // there but hasn't played a game yet still gets caught -- not just
+    // names that already have saved games.
+    var roster = getRoster();
+    for (var r = 0; r < roster.length; r++) addNameCandidate(roster[r], set);
     return set;
   }
 
@@ -4172,7 +4385,7 @@
     var existing = findHistoryNameMatch(val);
     if (existing) {
       manualNameModalOpen = true;
-      modalShow('A player named "' + existing + '" already has games saved in your history. Is this the same ' + existing + ', or a different person?', {
+      modalShow('A player named "' + existing + '" is already in your player list. Is this the same ' + existing + ', or a different person?', {
         showCancel: true,
         okLabel: 'Same Person',
         cancelLabel: 'Different Person',
@@ -4309,21 +4522,57 @@
     }
   }
 
-  var DEFAULT_PLAYERS = ['Keaton', 'Caroline', 'Corey', 'Kime', 'John', 'Nico', 'Bob', 'Joe', 'Jeff', 'Colby', 'Gary', 'Phil'];
-
   function buildPlayerInputs() {
-    buildNameGrid('playerInputs', 'p', 12, DEFAULT_PLAYERS, 'dupNote');
+    var defaults = (typeof demo12 !== 'undefined') ? demo12 : null;
+    buildNameGrid('playerInputs', 'p', 12, defaults, 'dupNote');
   }
 
   function buildTeamInputs() {
     var box = document.getElementById('teamInputs');
-    var html = '';
+    var html = '<div class="dup-note" id="dupNoteTeams">Duplicate name entered &mdash; please make each name unique (e.g. "Mike S" / "Mike G").</div>';
     for (var i = 1; i <= 6; i++) {
-      var nextId = (i < 6) ? ('t' + (i + 1)) : '';
-      html += '<label>Team ' + i + '</label>' +
-        '<input type="text" id="t' + i + '" placeholder="e.g. Mike / Sue" style="margin-bottom:8px;" onkeydown="handleNameEnter(event, \'' + nextId + '\')">';
+      html += teamRowHtml('tt', i, 'dupNoteTeams', 'tteamname' + i);
     }
     box.innerHTML = html;
+    refreshNameGrid('tt', 12, 'dupNoteTeams');
+  }
+
+  // Builds one "Team N" row: two roster dropdowns (each with a "+" manual-
+  // entry fallback, same as the 12-player screens) for the two required
+  // players, plus one optional team-name text field. Shared by the Classic
+  // 6-team screen (prefix "tt") and the Playoff 6-team screen (prefix
+  // "t7t") so both stay in sync if this ever needs to change.
+  function teamRowHtml(prefix, teamNum, dupNoteId, teamNameId) {
+    var p1 = 2 * teamNum - 1, p2 = 2 * teamNum;
+    return '<div class="team-row-block">' +
+      '<div class="team-inline-row">' +
+        '<div class="team-inline-label">TEAM<span class="team-inline-num">' + teamNum + '</span></div>' +
+        nameFieldHtml(prefix, p1, 12, dupNoteId, 'team-inline-name') +
+        nameFieldHtml(prefix, p2, 12, dupNoteId, 'team-inline-name') +
+        '<input type="text" class="team-name-input team-inline-teamname" id="' + teamNameId + '" maxlength="18" placeholder="Team name (optional)">' +
+      '</div>' +
+    '</div>';
+  }
+
+  // One roster dropdown + "+" manual-entry field, wrapped the same way
+  // buildNameGrid wraps each of its rows -- reused here so a two-per-row
+  // team layout can share all the existing dropdown/manual-entry/roster
+  // logic (onNameSelectChange, showManualEntry, commitManualName, etc.)
+  // without any changes to that logic. extraClass (optional) adds a
+  // layout modifier class onto the outer field-row wrapper -- used by
+  // teamRowHtml to shrink these to 40% width and line them up with the
+  // team-name box.
+  function nameFieldHtml(prefix, i, count, dupNoteId, extraClass) {
+    return '<div class="field-row' + (extraClass ? ' ' + extraClass : '') + '">' +
+      '<div class="name-field-row" id="' + prefix + i + '_row">' +
+        '<select id="' + prefix + i + '" class="name-select" onchange="onNameSelectChange(\'' + prefix + '\', ' + count + ', \'' + (dupNoteId || '') + '\')"></select>' +
+        '<button type="button" class="name-manual-btn" onclick="showManualEntry(\'' + prefix + '\', ' + i + ', ' + count + ', \'' + (dupNoteId || '') + '\')">+</button>' +
+      '</div>' +
+      '<input type="text" class="name-manual-input hidden" id="' + prefix + i + '_manual" placeholder="Type a name" ' +
+        'onkeydown="handleManualNameKey(event, \'' + prefix + '\', ' + i + ', ' + count + ', \'' + (dupNoteId || '') + '\')" ' +
+        'oninput="scheduleManualNameCheck(\'' + prefix + '\', ' + i + ', ' + count + ', \'' + (dupNoteId || '') + '\')" ' +
+        'onblur="commitManualName(\'' + prefix + '\', ' + i + ', ' + count + ', \'' + (dupNoteId || '') + '\')">' +
+    '</div>';
   }
 
   function randomPairPlayers() {
@@ -4349,10 +4598,14 @@
       pairs.push(names[p] + ' / ' + names[p + 1]);
     }
     teams = pairs;
+    teamLabels = {};
     var box = document.getElementById('pairPreview');
     var html = '<div class="card-title" style="margin-top:10px;">Teams (tap Generate Schedule to lock in)</div>';
     for (var q = 0; q < pairs.length; q++) {
-      html += '<div class="pair-line">Team ' + (q + 1) + ': ' + escapeHtml(pairs[q]) + '</div>';
+      html += '<div class="pair-line-block">' +
+        '<div class="pair-line-players">Team ' + (q + 1) + ': ' + escapeHtml(pairs[q]) + '</div>' +
+        '<input type="text" class="team-name-input" id="tname' + q + '" maxlength="18" placeholder="Team name (optional), e.g. The Dinkers">' +
+        '</div>';
     }
     box.innerHTML = html;
     // Scroll the newly-added teams list into view -- otherwise it loads
@@ -4362,7 +4615,8 @@
 
   // ================== Partner Round Robin (8 players) setup ==================
   function buildPlayer8Inputs() {
-    buildNameGrid('playerInputs8', 'p8_', 8, DEFAULT_PARTNER_PLAYERS, 'dupNote8');
+    var defaults = (typeof demo8 !== 'undefined') ? demo8 : null;
+    buildNameGrid('playerInputs8', 'p8_', 8, defaults, 'dupNote8');
   }
 
   function generateSchedule8() {
@@ -4823,7 +5077,8 @@
 
   // ================== Team/Partner Rotation (8 players, 2 teams of 4) setup ==================
   function buildPlayerTRInputs() {
-    buildNameGrid('playerInputsTR', 'pTR_', 8, DEFAULT_PARTNER_PLAYERS, 'dupNoteTR');
+    var defaults = (typeof demo8 !== 'undefined') ? demo8 : null;
+    buildNameGrid('playerInputsTR', 'pTR_', 8, defaults, 'dupNoteTR');
   }
 
   function shuffleInPlaceTR(arr) {
@@ -5484,7 +5739,8 @@
 
   // ================== Round Robin (time cap) setup/schedule/entry/standings ==================
   function buildPlayerRTInputs() {
-    buildNameGrid('playerInputsRT', 'pRT_', 8, DEFAULT_PARTNER_PLAYERS, 'dupNoteRT');
+    var defaults = (typeof demo8 !== 'undefined') ? demo8 : null;
+    buildNameGrid('playerInputsRT', 'pRT_', 8, defaults, 'dupNoteRT');
   }
 
   function generateScheduleRT() {
@@ -5946,7 +6202,7 @@
   //   possible, no two players who shared a court in games 4-5 share a
   //   court again.
   function buildPlayerClInputs() {
-    var defaults = (typeof DEFAULT_SCRAMBLE_PLAYERS !== 'undefined') ? DEFAULT_SCRAMBLE_PLAYERS : null;
+    var defaults = (typeof demo8 !== 'undefined') ? demo8 : null;
     buildNameGrid('playerInputsCl', 'pCl_', 8, defaults, 'dupNoteCl');
   }
 
@@ -6648,10 +6904,10 @@
   var activeGameIdxFu = null;
   var activeFieldFu = 'top';
   var activeDateKeyFu = null;
-  var DEFAULT_FUSION_PLAYERS = ['Keaton', 'Caroline', 'Phil', 'Corey', 'Gary', 'Jeff', 'Colby', 'Kime'];
 
   function buildPlayerFuInputs() {
-    buildNameGrid('playerInputsFu', 'pFu_', 8, DEFAULT_FUSION_PLAYERS, 'dupNoteFu');
+    var defaults = (typeof demo8 !== 'undefined') ? demo8 : null;
+    buildNameGrid('playerInputsFu', 'pFu_', 8, defaults, 'dupNoteFu');
   }
 
   // Builds the fixed Group-A x Group-B crossover pairing for games 4-7,
@@ -7132,7 +7388,8 @@
   var activeDateKeyFu2 = null;
 
   function buildPlayerFu2Inputs() {
-    buildNameGrid('playerInputsFu2', 'pFu2_', 8, DEFAULT_FUSION_PLAYERS, 'dupNoteFu2');
+    var defaults = (typeof demo8 !== 'undefined') ? demo8 : null;
+    buildNameGrid('playerInputsFu2', 'pFu2_', 8, defaults, 'dupNoteFu2');
   }
 
   // Builds the fixed Group-A x Group-B crossover pairing for games 4-7 under
@@ -7647,10 +7904,56 @@
   function generateSchedule() {
     if (mode === 'teams') {
       teams = [];
+      teamLabels = {};
+      var missingPlayerTeams = false;
       for (var i = 1; i <= 6; i++) {
-        var v = document.getElementById('t' + i).value.trim();
-        if (!v) v = 'Team ' + i;
-        teams.push(v);
+        var pv1 = document.getElementById('tt' + (2 * i - 1)).value.trim();
+        var pv2 = document.getElementById('tt' + (2 * i)).value.trim();
+        if (!pv1 || !pv2) missingPlayerTeams = true;
+        teams.push(pv1 && pv2 ? (pv1 + ' / ' + pv2) : '');
+      }
+      if (missingPlayerTeams) {
+        appAlert('Please select both players for all 6 teams.');
+        return;
+      }
+      if (checkDuplicateNames('tt', 12, 'dupNoteTeams')) {
+        appAlert('Two players have the exact same name. Please make each name unique (e.g. "Mike S" / "Mike G") before continuing.');
+        return;
+      }
+      var typedTeamNameCount = 0, typedTeamNames = [];
+      for (var ti = 1; ti <= 6; ti++) {
+        var tNameEl = document.getElementById('tteamname' + ti);
+        var tTyped = tNameEl ? tNameEl.value.trim() : '';
+        typedTeamNames.push(tTyped);
+        if (tTyped) typedTeamNameCount++;
+      }
+      if (typedTeamNameCount > 0 && typedTeamNameCount < 6) {
+        appAlert('Please enter a team name for all 6 teams, or leave all 6 blank.');
+        return;
+      }
+      if (typedTeamNameCount === 6) {
+        for (var tj = 0; tj < 6; tj++) teamLabels[teams[tj]] = typedTeamNames[tj];
+      }
+    } else if (mode === 'players' && teams && teams.length === 6) {
+      // Randomized-pairing flow -- pick up any team names typed next to the
+      // pairings on the setup screen. All-or-nothing: either every team
+      // gets a name, or none do (falls back to showing the player pairing
+      // everywhere, same as before this feature existed).
+      var typedNamesCount = 0;
+      var typedNames = [];
+      for (var qi = 0; qi < teams.length; qi++) {
+        var nameEl = document.getElementById('tname' + qi);
+        var typed = nameEl ? nameEl.value.trim() : '';
+        typedNames.push(typed);
+        if (typed) typedNamesCount++;
+      }
+      if (typedNamesCount > 0 && typedNamesCount < teams.length) {
+        appAlert('Please enter a team name for all 6 teams, or leave all 6 blank.');
+        return;
+      }
+      teamLabels = {};
+      if (typedNamesCount === teams.length) {
+        for (var qj = 0; qj < teams.length; qj++) teamLabels[teams[qj]] = typedNames[qj];
       }
     }
 
@@ -7689,6 +7992,44 @@
     return name;
   }
 
+  // Returns the assigned team name for a "Player A / Player B" string, if
+  // one was set on the setup screen -- otherwise just returns the players
+  // string unchanged (same as before this feature existed).
+  function teamLabel(str) {
+    if (str && teamLabels && teamLabels[str]) return teamLabels[str];
+    return str;
+  }
+  function teamLabelP7(str) {
+    if (str && teamLabelsP7 && teamLabelsP7[str]) return teamLabelsP7[str];
+    return str;
+  }
+
+  // Builds the row of 6 small reference boxes (team name on top, players
+  // below) shown above the schedule grid. If a team has no assigned name,
+  // just shows a single line -- either its typed team name (manual "6 Team
+  // Names" mode) or its "Player A / Player B" pairing.
+  function teamSummaryHtml(teamsArr, labelsObj) {
+    if (!teamsArr || teamsArr.length === 0) return '';
+    var anyLabel = false;
+    for (var li = 0; li < teamsArr.length; li++) {
+      if (labelsObj && labelsObj[teamsArr[li]]) { anyLabel = true; break; }
+    }
+    if (!anyLabel) return '';
+    var html = '<div class="team-summary-row">';
+    for (var i = 0; i < teamsArr.length; i++) {
+      var t = teamsArr[i];
+      var hasLabel = !!(labelsObj && labelsObj[t]);
+      var topLine = hasLabel ? labelsObj[t] : t;
+      var showPlayers = hasLabel && t.indexOf(' / ') !== -1;
+      html += '<div class="team-summary-box">' +
+        '<div class="team-summary-name">' + escapeHtml(topLine) + '</div>' +
+        (showPlayers ? '<div class="team-summary-players">' + escapeHtml(t) + '</div>' : '') +
+        '</div>';
+    }
+    html += '</div>';
+    return html;
+  }
+
   function gameAt(round, court) {
     for (var i = 0; i < games.length; i++) {
       if (games[i].round === round && games[i].court === court) return i;
@@ -7697,6 +8038,9 @@
   }
 
   function renderSchedule() {
+    var summaryBox = document.getElementById('teamSummary');
+    if (summaryBox) summaryBox.innerHTML = teamSummaryHtml(teams, teamLabels);
+
     var box = document.getElementById('gridWrap');
     var numRounds = 5, numCourts = 3;
     var html = '<table class="grid">';
@@ -7721,15 +8065,15 @@
         if (isDone) {
           var r1 = computePoints(g.s1, g.s2);
           html += '<td class="' + cellClass + '"><button class="cellbtn" onclick="openEntry(' + gi + ')">' +
-            '<span class="matchline">' + escapeHtml(firstNameOnly(g.t1)) + ' - <span class="score">' + g.s1 + '</span> <span class="pts">(' + r1.pts1 + ' pts)</span></span>' +
+            '<span class="matchline">' + escapeHtml(teamLabel(g.t1)) + ' - <span class="score">' + g.s1 + '</span> <span class="pts">(' + r1.pts1 + ' pts)</span></span>' +
             '<span class="vs-sep">vs</span>' +
-            '<span class="matchline">' + escapeHtml(firstNameOnly(g.t2)) + ' - <span class="score">' + g.s2 + '</span> <span class="pts">(' + r1.pts2 + ' pts)</span></span>' +
+            '<span class="matchline">' + escapeHtml(teamLabel(g.t2)) + ' - <span class="score">' + g.s2 + '</span> <span class="pts">(' + r1.pts2 + ' pts)</span></span>' +
             '</button></td>';
         } else {
           html += '<td class="' + cellClass + '"><button class="cellbtn" onclick="openEntry(' + gi + ')">' +
-            '<span class="matchline">' + escapeHtml(firstNameOnly(g.t1)) + '</span>' +
+            '<span class="matchline">' + escapeHtml(teamLabel(g.t1)) + '</span>' +
             '<span class="vs-sep">vs</span>' +
-            '<span class="matchline">' + escapeHtml(firstNameOnly(g.t2)) + '</span>' +
+            '<span class="matchline">' + escapeHtml(teamLabel(g.t2)) + '</span>' +
             '</button></td>';
         }
       }
@@ -7761,9 +8105,9 @@
     panel.className = 'entry-panel';
 
     var html = '<div class="score-row">';
-    html += '<div class="score-block"><div class="team-name-label">' + escapeHtml(firstNameOnly(topTeam)) + '</div>' +
+    html += '<div class="score-block"><div class="team-name-label">' + escapeHtml(teamLabel(topTeam)) + '</div>' +
       '<input class="score-input-big" type="text" readonly id="entryTop" value="' + (topVal !== null ? topVal : '') + '" onclick="setActiveField(\'top\')"></div>';
-    html += '<div class="score-block"><div class="team-name-label">' + escapeHtml(firstNameOnly(sideTeam)) + '</div>' +
+    html += '<div class="score-block"><div class="team-name-label">' + escapeHtml(teamLabel(sideTeam)) + '</div>' +
       '<input class="score-input-big" type="text" readonly id="entrySide" value="' + (sideVal !== null ? sideVal : '') + '" onclick="setActiveField(\'side\')"></div>';
     html += '</div>';
 
@@ -7979,7 +8323,11 @@
       '<th class="num sortable' + (winsActive ? ' active' : '') + '" onclick="setStandingsSort(\'wins\')">Wins' +
       (winsActive ? '<span class="arrow">' + arrowChar + '</span>' : '') + '</th></tr>';
     for (var k = 0; k < names.length; k++) {
-      html += '<tr><td>' + rankOf[names[k]] + '</td><td>' + escapeHtml(names[k]) +
+      var hasLabel = !!(teamLabels && teamLabels[names[k]]);
+      var teamCell = hasLabel
+        ? (escapeHtml(teamLabels[names[k]]) + '<div class="standings-players">' + escapeHtml(names[k]) + '</div>')
+        : escapeHtml(names[k]);
+      html += '<tr><td>' + rankOf[names[k]] + '</td><td>' + teamCell +
         '</td><td class="num">' + totals[names[k]] + '</td><td class="num">' + wins[names[k]] + '</td></tr>';
     }
     html += '</table>';
@@ -7989,6 +8337,7 @@
   function resetAll() {
     appConfirm('Start a new Round Robin tournament? This clears today\'s scores from the screen (previous days remain saved in History).', function () {
       teams = [];
+      teamLabels = {};
       games = [];
       mode = null;
       activeDateKey = null;
@@ -8011,6 +8360,8 @@
     modeP7 = m;
     document.getElementById('playerModeP7').className = (m === 'players') ? '' : 'hidden';
     document.getElementById('teamModeP7').className = (m === 'teams') ? '' : 'hidden';
+    document.getElementById('modeBtnPlayersP7').className = 'btn btn-secondary' + (m === 'players' ? ' mode-active' : '');
+    document.getElementById('modeBtnTeamsP7').className = 'btn btn-secondary' + (m === 'teams' ? ' mode-active' : '');
     if (m === 'players' && document.getElementById('playerInputsP7').children.length === 0) {
       buildPlayerInputsP7();
     }
@@ -8020,18 +8371,18 @@
   }
 
   function buildPlayerInputsP7() {
-    buildNameGrid('playerInputsP7', 'p7_', 12, DEFAULT_PLAYERS, 'dupNoteP7');
+    var defaults = (typeof demo12 !== 'undefined') ? demo12 : null;
+    buildNameGrid('playerInputsP7', 'p7_', 12, defaults, 'dupNoteP7');
   }
 
   function buildTeamInputsP7() {
     var box = document.getElementById('teamInputsP7');
-    var html = '';
+    var html = '<div class="dup-note" id="dupNoteP7Teams">Duplicate name entered &mdash; please make each name unique (e.g. "Mike S" / "Mike G").</div>';
     for (var i = 1; i <= 6; i++) {
-      var nextId = (i < 6) ? ('t7_' + (i + 1)) : '';
-      html += '<label>Team ' + i + '</label>' +
-        '<input type="text" id="t7_' + i + '" placeholder="e.g. Mike / Sue" style="margin-bottom:8px;" onkeydown="handleNameEnter(event, \'' + nextId + '\')">';
+      html += teamRowHtml('t7t', i, 'dupNoteP7Teams', 't7teamname' + i);
     }
     box.innerHTML = html;
+    refreshNameGrid('t7t', 12, 'dupNoteP7Teams');
   }
 
   function randomPairPlayersP7() {
@@ -8057,10 +8408,14 @@
       pairs.push(names[p] + ' / ' + names[p + 1]);
     }
     teamsP7 = pairs;
+    teamLabelsP7 = {};
     var box = document.getElementById('pairPreviewP7');
     var html = '<div class="card-title" style="margin-top:10px;">Teams (tap Generate Schedule to lock in)</div>';
     for (var q = 0; q < pairs.length; q++) {
-      html += '<div class="pair-line">Team ' + (q + 1) + ': ' + escapeHtml(pairs[q]) + '</div>';
+      html += '<div class="pair-line-block">' +
+        '<div class="pair-line-players">Team ' + (q + 1) + ': ' + escapeHtml(pairs[q]) + '</div>' +
+        '<input type="text" class="team-name-input" id="tnameP7_' + q + '" maxlength="18" placeholder="Team name (optional), e.g. The Dinkers">' +
+        '</div>';
     }
     box.innerHTML = html;
     // Scroll the newly-added teams list into view -- otherwise it loads
@@ -8071,10 +8426,52 @@
   function generateScheduleP7() {
     if (modeP7 === 'teams') {
       teamsP7 = [];
+      teamLabelsP7 = {};
+      var missingPlayerTeamsP7 = false;
       for (var i = 1; i <= 6; i++) {
-        var v = document.getElementById('t7_' + i).value.trim();
-        if (!v) v = 'Team ' + i;
-        teamsP7.push(v);
+        var pv1P7 = document.getElementById('t7t' + (2 * i - 1)).value.trim();
+        var pv2P7 = document.getElementById('t7t' + (2 * i)).value.trim();
+        if (!pv1P7 || !pv2P7) missingPlayerTeamsP7 = true;
+        teamsP7.push(pv1P7 && pv2P7 ? (pv1P7 + ' / ' + pv2P7) : '');
+      }
+      if (missingPlayerTeamsP7) {
+        appAlert('Please select both players for all 6 teams.');
+        return;
+      }
+      if (checkDuplicateNames('t7t', 12, 'dupNoteP7Teams')) {
+        appAlert('Two players have the exact same name. Please make each name unique (e.g. "Mike S" / "Mike G") before continuing.');
+        return;
+      }
+      var typedTeamNameCountP7 = 0, typedTeamNamesP7 = [];
+      for (var ti = 1; ti <= 6; ti++) {
+        var tNameElP7 = document.getElementById('t7teamname' + ti);
+        var tTypedP7 = tNameElP7 ? tNameElP7.value.trim() : '';
+        typedTeamNamesP7.push(tTypedP7);
+        if (tTypedP7) typedTeamNameCountP7++;
+      }
+      if (typedTeamNameCountP7 > 0 && typedTeamNameCountP7 < 6) {
+        appAlert('Please enter a team name for all 6 teams, or leave all 6 blank.');
+        return;
+      }
+      if (typedTeamNameCountP7 === 6) {
+        for (var tj = 0; tj < 6; tj++) teamLabelsP7[teamsP7[tj]] = typedTeamNamesP7[tj];
+      }
+    } else if (modeP7 === 'players' && teamsP7 && teamsP7.length === 6) {
+      var typedNamesCountP7 = 0;
+      var typedNamesP7 = [];
+      for (var qi = 0; qi < teamsP7.length; qi++) {
+        var nameEl = document.getElementById('tnameP7_' + qi);
+        var typed = nameEl ? nameEl.value.trim() : '';
+        typedNamesP7.push(typed);
+        if (typed) typedNamesCountP7++;
+      }
+      if (typedNamesCountP7 > 0 && typedNamesCountP7 < teamsP7.length) {
+        appAlert('Please enter a team name for all 6 teams, or leave all 6 blank.');
+        return;
+      }
+      teamLabelsP7 = {};
+      if (typedNamesCountP7 === teamsP7.length) {
+        for (var qj = 0; qj < teamsP7.length; qj++) teamLabelsP7[teamsP7[qj]] = typedNamesP7[qj];
       }
     }
     if (!teamsP7 || teamsP7.length !== 6) {
@@ -8153,6 +8550,9 @@
 
   // ---------- Round-robin (games 1-5) grid rendering ----------
   function renderScheduleP7() {
+    var summaryBoxP7 = document.getElementById('teamSummaryP7');
+    if (summaryBoxP7) summaryBoxP7.innerHTML = teamSummaryHtml(teamsP7, teamLabelsP7);
+
     var box = document.getElementById('gridWrapP7');
     var numRounds = 5, numCourts = 3;
     var html = '<table class="grid">';
@@ -8177,15 +8577,15 @@
         if (isDone) {
           var r1 = computePointsP7(g.s1, g.s2);
           html += '<td class="' + cellClass + '"><button class="cellbtn" onclick="openEntryP7(' + gi + ')">' +
-            '<span class="matchline">' + escapeHtml(firstNameOnly(g.t1)) + ' - <span class="score">' + g.s1 + '</span> <span class="pts">' + ptsParenP7(r1.pts1, r1.capped1) + '</span></span>' +
+            '<span class="matchline">' + escapeHtml(teamLabelP7(g.t1)) + ' - <span class="score">' + g.s1 + '</span> <span class="pts">' + ptsParenP7(r1.pts1, r1.capped1) + '</span></span>' +
             '<span class="vs-sep">vs</span>' +
-            '<span class="matchline">' + escapeHtml(firstNameOnly(g.t2)) + ' - <span class="score">' + g.s2 + '</span> <span class="pts">' + ptsParenP7(r1.pts2, r1.capped2) + '</span></span>' +
+            '<span class="matchline">' + escapeHtml(teamLabelP7(g.t2)) + ' - <span class="score">' + g.s2 + '</span> <span class="pts">' + ptsParenP7(r1.pts2, r1.capped2) + '</span></span>' +
             '</button></td>';
         } else {
           html += '<td class="' + cellClass + '"><button class="cellbtn" onclick="openEntryP7(' + gi + ')">' +
-            '<span class="matchline">' + escapeHtml(firstNameOnly(g.t1)) + '</span>' +
+            '<span class="matchline">' + escapeHtml(teamLabelP7(g.t1)) + '</span>' +
             '<span class="vs-sep">vs</span>' +
-            '<span class="matchline">' + escapeHtml(firstNameOnly(g.t2)) + '</span>' +
+            '<span class="matchline">' + escapeHtml(teamLabelP7(g.t2)) + '</span>' +
             '</button></td>';
         }
       }
@@ -8208,7 +8608,7 @@
     var cls = 'bracket-box' + (isDone ? ' done' : '') + (!filled ? ' tbd' : '') + (activeGameIdxP7 === gi ? ' selected-cell' : '');
 
     function nameLine(team, seed) {
-      var label = escapeHtml(firstNameOnly(team));
+      var label = escapeHtml(teamLabelP7(team));
       if (showSeeds && seed) label = '<span class="bracket-seed">#' + seed + '</span> ' + label;
       return label;
     }
@@ -8252,12 +8652,12 @@
     var semi1 = gameAtP7(5, 0), semi2 = gameAtP7(5, 1), consol = gameAtP7(5, 2);
     var champ = gameAtP7(6, 0), third = gameAtP7(6, 1), fun = gameAtP7(6, 2);
 
-    var seedNote = '<div class="empty-note" style="margin-bottom:10px;">Seeds: 1. ' + escapeHtml(firstNameOnly(seedOrderP7[0])) +
-      ' &middot; 2. ' + escapeHtml(firstNameOnly(seedOrderP7[1])) +
-      ' &middot; 3. ' + escapeHtml(firstNameOnly(seedOrderP7[2])) +
-      ' &middot; 4. ' + escapeHtml(firstNameOnly(seedOrderP7[3])) +
-      ' &middot; 5. ' + escapeHtml(firstNameOnly(seedOrderP7[4])) +
-      ' &middot; 6. ' + escapeHtml(firstNameOnly(seedOrderP7[5])) + '</div>';
+    var seedNote = '<div class="empty-note" style="margin-bottom:10px;">Seeds: 1. ' + escapeHtml(teamLabelP7(seedOrderP7[0])) +
+      ' &middot; 2. ' + escapeHtml(teamLabelP7(seedOrderP7[1])) +
+      ' &middot; 3. ' + escapeHtml(teamLabelP7(seedOrderP7[2])) +
+      ' &middot; 4. ' + escapeHtml(teamLabelP7(seedOrderP7[3])) +
+      ' &middot; 5. ' + escapeHtml(teamLabelP7(seedOrderP7[4])) +
+      ' &middot; 6. ' + escapeHtml(teamLabelP7(seedOrderP7[5])) + '</div>';
 
     var html = seedNote + '<div class="bracket-wrap">';
     html += '<div class="bracket-col">';
@@ -8890,7 +9290,11 @@
       '<th class="num sortable' + (ptsActive ? ' active' : '') + '" onclick="setStandingsSortP7(\'points\')">Point Diff.' +
       (ptsActive ? '<span class="arrow">' + arrowChar + '</span>' : '') + '</th></tr>';
     for (var k = 0; k < names.length; k++) {
-      html += '<tr><td>' + rankOf[names[k]] + '</td><td>' + escapeHtml(names[k]) +
+      var hasLabelP7 = !!(teamLabelsP7 && teamLabelsP7[names[k]]);
+      var teamCellP7 = hasLabelP7
+        ? (escapeHtml(teamLabelsP7[names[k]]) + '<div class="standings-players">' + escapeHtml(names[k]) + '</div>')
+        : escapeHtml(names[k]);
+      html += '<tr><td>' + rankOf[names[k]] + '</td><td>' + teamCellP7 +
         '</td><td class="num">' + stats.wins[names[k]] + '</td><td class="num">' + fmtPtsP7(stats.pts[names[k]]) + '</td></tr>';
     }
     html += '</table>';
@@ -8907,7 +9311,11 @@
       var finalStats = computeFinalStatsP7();
       function placementRowP7(place, team, note) {
         var noteHtml = note ? ' <span class="note-inline">' + note + '</span>' : '';
-        return '<tr><td>' + place + '</td><td>' + escapeHtml(team) + noteHtml +
+        var hasLabelPl = !!(teamLabelsP7 && teamLabelsP7[team]);
+        var teamCellPl = hasLabelPl
+          ? (escapeHtml(teamLabelsP7[team]) + '<div class="standings-players">' + escapeHtml(team) + '</div>')
+          : escapeHtml(team);
+        return '<tr><td>' + place + '</td><td>' + teamCellPl + noteHtml +
           '</td><td class="num">' + finalStats.wins[team] + '</td><td class="num">' + fmtPtsP7(finalStats.pts[team]) + '</td></tr>';
       }
       html += '<div class="card-title" style="margin-top:18px;">Final Placement</div>';
@@ -8931,6 +9339,7 @@
   function resetAllP7() {
     appConfirm('Start a new Playoff tournament? This clears today\'s scores from the screen (previous days remain saved in History).', function () {
       teamsP7 = [];
+      teamLabelsP7 = {};
       gamesP7 = [];
       seedOrderP7 = null;
       modeP7 = null;
@@ -8954,7 +9363,7 @@
     if (!teamsP7 || teamsP7.length !== 6 || !activeDateKeyP7) return;
     try {
       var days = getDays();
-      days[activeDateKeyP7] = { teams: teamsP7, games: gamesP7, seedOrder: seedOrderP7, dateKey: activeDateKeyP7, gameType: 'playoff12', updatedAt: new Date().toISOString() };
+      days[activeDateKeyP7] = { teams: teamsP7, teamLabels: teamLabelsP7, games: gamesP7, seedOrder: seedOrderP7, dateKey: activeDateKeyP7, gameType: 'playoff12', updatedAt: new Date().toISOString() };
       setDays(days);
       window.localStorage.setItem(PERINI_ACTIVE, activeDateKeyP7);
     } catch (e) { /* ignore quota / access errors */ }
@@ -9019,7 +9428,7 @@
     if (!teams || teams.length !== 6 || !activeDateKey) return;
     try {
       var days = getDays();
-      days[activeDateKey] = { gameType: 'partnerrr12', teams: teams, games: games, dateKey: activeDateKey, updatedAt: new Date().toISOString() };
+      days[activeDateKey] = { gameType: 'partnerrr12', teams: teams, teamLabels: teamLabels, games: games, dateKey: activeDateKey, updatedAt: new Date().toISOString() };
       setDays(days);
       window.localStorage.setItem(PERINI_ACTIVE, activeDateKey);
     } catch (e) { /* ignore quota / access errors */ }
@@ -9085,6 +9494,13 @@
 
   function gatherSnapshotTables(suffix) {
     var out = [];
+    if (suffix === '' || suffix === 'P7') {
+      var teamsArrForShot = (suffix === 'P7') ? teamsP7 : teams;
+      var labelsForShot = (suffix === 'P7') ? teamLabelsP7 : teamLabels;
+      var teamRows = buildSnapshotRowsTeams(teamsArrForShot, labelsForShot);
+      if (teamRows.length > 1) out.push({ label: 'Teams', rows: teamRows });
+    }
+
     var gridWrap = document.getElementById('gridWrap' + suffix);
     if (gridWrap) {
       var t1 = gridWrap.querySelector('table');
@@ -9118,6 +9534,25 @@
     return out;
   }
 
+  // Builds the "Teams" reference section for the score photo (team name +
+  // players), matching the on-screen boxes above the schedule. Only
+  // included when team names were actually assigned -- if nobody typed
+  // any, this returns just the header row and the caller skips it.
+  function buildSnapshotRowsTeams(teamsArr, labelsObj) {
+    var rows = [['Team', 'Players']];
+    if (!teamsArr || teamsArr.length === 0) return rows;
+    var anyLabel = false;
+    for (var i = 0; i < teamsArr.length; i++) {
+      if (labelsObj && labelsObj[teamsArr[i]]) { anyLabel = true; break; }
+    }
+    if (!anyLabel) return rows;
+    for (var j = 0; j < teamsArr.length; j++) {
+      var t = teamsArr[j];
+      rows.push([labelsObj[t] || t, t]);
+    }
+    return rows;
+  }
+
   // Builds a Playoffs (Games 6-7) section for the score photo -- the
   // bracket is drawn with styled boxes rather than a real <table>, so it
   // isn't picked up by gatherSnapshotTables automatically like the other
@@ -9129,8 +9564,8 @@
       var g = gamesP7[gi];
       if (!g || (!g.t1 && !g.t2)) { rows.push([label, 'TBD', 'TBD', '']); return; }
       var showSeeds = !(g.round === 6 && g.court === 2);
-      var n1 = g.t1 ? ((showSeeds && g.seed1 ? '#' + g.seed1 + ' ' : '') + firstNameOnly(g.t1)) : 'TBD';
-      var n2 = g.t2 ? ((showSeeds && g.seed2 ? '#' + g.seed2 + ' ' : '') + firstNameOnly(g.t2)) : 'TBD';
+      var n1 = g.t1 ? ((showSeeds && g.seed1 ? '#' + g.seed1 + ' ' : '') + teamLabelP7(g.t1)) : 'TBD';
+      var n2 = g.t2 ? ((showSeeds && g.seed2 ? '#' + g.seed2 + ' ' : '') + teamLabelP7(g.t2)) : 'TBD';
       var result = '';
       var isFunRow = (g.round === 6 && g.court === 2);
       if (g.entered) {
